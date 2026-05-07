@@ -1,1 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --color-primario: #003B7E;
+  --color-secundario: #0097A7;
+  --color-acento: #3FB1C5;
+  --color-divisor: #A7A9AC;
+  --color-texto: #7D7E81;
+  --color-fondo: #FFFFFF;
+  --color-fondo-app: #F5F9FA; 
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background-color: var(--color-fondo-app);
+  color: var(--color-texto);
+}
