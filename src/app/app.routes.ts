@@ -9,9 +9,20 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/pages/login-component/login-component').then(m => m.LoginComponent)
   },
   {
-    path: 'dashboard',
+    path: '',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/dashboard/pages/dashboard/dashboard').then(m => m.Dashboard)
+    loadComponent: () => import('./shared/components/layout/main-layout/main-layout').then(m => m.MainLayout),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/dashboard/pages/dashboard/dashboard').then(m => m.Dashboard)
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      }
+    ]
   },
   {
     path: '',
