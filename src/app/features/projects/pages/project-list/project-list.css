@@ -23,7 +23,6 @@
   padding: 20px;
   background: white;
   border-radius: 12px;
-  margin-bottom: 24px;
   align-items: center;
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
@@ -87,12 +86,13 @@
   padding: 16px;
   font-size: 14px;
   vertical-align: middle;
+  color: #6B7280; 
 }
 
 
 .col-code {
-  font-weight: 700;
-  color: #374151;
+  font-weight: 600;
+  color: #4B5563; 
 }
 
 .col-name {
@@ -177,17 +177,3 @@
   background: #F3F4F6;
 }
 
-.pagination-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  background-color: #F9FAFB;
-  border-top: 1px solid #E5E7EB;
-}
-
-.pagination-controls {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}

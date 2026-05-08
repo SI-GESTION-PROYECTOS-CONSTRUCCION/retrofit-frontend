@@ -117,12 +117,12 @@ export class ProjectList implements OnInit {
 
   getStatusBadgeClass(status: string): string {
     const map: Record<string, string> = {
-      'EN_EJECUCION': 'badge-success', 'IN_PROGRESS': 'badge-success',
-      'PLANEAMIENTO': 'badge-info', 'PLANNING': 'badge-info',
+      'EN_EJECUCION': 'badge-executing', 'IN_PROGRESS': 'badge-executing',
+      'PLANEAMIENTO': 'badge-planning', 'PLANNING': 'badge-planning',
       'PAUSADO': 'badge-warning', 'ON_HOLD': 'badge-warning',
       'FINALIZADO': 'badge-success', 'COMPLETED': 'badge-success'
     };
-    return map[status] || 'badge-info';
+    return map[status] || 'badge-planning';
   }
 
   getPriorityBadgeClass(priority: string): string {
@@ -130,7 +130,7 @@ export class ProjectList implements OnInit {
       'ALTA': 'badge-danger', 'HIGH': 'badge-danger',
       'CRITICA': 'badge-danger', 'CRITICAL': 'badge-danger',
       'MEDIA': 'badge-info', 'MEDIUM': 'badge-info',
-      'BAJA': 'badge-success', 'LOW': 'badge-success'
+      'BAJA': 'badge-secondary', 'LOW': 'badge-secondary'
     };
     return map[priority] || 'badge-info';
   }
