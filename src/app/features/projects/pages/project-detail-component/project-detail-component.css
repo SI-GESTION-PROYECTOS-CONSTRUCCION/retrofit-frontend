@@ -1,0 +1,237 @@
+/* =========================================
+   CABECERA DEL DETALLE
+   ========================================= */
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  background-color: var(--color-fondo);
+  padding: 24px 0 0 0;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.project-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.meta-row {
+  display: flex;
+  gap: 24px;
+  color: #6B7280;
+  font-size: 14px;
+}
+
+.meta-row span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* =========================================
+   PESTAÑAS (TABS)
+   ========================================= */
+.tabs-container {
+  display: flex;
+  gap: 32px;
+  border-bottom: 1px solid #E5E7EB;
+  margin-bottom: 40px;
+}
+
+.tab-item {
+  background: none;
+  border: none;
+  padding: 12px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tab-item:hover {
+  color: #111827;
+}
+
+.tab-item.active {
+  color: #111827;
+  border-bottom-color: #111827; /* Línea negra gruesa inferior */
+}
+
+/* =========================================
+   GRID PRINCIPAL
+   ========================================= */
+.content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* 65% - 35% aprox */
+  gap: 60px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 20px;
+}
+
+/* LADO IZQUIERDO */
+.project-description {
+  font-size: 15px;
+  color: #4B5563;
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 24px 0;
+  border-top: 1px solid #E5E7EB;
+  border-bottom: 1px solid #E5E7EB;
+  margin-bottom: 40px;
+}
+
+.info-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+
+.info-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-value {
+  color: #9CA3AF;
+  font-size: 14px;
+}
+
+.progress-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.progress-card {
+  background-color: #F3F4F6;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.disabled-card {
+  opacity: 0.3; /* Efecto difuminado como en tu imagen */
+}
+
+.pc-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+}
+
+.pc-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+/* LADO DERECHO */
+.alerts-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.alert-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.alert-item:last-child {
+  border-bottom: none;
+}
+
+.alert-icon {
+  font-size: 18px;
+  margin-top: 2px;
+}
+
+.text-danger { color: #EF4444; }
+.text-success { color: #10B981; }
+
+.alert-content h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 4px 0;
+}
+
+.alert-content p {
+  font-size: 13px;
+  color: #6B7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.quick-actions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quick-action-btn {
+  width: 100%;
+  text-align: left;
+  padding: 16px 20px;
+  background-color: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.quick-action-btn i {
+  color: #6B7280;
+  font-size: 16px;
+}
+
+.quick-action-btn:hover {
+  border-color: #D1D5DB;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  background-color: #F9FAFB;
+}

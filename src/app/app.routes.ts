@@ -22,6 +22,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/projects/pages/project-list/project-list').then(m => m.ProjectList)
       },
       {
+        path: 'portafolio/proyecto/:id',
+        loadComponent: () => import('./features/projects/pages/project-detail-component/project-detail-component').then(m => m.ProjectDetailComponent)
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full'

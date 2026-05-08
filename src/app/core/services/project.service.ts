@@ -43,4 +43,8 @@ export class ProjectService {
   deleteProject(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  getProjectById(id: number): Observable<ProjectResponseDto> {
+    return this.http.get<ProjectResponseDto>(`${this.apiUrl}/${id}`);
+  }
 }
