@@ -14,16 +14,13 @@ import { ProjectCreateModalComponent } from '../../modal/project-create-modal-co
 export class ProjectList {
   private projectService = inject(ProjectService);
   isModalOpen = false;
-  // Variables de estado
   projects: ProjectResponseDto[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
-
-  // Variables de Paginación
   totalElements: number = 0;
   totalPages: number = 0;
   currentPage: number = 0;
-  pageSize: number = 5; // Mostrando 5 proyectos por defecto
+  pageSize: number = 5; 
 
   ngOnInit(): void {
     this.loadProjects(this.currentPage);
@@ -47,7 +44,6 @@ export class ProjectList {
     });
   }
 
-  // Controles de paginación
   nextPage(): void {
     if (this.currentPage < this.totalPages - 1) {
       this.loadProjects(this.currentPage + 1);
@@ -66,11 +62,9 @@ export class ProjectList {
   }
 
   onProjectCreated() {
-    
-    this.loadProjects(1);
+    this.loadProjects(this.currentPage);
   }
 
-  // --- Funciones UI Helpers (Mapeo de colores) ---
   getStatusBadgeClass(status: string): string {
     const map: Record<string, string> = {
       'EN_EJECUCION': 'badge-success', 'IN_PROGRESS': 'badge-success',
