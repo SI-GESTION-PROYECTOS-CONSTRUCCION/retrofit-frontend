@@ -1,0 +1,89 @@
+<div class="modal-backdrop">
+  <div class="modal-container">
+    
+    <div class="modal-header">
+      <button class="btn-close" (click)="closeModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="header-content">
+        <div class="header-title">
+          <i class="fa-regular fa-folder-open icon-title"></i>
+          <h2>Registrar Nuevo Proyecto</h2>
+        </div>
+        <p class="header-subtitle">
+          Complete la información para habilitar el proyecto en el sistema Retrofit Manager.
+        </p>
+      </div>
+    </div>
+
+    <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+      <div class="modal-body">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>CÓDIGO DEL PROYECTO</label>
+            <input type="text" formControlName="code" placeholder="Ej. PRJ-2024-001" 
+                   [class.is-invalid]="isFieldInvalid('code')">
+            @if (isFieldInvalid('code')) { <span class="error-text">Requerido. Formato: PRJ-YYYY-000</span> }
+          </div>
+          
+          <div class="form-group">
+            <label>NOMBRE DEL PROYECTO</label>
+            <input type="text" formControlName="name" placeholder="Ej. Mantenimiento Subestación"
+                   [class.is-invalid]="isFieldInvalid('name')">
+            @if (isFieldInvalid('name')) { <span class="error-text">Requerido (mín. 5 caracteres)</span> }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>CLIENTE (EMPRESA)</label>
+          <input type="text" formControlName="client" placeholder="Ej. Engie Energía Perú"
+                 [class.is-invalid]="isFieldInvalid('client')">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>ESTADO INICIAL</label>
+            <select formControlName="status">
+              <option value="PLANEAMIENTO">Planeamiento</option>
+              <option value="EN_EJECUCION">En Ejecución</option>
+              <option value="PAUSADO">Pausado</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>PRIORIDAD</label>
+            <select formControlName="priority">
+              <option value="BAJA">Baja</option>
+              <option value="MEDIA">Media</option>
+              <option value="ALTA">Alta</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>RESPONSABLE DEL PROYECTO</label>
+          <select formControlName="managerId" [class.is-invalid]="isFieldInvalid('managerId')">
+            <option [ngValue]="null" disabled selected>Seleccione un responsable...</option>
+            @for (manager of managers; track manager.id) {
+              <option [value]="manager.id">{{ manager.name }}</option>
+            }
+          </select>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-cancel" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn-submit" [disabled]="projectForm.invalid || isSubmitting">
+          @if (isSubmitting) {
+            <i class="fa-solid fa-circle-notch fa-spin"></i> Guardando...
+          } @else {
+            Guardar Proyecto
+          }
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>

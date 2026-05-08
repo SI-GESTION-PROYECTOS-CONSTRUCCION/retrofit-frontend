@@ -18,6 +18,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dashboard/pages/dashboard/dashboard').then(m => m.Dashboard)
       },
       {
+        path: 'portafolio',
+        loadComponent: () => import('./features/projects/pages/project-list/project-list').then(m => m.ProjectList)
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full'
