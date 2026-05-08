@@ -20,6 +20,7 @@ export interface ProjectResponseDto {
   estimatedDeliveryDate: string;
   status: string;
   priority: string;
+  managerId: number;
   currentProgress: number;
   managerFullName: string;
 }

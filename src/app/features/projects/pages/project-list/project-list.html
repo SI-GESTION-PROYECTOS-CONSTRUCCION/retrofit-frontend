@@ -13,9 +13,22 @@
 
       @if (isModalOpen) {
         <app-project-create-modal-component 
+          [projectToEdit]="selectedProject"
           (close)="isModalOpen = false" 
-          (projectCreated)="onProjectCreated()">
+          (projectSaved)="onProjectSaved()">
         </app-project-create-modal-component>
+      }
+
+
+      @if (isDeleteModalOpen && projectToDelete) {
+        <app-confirm-modal
+          title="Eliminar Proyecto"
+          [message]="'¿Estás seguro de que deseas eliminar el proyecto <strong>' + projectToDelete.code + '</strong>?<br>Esta acción no se puede deshacer.'"
+          confirmText="Eliminar"
+          [isProcessing]="isDeleting"
+          (confirm)="confirmDelete()"
+          (cancel)="closeDeleteModal()">
+        </app-confirm-modal>
       }
     </div>
   </div>
@@ -100,12 +113,33 @@
                 </td>
                 
                 <td class="col-actions">
+                  <!-- Botón Principal (Ver) -->
                   <button class="action-btn" title="Ver Detalle" [routerLink]="['/projects', project.id]">
                     <i class="fa-regular fa-eye"></i>
                   </button>
-                  <button class="action-btn" title="Opciones">
-                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                  </button>
+
+                  <!-- Contenedor Relativo para el Menú -->
+                  <div class="dropdown-container" style="position: relative; display: inline-block;">
+                    
+                    <!-- Botón 3 puntos -->
+                    <button class="action-btn" title="Opciones" (click)="toggleMenu(project.id, $event)">
+                      <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </button>
+
+                    <!-- El Menú Desplegable (Solo se muestra si su ID coincide) -->
+                    @if (activeMenuId === project.id) {
+                      <div class="dropdown-menu">
+                        <button class="dropdown-item" (click)="openEditModal(project)">
+                          <i class="fa-solid fa-pen"></i> Editar
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item text-danger" (click)="openDeleteModal(project)">
+                          <i class="fa-solid fa-trash-can"></i> Eliminar
+                        </button>
+                      </div>
+                    }
+
+                  </div>
                 </td>
               </tr>
             } @empty {

@@ -1,9 +1,10 @@
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProjectService } from '../../../../core/services/project.service';
 import { UserService } from '../../../../core/services/user.service';
 import { UserDto } from '../../../../core/models/user.model';
+import { ProjectResponseDto } from '../../../../core/models/project.model';
 
 @Component({
   selector: 'app-project-create-modal-component',
@@ -14,8 +15,8 @@ import { UserDto } from '../../../../core/models/user.model';
 })
 export class ProjectCreateModalComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
-  @Output() projectCreated = new EventEmitter<void>();
-
+  @Output() projectSaved = new EventEmitter<void>();
+  @Input() projectToEdit: ProjectResponseDto | null = null;
   private fb = inject(FormBuilder);
   private projectService = inject(ProjectService);
   private userService = inject(UserService);
@@ -42,18 +43,39 @@ export class ProjectCreateModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadManagers();
+
+    if (this.projectToEdit) {
+      this.projectForm.patchValue({
+        code: this.projectToEdit.code,
+        name: this.projectToEdit.name,
+        client: this.projectToEdit.client,
+        location: this.projectToEdit.location,
+        description: this.projectToEdit.description,
+        estimatedDeliveryDate: this.projectToEdit.estimatedDeliveryDate,
+        status: this.projectToEdit.status,
+        priority: this.projectToEdit.priority
+        // managerId lo setearemos después de cargar la lista de managers
+      });
+    }
   }
 
   loadManagers() {
     this.userService.getUsersByRole('ALL').subscribe({
-      next: (users) => this.managers = users,
+      next: (users) => {
+        this.managers = users;
+        
+        if (this.projectToEdit && this.projectToEdit.managerId) {
+          this.projectForm.patchValue({
+            managerId: this.projectToEdit.managerId
+          });
+        }
+      },
       error: (err) => console.error('Error al cargar responsables', err)
     });
   }
 
   onSubmit() {
     this.backendErrors = {};
-
     if (this.projectForm.invalid) {
       this.projectForm.markAllAsTouched();
       return;
@@ -62,10 +84,14 @@ export class ProjectCreateModalComponent implements OnInit {
     this.isSubmitting = true;
     const requestDto = this.projectForm.value;
 
-    this.projectService.createProject(requestDto).subscribe({
+    const request$ = this.projectToEdit 
+      ? this.projectService.updateProject(this.projectToEdit.id, requestDto)
+      : this.projectService.createProject(requestDto);
+
+    request$.subscribe({
       next: (res) => {
         this.isSubmitting = false;
-        this.projectCreated.emit();
+        this.projectSaved.emit();
         this.closeModal();
       },
       error: (err) => {
@@ -73,7 +99,7 @@ export class ProjectCreateModalComponent implements OnInit {
         if (err.status === 400 && err.error) {
           this.backendErrors = err.error; 
         } else {
-          console.error('Error no controlado al crear proyecto', err);
+          console.error('Error no controlado al guardar proyecto', err);
         }
       }
     });

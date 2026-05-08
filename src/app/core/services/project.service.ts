@@ -35,4 +35,12 @@ export class ProjectService {
   getPriorities(): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/filters/priorities`);
   }
+
+  updateProject(id: number, dto: ProjectRequestDto): Observable<ProjectResponseDto> {
+    return this.http.put<ProjectResponseDto>(`${this.apiUrl}/${id}`, dto);
+  }
+
+  deleteProject(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

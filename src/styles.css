@@ -399,3 +399,62 @@ body {
   color: #FFFFFF;
   border: 1px solid #111827;
 }
+
+
+/* =========================================
+   MENÚ DESPLEGABLE (3 PUNTOS)
+   ========================================= */
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%; /* Aparece justo debajo de los 3 puntos */
+  margin-top: 4px;
+  background-color: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  min-width: 150px;
+  z-index: 50; /* Para que aparezca por encima de la tabla */
+  overflow: hidden;
+  animation: dropdownFade 0.2s ease-out;
+}
+
+@keyframes dropdownFade {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4B5563;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #F9FAFB;
+  color: #111827;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #F3F4F6;
+  margin: 0;
+}
+
+.text-danger {
+  color: #EF4444 !important;
+}
+
+.dropdown-item.text-danger:hover {
+  background-color: #FEF2F2; /* Un fondo rojito muy suave al pasar el mouse */
+}

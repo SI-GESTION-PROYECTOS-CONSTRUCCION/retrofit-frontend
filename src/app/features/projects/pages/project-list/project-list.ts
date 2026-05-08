@@ -1,15 +1,16 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { ProjectService } from '../../../../core/services/project.service';
 import { ProjectResponseDto } from '../../../../core/models/project.model';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // <--- IMPORTANTE AGREGAR ESTO
 import { ProjectCreateModalComponent } from '../../modal/project-create-modal-component/project-create-modal-component';
+import { ConfirmModal } from '../../../../shared/components/confirm-modal/confirm-modal';
 
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [RouterModule, CommonModule, ProjectCreateModalComponent, FormsModule], // <--- AGREGADO AQUÍ
+  imports: [RouterModule, CommonModule, ProjectCreateModalComponent, FormsModule, ConfirmModal], 
   templateUrl: './project-list.html',
   styleUrl: './project-list.css',
 })
@@ -31,7 +32,12 @@ export class ProjectList implements OnInit {
   
   priorities: string[] = [];
   statuses: string[] = [];
-  
+  selectedProject: ProjectResponseDto | null = null;
+  activeMenuId: number | null = null;
+
+  isDeleteModalOpen = false;
+  projectToDelete: ProjectResponseDto | null = null;
+  isDeleting = false; 
   private searchTimeout: any; 
 
   ngOnInit(): void {
@@ -108,11 +114,48 @@ export class ProjectList implements OnInit {
   }
 
   openNewProjectModal() {
+    this.selectedProject = null;
     this.isModalOpen = true;
   }
 
-  onProjectCreated() {
-    this.onFilterChange(); // Recarga la tabla limpiando filtros desde la pág 0
+  openEditModal(project: ProjectResponseDto) {
+    this.selectedProject = project; 
+    this.isModalOpen = true;
+  }
+
+
+  openDeleteModal(project: ProjectResponseDto) {
+    this.projectToDelete = project;
+    this.isDeleteModalOpen = true;
+    this.activeMenuId = null; 
+  }
+
+  confirmDelete() {
+    if (!this.projectToDelete) return;
+
+    this.isDeleting = true;
+    this.projectService.deleteProject(this.projectToDelete.id).subscribe({
+      next: () => {
+        this.isDeleting = false;
+        this.isDeleteModalOpen = false;
+        this.projectToDelete = null;
+        this.onFilterChange();
+      },
+      error: (err) => {
+        this.isDeleting = false;
+        console.error('Error al eliminar:', err);
+      }
+    });
+  }
+
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen = false;
+    this.projectToDelete = null;
+  }
+
+  onProjectSaved() {
+    this.loadProjects(this.currentPage);
   }
 
   getStatusBadgeClass(status: string): string {
@@ -144,5 +187,19 @@ export class ProjectList implements OnInit {
     if (!name) return 'U';
     const parts = name.split(' ');
     return parts.length >= 2 ? `${parts[0][0]}${parts[1][0]}`.toUpperCase() : name.substring(0, 2).toUpperCase();
+  }
+
+  toggleMenu(projectId: number, event: Event) {
+    event.stopPropagation();
+    if (this.activeMenuId === projectId) {
+      this.activeMenuId = null;
+    } else {
+      this.activeMenuId = projectId; 
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) { 
+    this.activeMenuId = null;
   }
 }
