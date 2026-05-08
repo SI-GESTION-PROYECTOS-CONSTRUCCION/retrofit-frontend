@@ -24,11 +24,29 @@
     <div class="filters-toolbar">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Buscar por código o nombre...">
+        <input type="text" placeholder="Buscar por código o nombre..." 
+               [(ngModel)]="searchTerm" 
+               (input)="onSearchChange()">
       </div>
-      <button class="btn btn-outline"><i class="fa-regular fa-building"></i> Todos los Clientes</button>
-      <button class="btn btn-outline"><i class="fa-solid fa-wrench"></i> Tipo de Obra</button>
-      <button class="btn btn-outline"><i class="fa-regular fa-clock"></i> Estado del Proyecto</button>
+      
+      <select class="btn btn-outline filter-select" 
+              [(ngModel)]="selectedPriority" 
+              (change)="onFilterChange()">
+        <option value="">Todas las Prioridades</option> 
+        @for (p of priorities; track p) {
+          <option [value]="p">{{ formatEnum(p) }}</option>
+        }
+      </select>
+
+      <!-- Selector Dinámico de Estado -->
+      <select class="btn btn-outline filter-select" 
+              [(ngModel)]="selectedStatus" 
+              (change)="onFilterChange()">
+        <option value="">Todos los Estados</option>
+        @for (s of statuses; track s) {
+          <option [value]="s">{{ formatEnum(s) }}</option>
+        }
+      </select>
     </div>
 
     @if (isLoading) {
