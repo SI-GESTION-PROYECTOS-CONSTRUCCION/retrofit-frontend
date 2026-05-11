@@ -26,6 +26,18 @@ export const routes: Routes = [
         loadComponent: () => import('./features/projects/pages/project-detail-component/project-detail-component').then(m => m.ProjectDetailComponent)
       },
       {
+        path: 'gestionUsuarios',
+        loadComponent: () => import('./features/gestion-usuarios/gestion-usuarios').then(m => m.GestionUsuariosComponent)
+      },
+      {
+        path: 'gestionTrabajadores',
+        loadComponent: () => import('./features/gestion-workers/gestion-workers').then(m => m.GestionWorkersComponent)
+      },
+      {
+        path: 'asignacionProyectos',
+        loadComponent: () => import('./features/project-assignment/project-assignment').then(m => m.ProjectAssignmentComponent)
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full'

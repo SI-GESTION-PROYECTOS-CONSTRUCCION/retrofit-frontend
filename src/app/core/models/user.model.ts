@@ -5,7 +5,16 @@ export interface UserDto {
   email: string;
   username: string;
   role: string;
-  sex: string;
   createdAt: Date,
   updatedAt: Date
+  active: boolean;
+}
+
+export interface UserCreateDto {
+  email: string;
+  name: string;
+  username: string;
+  lastName: string;
+  password?: string;
+  role: string;
 }

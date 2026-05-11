@@ -60,9 +60,10 @@ export class ProjectCreateModalComponent implements OnInit {
   }
 
   loadManagers() {
-    this.userService.getUsersByRole('ALL').subscribe({
-      next: (users) => {
-        this.managers = users;
+    this.userService.getUsers(0, 10, '','ALL').subscribe({
+      next: (response) => {
+
+        this.managers = response.content;
         
         if (this.projectToEdit && this.projectToEdit.managerId) {
           this.projectForm.patchValue({
