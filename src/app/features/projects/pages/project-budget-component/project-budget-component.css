@@ -1,0 +1,96 @@
+.budget-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+.actions { display: flex; gap: 12px; }
+
+/* Botones */
+.btn { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: none; transition: 0.2s; }
+.btn-dark { background: #111827; color: white; &:hover { background: #374151; } &:disabled { opacity: 0.5; } }
+.btn-outline { background: white; border: 1px solid #D1D5DB; color: #374151; &:hover { background: #F9FAFB; } }
+.btn-icon { background: none; border: none; cursor: pointer; font-size: 16px; opacity: 0.7; &:hover { opacity: 1; } }
+.text-danger { color: #EF4444; }
+
+/* Tabla Tipo Excel */
+.table-responsive { width: 100%; overflow-x: auto; border: 1px solid #E5E7EB; border-radius: 8px; }
+.excel-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.excel-table th { background-color: #F9FAFB; padding: 12px; text-align: left; font-weight: 600; color: #4B5563; border-bottom: 1px solid #E5E7EB; border-right: 1px solid #E5E7EB; }
+.excel-table td { border-bottom: 1px solid #E5E7EB; border-right: 1px solid #E5E7EB; padding: 0; position: relative; }
+.excel-table td.text-center { text-align: center; padding: 10px; }
+
+/* Inputs dentro de las celdas (El efecto Excel) */
+.cell-input { width: 100%; height: 100%; border: none; padding: 12px; outline: none; background: transparent; font-family: inherit; font-size: 13px; color: #111827; }
+.cell-input:focus { background-color: #F3F6FF; box-shadow: inset 0 0 0 2px #3B82F6; }
+.text-right { text-align: right; }
+.bg-readonly { background-color: #F3F4F6; color: #6B7280; font-weight: 600; }
+.empty-state { padding: 40px !important; color: #6B7280; }
+
+
+/* Estilos para la Magia de la Sangría */
+.description-cell {
+  padding: 0 !important;
+}
+
+.indent-wrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  transition: padding-left 0.2s ease;
+}
+
+.indent-controls {
+  display: flex;
+  flex-direction: column;
+  padding: 0 4px;
+  opacity: 0.2;
+  transition: opacity 0.2s;
+}
+
+.indent-wrapper:hover .indent-controls {
+  opacity: 1;
+}
+
+.btn-tiny {
+  background: none;
+  border: none;
+  font-size: 10px;
+  color: #6B7280;
+  cursor: pointer;
+  padding: 2px 4px;
+  &:hover { color: #111827; background: #E5E7EB; border-radius: 2px; }
+  &:disabled { opacity: 0.2; cursor: not-allowed; }
+}
+
+.is-title {
+  background-color: #F8FAFC;
+  .cell-input { font-weight: 700; color: #1E293B; }
+}
+
+.fw-bold { font-weight: bold; }
+
+
+.lock-warning {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #FFFBEB;
+  border: 1px solid #FDE68A;
+  color: #92400E;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.lock-warning i {
+  color: #F59E0B;
+}
+
+.table-locked {
+  opacity: 0.8;
+  background-color: #F9FAFB;
+  cursor: not-allowed;
+}
+
+.table-locked .cell-input {
+  cursor: not-allowed;
+  background: transparent;
+}

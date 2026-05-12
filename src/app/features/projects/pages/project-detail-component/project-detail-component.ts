@@ -4,11 +4,14 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ProjectService } from '../../../../core/services/project.service';
 import { ProjectResponseDto } from '../../../../core/models/project.model';
 import { switchMap } from 'rxjs/operators';
+import { ProjectBudgetComponent } from '../project-budget-component/project-budget-component';
+import { ProjectSummaryComponent } from '../project-summary-component/project-summary-component';
+import { ProjectProgressListComponent } from '../project-progress-list-component/project-progress-list-component';
 
 @Component({
   selector: 'app-project-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ProjectBudgetComponent, ProjectSummaryComponent, ProjectProgressListComponent],
   templateUrl: './project-detail-component.html',
   styleUrl: './project-detail-component.css'
 })
@@ -26,8 +29,8 @@ export class ProjectDetailComponent implements OnInit {
     this.route.paramMap.pipe(
       switchMap(params => {
         this.isLoading = true;
-        const id = Number(params.get('id'));
-        return this.projectService.getProjectById(id);
+        const code = String(params.get('code'));
+        return this.projectService.getProjectByCode(code);
       })
     ).subscribe({
       next: (data) => {

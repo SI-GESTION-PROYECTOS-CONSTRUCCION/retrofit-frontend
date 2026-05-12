@@ -50,20 +50,115 @@ body {
 .section-title {
   font-size: 16px;
   font-weight: 600;
-  color: var(--color-texto-principal);
+  color: var(--color-primario);
   margin-bottom: 16px;
 }
+.page-container {
+  margin: 0 auto;
+}
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
 
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+
+.filters-toolbar {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+}
+
+.search-box i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-divisor);
+}
+
+
+.search-box input {
+  width: 100%;
+  padding: 10px 10px 10px 35px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.table-card-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #E5E7EB;
+  padding: 0; 
+}
+
+.retrofit-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+
+.retrofit-table thead th {
+  background-color: #1A1A1A; 
+  color: white;
+  padding: 16px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.retrofit-table tbody tr {
+  border-bottom: 1px solid #F3F4F6;
+  transition: background 0.2s;
+}
+
+.retrofit-table tbody tr:hover {
+  background-color: #F9FAFB;
+}
+
+.retrofit-table td {
+  padding: 16px;
+  font-size: 14px;
+  vertical-align: middle;
+  color: #6B7280; 
+}
+
+.col-code {
+  font-weight: 600;
+  color: #4B5563; 
+}
+
+.col-name {
+  font-weight: 600;
+  color: #111827;
+  max-width: 250px;
+}
 
 /* =========================================
    TARJETAS (Cards)
    ========================================= */
 
 .card {
-  background-color: var(--color-fondo-tarjeta);
-  border: 1px solid var(--color-divisor);
   border-radius: 8px;
-  padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Sombra muy sutil, casi imperceptible */
   margin-bottom: 20px;
 }

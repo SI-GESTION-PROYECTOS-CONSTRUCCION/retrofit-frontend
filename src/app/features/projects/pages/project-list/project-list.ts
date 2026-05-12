@@ -180,7 +180,24 @@ export class ProjectList implements OnInit {
 
   formatEnum(text: string): string {
     if (!text) return '';
-    return text.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+    
+    // Diccionario de traducciones para Estados y Prioridades
+    const translations: Record<string, string> = {
+      // Estados
+      'PLANNING': 'Planeamiento',
+      'IN_PROGRESS': 'En Ejecución',
+      'ON_HOLD': 'Pausado',
+      'COMPLETED': 'Completado',
+      'CANCELLED': 'Cancelado',
+      
+      // Prioridades
+      'LOW': 'Baja',
+      'MEDIUM': 'Media',
+      'HIGH': 'Alta',
+      'CRITICAL': 'Crítica'
+    };
+
+    return translations[text.toUpperCase()] || text;
   }
 
   getInitials(name: string): string {

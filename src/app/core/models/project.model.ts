@@ -21,6 +21,41 @@ export interface ProjectResponseDto {
   status: string;
   priority: string;
   managerId: number;
+  totalBudget: number;
   currentProgress: number;
   managerFullName: string;
+}
+export interface ProjectItemDto {
+  id?: number;
+  description: string;
+  code: string;
+  unit: string;
+  totalQuantity: number;
+  unitPrice: number;
+  executedQuantity?: number;
+}
+
+export interface ProgressReportRequestDto{
+  projectItemId: number;
+  reportDate: string;
+  executedQuantity: number;
+  observations: string;
+}
+
+
+export interface ProgressReportResponseDto {
+  id: number;
+  itemCode: string;
+  itemDescription: string;
+  reportDate: string;
+  executedQuantity: number;
+  unit: string;
+  observations: string;
+  photoUrls: string[];
+}
+
+
+export interface GroupedProgressReportDto {
+  period: string;
+  reports: ProgressReportResponseDto[]; 
 }
