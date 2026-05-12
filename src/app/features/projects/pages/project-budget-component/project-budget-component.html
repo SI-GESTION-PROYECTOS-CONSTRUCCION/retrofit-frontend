@@ -1,0 +1,107 @@
+<div class="budget-container">
+  <div class="budget-header">
+    <div>
+      <h3 class="section-title">Línea Base del Proyecto</h3>
+      @if (isLocked) {
+        <div class="lock-warning">
+          <i class="fa-solid fa-lock"></i>
+          <span><b>Presupuesto Bloqueado:</b> La obra tiene un {{ project?.currentProgress }}% de avance. No se permiten ediciones.</span>
+        </div>
+      } @else {
+        <p class="section-subtitle">
+          <i class="fa-solid fa-keyboard"></i> 
+          Use <b>Tab</b> para sangría, <b>Shift + Tab</b> para quitarla, y <b>Enter</b> para bajar.
+        </p>
+      }
+    </div>
+    <div class="actions">
+      <button class="btn btn-dark" (click)="saveBudget()" [disabled]="isLocked || isLoading">
+        <i class="fa-solid fa-floppy-disk"></i> Guardar Presupuesto
+      </button>
+    </div>
+  </div>
+
+  <form [formGroup]="budgetForm">
+    <div class="table-responsive">
+      <table class="excel-table" [class.table-locked]="isLocked">
+        <thead>
+          <tr>
+            <th width="100px">Item</th>
+            <th>Descripción de la Partida</th>
+            <th width="80px">Und.</th>
+            <th width="100px">Metrado</th>
+            <th width="100px">P. Unitario</th>
+            <th width="100px">Subtotal</th>
+            <th width="50px"></th>
+          </tr>
+        </thead>
+        <tbody formArrayName="items">
+          @for (row of itemsFormArray.controls; track row; let idx = $index) {
+            
+            <tr [formGroupName]="idx" [ngClass]="{'is-parent-row': isParent(idx)}">
+              
+              <td>
+                <input type="text" formControlName="code" class="cell-input text-center fw-bold text-muted" readonly>
+              </td>
+              
+              <td class="description-cell">
+                <div class="indent-wrapper" [ngStyle]="{'padding-left': (row.get('level')?.value * 25) + 'px'}">
+                  <input type="text" 
+                         [id]="'desc-' + idx"
+                         formControlName="description" 
+                         class="cell-input" 
+                         placeholder="Escriba aquí..."
+                         [readonly]="isLocked"
+                         (keydown)="handleKeydown($event, idx)"
+                         (input)="ensureEmptyRows()"
+                         autocomplete="off">
+                </div>
+              </td>
+              
+              <td>
+                @if (!isParent(idx)) {
+                  <select formControlName="unit" class="cell-input text-center" [disabled]="isLocked">
+                    <option value="">-</option>
+                    <option value="glb">glb</option>
+                    <option value="m2">m²</option>
+                    <option value="m3">m³</option>
+                    <option value="m">m</option>
+                    <option value="und">und</option>
+                  </select>
+                }
+              </td>
+              
+              <td>
+                @if (!isParent(idx)) {
+                  <input type="number" formControlName="totalQuantity" class="cell-input text-right" placeholder="0.00" [readonly]="isLocked">
+                }
+              </td>
+
+              <td>
+                @if (!isParent(idx)) {
+                  <input type="number" formControlName="unitPrice" class="cell-input text-right" placeholder="0.00" [readonly]="isLocked">
+                }
+              </td>
+
+              <td class="text-right bg-readonly" style="padding: 12px;">
+                @if (isParent(idx)) {
+                  <span style="font-weight: 800; color: #111827;">S/ {{ getRowSubtotal(idx) | number:'1.2-2' }}</span>
+                } @else {
+                  S/ {{ getRowSubtotal(idx) | number:'1.2-2' }}
+                }
+              </td>
+              
+              <td class="text-center">
+                @if (row.get('description')?.value !== '' && !isLocked) {
+                  <button type="button" class="btn-icon text-danger" (click)="removeRow(idx)" title="Eliminar fila">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </form>
+</div>
