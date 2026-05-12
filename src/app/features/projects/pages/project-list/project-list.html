@@ -1,0 +1,163 @@
+<div class="page-container">
+  
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Portafolio de Proyectos</h1>
+      <p class="page-subtitle">Gestión centralizada de obras, servicios y mantenimientos industriales.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline"><i class="fa-solid fa-download"></i> Exportar</button>
+      <button class="btn btn-primary" (click)="openNewProjectModal()">
+        <i class="fa-solid fa-plus"></i> Nuevo Proyecto
+      </button>
+
+      @if (isModalOpen) {
+        <app-project-create-modal-component 
+          [projectToEdit]="selectedProject"
+          (close)="isModalOpen = false" 
+          (projectSaved)="onProjectSaved()">
+        </app-project-create-modal-component>
+      }
+
+
+      @if (isDeleteModalOpen && projectToDelete) {
+        <app-confirm-modal
+          title="Eliminar Proyecto"
+          [message]="'¿Estás seguro de que deseas eliminar el proyecto <strong>' + projectToDelete.code + '</strong>?<br>Esta acción no se puede deshacer.'"
+          confirmText="Eliminar"
+          [isProcessing]="isDeleting"
+          (confirm)="confirmDelete()"
+          (cancel)="closeDeleteModal()">
+        </app-confirm-modal>
+      }
+    </div>
+  </div>
+
+  <div class="card table-card-container">
+    <div class="filters-toolbar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Buscar por código o nombre..." 
+               [(ngModel)]="searchTerm" 
+               (input)="onSearchChange()">
+      </div>
+      
+      <select class="btn btn-outline filter-select" 
+              [(ngModel)]="selectedPriority" 
+              (change)="onFilterChange()">
+        <option value="">Todas las Prioridades</option> 
+        @for (p of priorities; track p) {
+          <option [value]="p">{{ formatEnum(p) }}</option>
+        }
+      </select>
+
+      <!-- Selector Dinámico de Estado -->
+      <select class="btn btn-outline filter-select" 
+              [(ngModel)]="selectedStatus" 
+              (change)="onFilterChange()">
+        <option value="">Todos los Estados</option>
+        @for (s of statuses; track s) {
+          <option [value]="s">{{ formatEnum(s) }}</option>
+        }
+      </select>
+    </div>
+</div>
+
+
+<div class="card table-card-container">
+    @if (isLoading) {
+      <div class="loading-state">
+        <i class="fa-solid fa-spinner fa-spin"></i> Cargando portafolio...
+      </div>
+    } @else if (errorMessage) {
+      <div class="error-state text-danger">{{ errorMessage }}</div>
+    } @else {
+      <div class="table-responsive">
+        <table class="retrofit-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nombre del Proyecto</th>
+              <th>Cliente</th>
+              <th>Progreso</th>
+              <th>Prioridad</th>
+              <th>Estado</th>
+              <th>Responsable</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (project of projects; track project.id) {
+              <tr>
+                <td class="col-code">{{ project.code }}</td>
+                <td class="col-name">{{ project.name }}</td>
+                <td>{{ project.client }}</td>
+                
+                <td>
+                  <div class="progress-container">
+                    <span class="progress-percent">{{ project.currentProgress }}%</span>
+                    <div class="progress-track">
+                      <div class="progress-fill" [style.width.%]="project.currentProgress"></div>
+                    </div>
+                  </div>
+                </td>
+                
+                <td><span class="badge" [ngClass]="getPriorityBadgeClass(project.priority)">{{ formatEnum(project.priority) }}</span></td>
+                <td><span class="badge" [ngClass]="getStatusBadgeClass(project.status)">{{ formatEnum(project.status) }}</span></td>
+                
+                <td>
+                  <div class="user-info">
+                    <div class="user-avatar">{{ getInitials(project.managerFullName) }}</div>
+                    <span class="user-name">{{ project.managerFullName }}</span>
+                  </div>
+                </td>
+                
+                <td class="col-actions">
+                  <!-- Botón Principal (Ver) -->
+                  <button class="action-btn" title="Ver Detalle" [routerLink]="['/portafolio/proyecto', project.code]">
+                    <i class="fa-regular fa-eye"></i>
+                  </button>
+
+                  <!-- Contenedor Relativo para el Menú -->
+                  <div class="dropdown-container" style="position: relative; display: inline-block;">
+                    
+                    <!-- Botón 3 puntos -->
+                    <button class="action-btn" title="Opciones" (click)="toggleMenu(project.id, $event)">
+                      <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </button>
+
+                    <!-- El Menú Desplegable (Solo se muestra si su ID coincide) -->
+                    @if (activeMenuId === project.id) {
+                      <div class="dropdown-menu">
+                        <button class="dropdown-item" (click)="openEditModal(project)">
+                          <i class="fa-solid fa-pen"></i> Editar
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item text-danger" (click)="openDeleteModal(project)">
+                          <i class="fa-solid fa-trash-can"></i> Eliminar
+                        </button>
+                      </div>
+                    }
+
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr><td colspan="8" class="empty-state">No se encontraron proyectos.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación Real Dinámica -->
+      <div class="pagination-footer">
+        <span>Mostrando {{ projects.length }} de {{ totalElements }} proyectos</span>
+        <div class="pagination-controls">
+          <button class="btn btn-outline" [disabled]="currentPage === 0" (click)="previousPage()">Anterior</button>
+          <button class="btn btn-primary">{{ currentPage + 1 }}</button>
+          <button class="btn btn-outline" [disabled]="currentPage >= totalPages - 1" (click)="nextPage()">Siguiente</button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

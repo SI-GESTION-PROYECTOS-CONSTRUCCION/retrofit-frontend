@@ -1,0 +1,126 @@
+<div class="modal-backdrop">
+  <div class="modal-container">
+    
+    <div class="modal-header">
+      <button class="btn-close" (click)="closeModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="header-content">
+        <div class="header-title">
+          <i class="fa-regular fa-folder-open icon-title"></i>
+          <h2>{{ projectToEdit ? 'Editar Proyecto' : 'Registrar Nuevo Proyecto' }}</h2>
+        </div>
+        <p class="header-subtitle">
+          Complete la información para habilitar el proyecto en el sistema Retrofit Manager.
+        </p>
+      </div>
+    </div>
+
+    <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+      <div class="modal-body">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>CÓDIGO DEL PROYECTO</label>
+            <input type="text" formControlName="code" placeholder="Ej. PRJ-2024-001" 
+                   [class.is-invalid]="hasError('code')">
+            @if (backendErrors['code']) { <span class="error-text">{{ backendErrors['code'] }}</span> }
+            @else if (projectForm.get('code')?.invalid && projectForm.get('code')?.touched) { <span class="error-text">Requerido</span> }
+          </div>
+          
+          <div class="form-group">
+            <label>NOMBRE DEL PROYECTO</label>
+            <input type="text" formControlName="name" placeholder="Ej. Mantenimiento Subestación"
+                   [class.is-invalid]="hasError('name')">
+            @if (backendErrors['name']) { <span class="error-text">{{ backendErrors['name'] }}</span> }
+            @else if (projectForm.get('name')?.invalid && projectForm.get('name')?.touched) { <span class="error-text">Requerido</span> }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>CLIENTE (EMPRESA)</label>
+          <input type="text" formControlName="client" placeholder="Ej. Engie Energía Perú"
+                 [class.is-invalid]="hasError('client')">
+          @if (backendErrors['client']) { <span class="error-text">{{ backendErrors['client'] }}</span> }
+        </div>
+
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>UBICACIÓN / SEDE</label>
+            <input type="text" formControlName="location" placeholder="Ej. Planta Talara"
+                   [class.is-invalid]="hasError('location')">
+            @if (backendErrors['location']) { <span class="error-text">{{ backendErrors['location'] }}</span> }
+          </div>
+          
+          <div class="form-group">
+            <label>FECHA ESTIMADA DE ENTREGA</label>
+            <input type="date" formControlName="estimatedDeliveryDate"
+                   [class.is-invalid]="hasError('estimatedDeliveryDate')">
+            @if (backendErrors['estimatedDeliveryDate']) { <span class="error-text">{{ backendErrors['estimatedDeliveryDate'] }}</span> }
+            @else if (projectForm.get('estimatedDeliveryDate')?.invalid && projectForm.get('estimatedDeliveryDate')?.touched) { <span class="error-text">Requerido</span> }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>DESCRIPCIÓN GENERAL</label>
+          <textarea formControlName="description" rows="3" placeholder="Breve detalle de los trabajos a realizar..."
+                    style="width: 100%; padding: 12px 16px; border: 1px solid #E5E7EB; border-radius: 8px; resize: vertical; font-family: inherit;"
+                    [class.is-invalid]="hasError('description')"></textarea>
+          @if (backendErrors['description']) { <span class="error-text">{{ backendErrors['description'] }}</span> }
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>ESTADO INICIAL</label>
+            <select formControlName="status" [class.is-invalid]="hasError('status')">
+              <option value="PLANNING">Planeamiento</option>
+              <option value="IN_PROGRESS">En Ejecución</option>
+              <option value="ON_HOLD">Pausado</option>
+              <option value="COMPLETED">Completado</option>
+              <option value="CANCELLED">Cancelado</option>
+            </select>
+            @if (backendErrors['status']) { <span class="error-text">{{ backendErrors['status'] }}</span> }
+          </div>
+          
+          <div class="form-group">
+            <label>PRIORIDAD</label>
+            <select formControlName="priority" [class.is-invalid]="hasError('priority')">
+              <option value="LOW">Baja</option>
+              <option value="MEDIUM">Media</option>
+              <option value="HIGH">Alta</option>
+              <option value="CRITICAL">Crítica</option>
+            </select>
+            @if (backendErrors['priority']) { <span class="error-text">{{ backendErrors['priority'] }}</span> }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>RESPONSABLE DEL PROYECTO</label>
+          <select formControlName="managerId" [class.is-invalid]="hasError('managerId')">
+            <option [ngValue]="null" disabled selected>Seleccione un responsable...</option>
+            @for (manager of managers; track manager.id) {
+              <option [value]="manager.id">{{ manager.name }} {{ manager.lastName }}</option>
+            }
+          </select>
+          @if (backendErrors['managerId']) { <span class="error-text">{{ backendErrors['managerId'] }}</span> }
+          @else if (projectForm.get('managerId')?.invalid && projectForm.get('managerId')?.touched) { <span class="error-text">Seleccione un responsable</span> }
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-cancel" (click)="closeModal()">Cancelar</button>
+        <button type="submit" class="btn btn-submit" [disabled]="isSubmitting">
+          @if (isSubmitting) {
+            <i class="fa-solid fa-circle-notch fa-spin"></i> Guardando...
+          } @else {
+            <!-- Texto Dinámico -->
+            {{ projectToEdit ? 'Actualizar Proyecto' : 'Guardar Proyecto' }}
+          }
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>

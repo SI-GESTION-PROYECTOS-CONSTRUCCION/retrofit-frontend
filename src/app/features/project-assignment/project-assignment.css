@@ -1,0 +1,317 @@
+/* --- KPIs Minimalistas --- */
+.kpi-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  flex: 1;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.kpi-card.highlight {
+  border-left: 4px solid var(--color-primario, #0f172a);
+}
+
+.kpi-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.kpi-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.kpi-icon {
+  font-size: 1.8rem;
+  color: #cbd5e1;
+}
+
+/* --- Layout Principal --- */
+.assignment-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* --- Matriz Central --- */
+.matrix-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.table-responsive {
+  max-width: 100%;
+  overflow-x: auto;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.matrix-table th, .matrix-table td {
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.matrix-table th {
+  background-color: #f8fafc;
+  font-size: 0.85rem;
+}
+
+.header-first {
+  text-align: left !important;
+  background-color: #1e293b !important;
+  color: #ffffff;
+}
+
+.project-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.project-name {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.project-code {
+  font-size: 0.7rem;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Fila Trabajador */
+.worker-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  min-width: 220px;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.worker-name {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 0.9rem;
+}
+
+.worker-pos {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.sticky-col {
+  position: sticky;
+  left: 0;
+  background-color: #ffffff;
+  z-index: 2;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.03);
+}
+
+.matrix-table th.sticky-col { z-index: 3; }
+
+/* --- Celdas e Interacciones --- */
+.matrix-cell {
+  position: relative;
+  min-width: 140px;
+  height: 70px;
+  padding: 8px !important;
+}
+
+.btn-assign {
+  opacity: 0; /* Oculto por defecto para limpieza visual */
+  background: transparent;
+  border: 1px dashed #cbd5e1;
+  color: #94a3b8;
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Solo aparece el botón cuando pasas el mouse por la celda */
+.matrix-cell:hover .btn-assign {
+  opacity: 1;
+}
+
+.btn-assign:hover {
+  background-color: #f0fdf4;
+  border-color: #22c55e;
+  color: #16a34a;
+}
+
+.assigned-badge {
+  background-color: #e2e8f0;
+  color: #475569;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.assigned-badge .hover-text { display: none; }
+
+.assigned-badge:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.assigned-badge:hover .badge-text { display: none; }
+.assigned-badge:hover .hover-text { display: block; }
+
+.blocked-cell {
+  width: 100%;
+  height: 100%;
+}
+
+/* --- Sidebar Derecho --- */
+.available-sidebar {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  max-height: calc(65vh + 80px); /* Se alinea con la matriz */
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.sidebar-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #0f172a;
+}
+
+.badge-count {
+  background-color: #f1f5f9;
+  color: #475569;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.available-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.available-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  transition: transform 0.2s;
+}
+
+.available-item:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+}
+
+.small-avatar {
+  width: 32px;
+  height: 32px;
+  font-size: 0.8rem;
+}
+
+.w-name {
+  display: block;
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 0.85rem;
+}
+
+.w-role {
+  display: block;
+  font-size: 0.7rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.empty-list {
+  text-align: center;
+  padding: 40px 20px;
+  color: #94a3b8;
+}
+
+.empty-list i {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #e2e8f0;
+}

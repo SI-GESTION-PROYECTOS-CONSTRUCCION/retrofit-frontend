@@ -1,0 +1,33 @@
+<div class="modal-backdrop">
+  <div class="modal-container" style="max-width: 400px; padding: 24px; text-align: center;">
+    
+    <div style="display: flex; justify-content: center;">
+      <div class="warning-icon-container">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+    </div>
+
+    <h2 style="font-size: 18px; font-weight: 600; color: #111827; margin-bottom: 8px;">
+      {{ title }}
+    </h2>
+    
+
+    <p style="font-size: 14px; color: #6B7280; margin-bottom: 24px; line-height: 1.5;" [innerHTML]="message">
+    </p>
+
+    <div style="display: flex; gap: 12px; justify-content: center;">
+      <button type="button" class="btn btn-outline" style="flex: 1;" (click)="onCancel()">
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-danger" style="flex: 1; justify-content: center;" 
+              (click)="onConfirm()" [disabled]="isProcessing">
+        @if (isProcessing) {
+          <i class="fa-solid fa-circle-notch fa-spin"></i>
+        } @else {
+          {{ confirmText }}
+        }
+      </button>
+    </div>
+
+  </div>
+</div>

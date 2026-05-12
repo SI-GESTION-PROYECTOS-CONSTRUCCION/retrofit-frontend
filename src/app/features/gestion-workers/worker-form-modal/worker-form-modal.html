@@ -1,0 +1,141 @@
+<div class="modal-backdrop">
+  <div class="modal-container">
+    
+    <div class="modal-header">
+      <button class="btn-close" (click)="closeModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="header-content">
+        <div class="header-title">
+          <i class="fa-solid fa-person-digging icon-title"></i>
+          <h2>{{ mode === 'create' ? 'Registrar Trabajador' : (mode === 'edit' ? 'Editar Trabajador' : 'Detalle del Personal') }}</h2>
+        </div>
+        <p class="header-subtitle">Gestión operativa del personal de Retrofit S.A.C.</p>
+      </div>
+    </div>
+
+    <form [formGroup]="workerForm" (ngSubmit)="onSubmit()">
+      <div class="modal-body">
+        
+        @if (backendErrors['general']) {
+          <div class="info-alert" style="background-color: #fef2f2; border-color: #fca5a5; color: #ef4444; margin-bottom: 15px;">
+            <i class="fa-solid fa-circle-exclamation"></i> {{ backendErrors['general'] }}
+          </div>
+        }
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>NOMBRES</label>
+            <input type="text" formControlName="name" placeholder="Ej. Juan"
+                   [class.is-invalid]="hasError('name')">
+            @if (backendErrors['name']) { <span class="error-text">{{ backendErrors['name'] }}</span> }
+            @else if (workerForm.get('name')?.invalid && workerForm.get('name')?.touched) { <span class="error-text">Los nombres son requeridos</span> }
+          </div>
+          
+          <div class="form-group">
+            <label>APELLIDOS</label>
+            <input type="text" formControlName="lastName" placeholder="Ej. Pérez"
+                   [class.is-invalid]="hasError('lastName')">
+            @if (backendErrors['lastName']) { <span class="error-text">{{ backendErrors['lastName'] }}</span> }
+            @else if (workerForm.get('lastName')?.invalid && workerForm.get('lastName')?.touched) { <span class="error-text">Los apellidos son requeridos</span> }
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>DNI</label>
+            <input type="text" formControlName="dni" placeholder="8 dígitos" 
+                   [class.is-invalid]="hasError('dni')">
+            @if (backendErrors['dni']) { <span class="error-text">{{ backendErrors['dni'] }}</span> }
+            @else if (workerForm.get('dni')?.invalid && workerForm.get('dni')?.touched) { <span class="error-text">El DNI es requerido (8 dígitos)</span> }
+          </div>
+          
+          <div class="form-group">
+            <label>CARGO / POSICIÓN</label>
+            <input type="text" formControlName="position" placeholder="Ej. Operario"
+                   [class.is-invalid]="hasError('position')">
+            @if (backendErrors['position']) { <span class="error-text">{{ backendErrors['position'] }}</span> }
+            @else if (workerForm.get('position')?.invalid && workerForm.get('position')?.touched) { <span class="error-text">El cargo es requerido</span> }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>TELÉFONO DE CONTACTO</label>
+          <input type="text" formControlName="phone" placeholder="Ej. 987654321"
+                 [class.is-invalid]="hasError('phone')">
+          @if (backendErrors['phone']) { <span class="error-text">{{ backendErrors['phone'] }}</span> }
+          @else if (workerForm.get('phone')?.invalid && workerForm.get('phone')?.touched) { <span class="error-text">El teléfono es requerido</span> }
+        </div>
+
+        @if (mode === 'create') {
+          <div class="info-alert">
+            <input type="checkbox" formControlName="createAccount" id="checkAcceso">
+            <label for="checkAcceso">¿Habilitar acceso al sistema?</label>
+          </div>
+        }
+
+        @if (workerForm.get('createAccount')?.value) {
+          <div class="form-row animate-fade-in">
+            <div class="form-group">
+              <label>USUARIO</label>
+              <input type="text" formControlName="username" placeholder="Ej. jperez"
+                     [class.is-invalid]="hasError('username')">
+              @if (backendErrors['username']) { <span class="error-text">{{ backendErrors['username'] }}</span> }
+              @else if (workerForm.get('username')?.invalid && workerForm.get('username')?.touched) { <span class="error-text">El usuario es requerido</span> }
+            </div>
+            
+            <div class="form-group">
+              <label>ROL</label>
+              <select formControlName="role" [class.is-invalid]="hasError('role')">
+                <option [ngValue]="null" disabled selected>Seleccione un rol...</option>
+                <option value="ALMACENERO">Almacenero</option>
+                <option value="INGENIERO_RESIDENTE">Residente</option>
+              </select>
+              @if (backendErrors['role']) { <span class="error-text">{{ backendErrors['role'] }}</span> }
+              @else if (workerForm.get('role')?.invalid && workerForm.get('role')?.touched) { <span class="error-text">Seleccione un rol válido</span> }
+            </div>
+          </div>
+
+          <div class="form-group">
+              <label>EMAIL</label>
+              <input type="email" formControlName="email" placeholder="Ej. jperez@empresa.com"
+                    [class.is-invalid]="hasError('email')">
+              
+              @if (backendErrors['email']) { 
+                <span class="error-text">{{ backendErrors['email'] }}</span> 
+              } @else if (workerForm.get('email')?.invalid && workerForm.get('email')?.touched) { 
+                <span class="error-text">Ingrese un email válido</span> 
+              }
+            </div>
+          
+          @if (mode === 'create') {
+            
+            <div class="form-group">
+              <label>CONTRASEÑA</label>
+              <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres"
+                     [class.is-invalid]="hasError('password')">
+              @if (backendErrors['password']) { <span class="error-text">{{ backendErrors['password'] }}</span> }
+              @else if (workerForm.get('password')?.invalid && workerForm.get('password')?.touched) { <span class="error-text">La contraseña es requerida</span> }
+            </div>
+          }
+        }
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-cancel" (click)="closeModal()">
+          {{ mode === 'view' ? 'Cerrar' : 'Cancelar' }}
+        </button>
+        
+        @if (mode !== 'view') {
+          <button type="submit" class="btn btn-submit" [disabled]="isSubmitting">
+            @if (isSubmitting) {
+              <i class="fa-solid fa-circle-notch fa-spin"></i> Guardando...
+            } @else {
+              {{ mode === 'create' ? 'Guardar Trabajador' : 'Actualizar Trabajador' }}
+            }
+          </button>
+        }
+      </div>
+    </form>
+  </div>
+</div>

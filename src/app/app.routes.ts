@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
 import { guestGuard } from './core/guards/guest-guard';
+import { DailyReportComponent } from './features/projects/pages/daily-report-component/daily-report-component';
 
 export const routes: Routes = [
 {
@@ -9,9 +10,44 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/pages/login-component/login-component').then(m => m.LoginComponent)
   },
   {
-    path: 'dashboard',
+    path: '',
     canActivate: [authGuard],
-    loadComponent: () => import('./features/dashboard/pages/dashboard/dashboard').then(m => m.Dashboard)
+    loadComponent: () => import('./shared/components/layout/main-layout/main-layout').then(m => m.MainLayout),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/dashboard/pages/dashboard/dashboard').then(m => m.Dashboard)
+      },
+      {
+        path: 'portafolio',
+        loadComponent: () => import('./features/projects/pages/project-list/project-list').then(m => m.ProjectList)
+      },
+      {
+        path: 'portafolio/proyecto/:code',
+        loadComponent: () => import('./features/projects/pages/project-detail-component/project-detail-component').then(m => m.ProjectDetailComponent)
+      },
+      { 
+        path: 'portafolio/proyecto/:id/daily-report', // <--- LA NUEVA RUTA APARTE
+        component: DailyReportComponent 
+      },
+      {
+        path: 'gestionUsuarios',
+        loadComponent: () => import('./features/gestion-usuarios/gestion-usuarios').then(m => m.GestionUsuariosComponent)
+      },
+      {
+        path: 'gestionTrabajadores',
+        loadComponent: () => import('./features/gestion-workers/gestion-workers').then(m => m.GestionWorkersComponent)
+      },
+      {
+        path: 'asignacionProyectos',
+        loadComponent: () => import('./features/project-assignment/project-assignment').then(m => m.ProjectAssignmentComponent)
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      }
+    ]
   },
   {
     path: '',

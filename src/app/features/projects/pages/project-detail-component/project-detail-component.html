@@ -1,0 +1,61 @@
+<div class="page-container">
+  
+  @if (isLoading) {
+    <div class="loading-state" style="padding: 40px; text-align: center; color: #6B7280;">
+      <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+      <p style="margin-top: 10px;">Cargando detalles del proyecto...</p>
+    </div>
+  } @else if (errorMessage) {
+    <div class="error-state text-danger" style="padding: 20px; text-align: center;">
+      {{ errorMessage }}
+      <br><br>
+      <button class="btn btn-outline" routerLink="/portafolio">Volver al Portafolio</button>
+    </div>
+  } @else if (project) {
+    
+    <div class="detail-header">
+      <div class="header-main">
+        <div class="title-row">
+          <h1 class="project-title">{{ project.name }}</h1>
+          <span class="badge" [ngClass]="getStatusBadgeClass(project.status)">
+            {{ formatEnum(project.status) }}
+          </span>
+        </div>
+        <div class="meta-row">
+          <span><i class="fa-regular fa-clipboard"></i> Cód: {{ project.code }}</span>
+          <span><i class="fa-solid fa-user-tie"></i> Cliente: {{ project.client }}</span>
+          @if (project.location) {
+            <span><i class="fa-solid fa-location-dot"></i> {{ project.location }}</span>
+          }
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary"><i class="fa-solid fa-arrow-up-from-bracket"></i> Subir Planos</button>
+      </div>
+    </div>
+
+    <div class="tabs-container">
+      <button class="tab-item" [class.active]="activeTab === 'RESUMEN'" (click)="activeTab = 'RESUMEN'">RESUMEN</button>
+      <button class="tab-item" [class.active]="activeTab === 'PRESUPUESTO'" (click)="activeTab = 'PRESUPUESTO'">PRESUPUESTO</button>
+      <button class="tab-item" [class.active]="activeTab === 'CRONOGRAMA'" (click)="activeTab = 'CRONOGRAMA'">CRONOGRAMA (GANTT)</button>
+      <button class="tab-item" [class.active]="activeTab === 'AVANCES'" (click)="activeTab = 'AVANCES'">AVANCES</button>
+    </div>
+
+    <div class="tab-content">
+      @switch (activeTab) {
+        @case ('RESUMEN') {
+          <app-project-summary-component [project]="project"></app-project-summary-component>
+        }
+        @case ('PRESUPUESTO') {
+          <app-project-budget [projectId]="project.id"></app-project-budget>
+        }
+        @case ('CRONOGRAMA') {
+          <div class="empty-state">Módulo de Gantt en construcción...</div>
+        }
+        @case ('AVANCES') {
+          <app-project-progress-list-component [projectId]="project.id"></app-project-progress-list-component>
+        }
+      }
+    </div>
+  }
+</div>

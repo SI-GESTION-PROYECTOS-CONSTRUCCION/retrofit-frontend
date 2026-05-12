@@ -1,0 +1,85 @@
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.brand-logo {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 10px;
+  border-bottom: 1px solid var(--color-divisor);
+  
+  img { height: 24px; }
+  h2 { font-size: 16px; font-weight: 700; color: var(--color-primario); margin: 0; }
+}
+
+.nav-menu {
+  flex-grow: 1;
+  padding: 20px 15px;
+  overflow-y: auto;
+
+  .menu-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--color-divisor);
+    margin-bottom: 10px;
+    padding-left: 10px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+
+    li a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      color: var(--color-texto);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+
+      i { width: 16px; text-align: center; }
+
+      &:hover {
+        background-color: var(--color-fondo-app);
+        color: var(--color-primario);
+      }
+
+      &.active {
+        background-color: var(--color-fondo-app);
+        color: var(--color-primario);
+        font-weight: 600;
+        box-shadow: inset 3px 0 0 var(--color-primario);
+      }
+    }
+  }
+}
+
+.logout-section {
+  padding: 15px;
+  border-top: 1px solid var(--color-divisor);
+  
+  .btn-logout {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: none;
+    border: none;
+    color: #e74c3c;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 6px;
+
+    &:hover { background-color: rgba(231, 76, 60, 0.1); }
+  }
+}

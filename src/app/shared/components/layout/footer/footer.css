@@ -1,0 +1,23 @@
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  padding: 0 30px;
+  font-size: 11px;
+  color: var(--color-divisor);
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #2ecc71; 
+    border-radius: 50%;
+  }
+  .version { color: var(--color-texto); font-weight: 500; }
+}

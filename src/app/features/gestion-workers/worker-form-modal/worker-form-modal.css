@@ -1,0 +1,32 @@
+.modal-container {
+  max-height: 90vh; /* Que no ocupe toda la pantalla alto */
+  overflow-y: auto; /* Scroll si el contenido es mucho */
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Para que las filas no se vean amontonadas */
+.modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Espaciado uniforme entre grupos */
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.is-invalid {
+  border-color: #ef4444 !important; /* Rojo */
+  background-color: #fef2f2 !important;
+}
+
+.error-text {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  display: block;
+}

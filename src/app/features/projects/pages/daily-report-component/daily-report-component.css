@@ -1,0 +1,41 @@
+.report-layout { display: flex; gap: 32px; align-items: flex-start; padding: 10px; }
+.main-content { flex: 1; min-width: 0; }
+.side-content { width: 340px; display: flex; flex-direction: column; gap: 20px; }
+
+.page-title { font-size: 28px; font-weight: 800; color: #111827; margin-bottom: 4px; }
+.page-subtitle { font-size: 14px; color: #6B7280; margin-bottom: 32px; }
+
+.card { background: #ffffff; border: 1px solid #E5E7EB; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+.section-title { font-size: 15px; font-weight: 700; color: #374151; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; i { color: #9CA3AF; } }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-group label { display: block; font-size: 11px; font-weight: 700; color: #6B7280; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.form-control { width: 100%; padding: 12px 16px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px; color: #111827; transition: all 0.2s; &:focus { outline: none; border-color: #111827; box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.1); } }
+
+.metrado-info-box { background-color: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: center; }
+.info-item { display: flex; flex-direction: column; gap: 4px; .info-label { font-size: 12px; color: #6B7280; font-weight: 600; } .info-value { font-size: 18px; font-weight: 800; color: #111827; } .text-primary { color: #2563EB; } }
+.highlight-input { background-color: #ffffff; font-weight: 700; font-size: 16px; border-color: #94A3B8; }
+
+.input-with-unit { position: relative; display: flex; align-items: center; input { padding-right: 45px; } .unit-addon { position: absolute; right: 16px; color: #6B7280; font-weight: 600; font-size: 14px; } }
+
+.hidden-input { display: none; }
+.section-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; .section-title { margin-bottom: 0; } }
+.photo-grid { display: flex; gap: 16px; flex-wrap: wrap; }
+.photo-card { width: 140px; height: 140px; border-radius: 12px; overflow: hidden; position: relative; img { width: 100%; height: 100%; object-fit: cover; } .btn-remove-photo { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; &:hover { background: #EF4444; } } }
+.upload-placeholder { width: 140px; height: 140px; border: 2px dashed #D1D5DB; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #9CA3AF; cursor: pointer; &:hover { border-color: #6B7280; background: #F9FAFB; } i { font-size: 24px; } span { font-size: 11px; font-weight: 700; } }
+
+.form-actions { display: flex; gap: 16px; margin-top: 32px; }
+.btn { padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: none; transition: 0.2s; }
+.btn-sm { padding: 8px 16px; font-size: 13px; }
+.btn-large { padding: 14px 28px; font-size: 15px; flex: 1; justify-content: center; }
+.btn-dark { background: #111827; color: white; &:hover { background: #374151; } &:disabled { opacity: 0.6; cursor: not-allowed; } }
+.btn-outline { background: white; border: 1px solid #D1D5DB; color: #374151; &:hover { background: #F9FAFB; } }
+
+/* Tarjeta Estado */
+.dark-card { background: #111827; color: white; border: none; position: relative; overflow: hidden; padding: 24px; }
+.dark-card-header { display: flex; justify-content: space-between; margin-bottom: 16px; }
+.dark-subtitle { font-size: 11px; font-weight: 700; color: #9CA3AF; }
+.watermark { position: absolute; right: 20px; top: 20px; font-size: 60px; color: rgba(255,255,255,0.05); }
+.dark-title { font-size: 32px; font-weight: 800; margin-bottom: 24px; }
+.progress-bar-container { height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; margin-bottom: 16px; overflow: hidden; .progress-bar-fill { height: 100%; background: #ffffff; border-radius: 4px; } }
+.dark-card-footer { display: flex; justify-content: space-between; font-size: 12px; color: #9CA3AF; }
