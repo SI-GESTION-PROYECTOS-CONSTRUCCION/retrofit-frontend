@@ -1,0 +1,114 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Personal de Obra</h1>
+      <p class="page-subtitle">Gestión de operarios, técnicos y especialistas de Retrofit S.A.C.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="openModal('create')">
+        <i class="fa-solid fa-person-digging"></i> Nuevo Trabajador
+      </button>
+    </div>
+  </div>
+
+  @if (isModalOpen) {
+    <app-worker-form-modal
+      [mode]="modalMode"
+      [workerToEdit]="selectedWorker"
+      (close)="isModalOpen = false"
+      (saved)="loadWorkers()">
+    </app-worker-form-modal>
+  }
+
+  @if (isDeleteModalOpen && workerToDelete) {
+    <app-confirm-modal
+      title="Eliminar Trabajador"
+      [message]="'¿Estás seguro de que deseas desactivar a <strong>' + workerToDelete.name + '</strong>?<br>Esta acción no se puede deshacer.'"
+      confirmText="Eliminar"
+      [isProcessing]="isDeleting"
+      (confirm)="confirmDelete()"
+      (cancel)="closeDeleteModal()">
+    </app-confirm-modal>
+  }
+
+  <div class="card table-card-container">
+    <div class="filters-toolbar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Buscar por DNI o nombre..." 
+               [(ngModel)]="searchTerm" (input)="onSearchChange()">
+      </div>
+    </div>
+
+    @if (isLoading) {
+      <div class="loading-state">
+        <i class="fa-solid fa-spinner fa-spin"></i> Cargando personal...
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="retrofit-table">
+          <thead>
+            <tr>
+              <th>DNI</th>
+              <th>Trabajador</th>
+              <th>Cargo / Posición</th>
+              <th>Contacto</th>
+              <th>Usuario Sist.</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (worker of workers; track worker.id) {
+              <tr>
+                <td class="col-code">{{ worker.dni }}</td>
+                <td>
+                  <div class="user-info">
+                    <div class="user-avatar">{{ getInitials(worker.name, worker.lastName) }}</div>
+                    <span class="user-name">{{ worker.name }} {{ worker.lastName }}</span>
+                  </div>
+                </td>
+                <td><span class="badge badge-info">{{ worker.position }}</span></td>
+                <td>{{ worker.phone }}</td>
+                <td>
+                  @if (worker.username) {
+                    <span class="badge badge-success" title="Tiene cuenta activa">
+                      <i class="fa-solid fa-user-check"></i> {{ worker.username }}
+                    </span>
+                  } @else {
+                    <span class="badge badge-secondary">Sin acceso</span>
+                  }
+                </td>
+                <td>
+                  @if (worker.active) {
+                    <span class="badge badge-success">Activo</span>
+                  } @else {
+                    <span class="badge badge-secondary">Inactivo</span>
+                  }
+                </td>
+                <td class="col-actions">
+                  <div class="action-buttons-group">
+                    <button class="action-btn view" (click)="openModal('view', worker)"><i class="fa-regular fa-eye"></i></button>
+                    <button class="action-btn edit" (click)="openModal('edit', worker)"><i class="fa-regular fa-pen-to-square"></i></button>
+                    <button class="action-btn delete" (click)="openDeleteConfirm(worker)"><i class="fa-regular fa-trash-can"></i></button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr><td colspan="6" class="empty-state">No se encontró personal registrado.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination-footer">
+        <span>Mostrando {{ workers.length }} de {{ totalElements }} trabajadores</span>
+        <div class="pagination-controls">
+          <button class="btn btn-outline" [disabled]="currentPage === 0" (click)="previousPage()">Anterior</button>
+          <button class="btn btn-primary">{{ currentPage + 1 }}</button>
+          <button class="btn btn-outline" [disabled]="currentPage >= totalPages - 1" (click)="nextPage()">Siguiente</button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

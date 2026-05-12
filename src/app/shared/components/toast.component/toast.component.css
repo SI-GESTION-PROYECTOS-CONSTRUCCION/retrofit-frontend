@@ -1,0 +1,31 @@
+.toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      animation: slideIn 0.3s ease-out;
+    }
+    .toast-message {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 24px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+    }
+    .toast-text { white-space: pre-line; } /* Permite los saltos de línea \n */
+    .toast-icon { font-size: 20px; }
+    
+    /* Colores según el tipo */
+    .success { background-color: #10B981; } /* Verde elegante */
+    .error { background-color: #EF4444; }   /* Rojo elegante */
+    .warning { background-color: #F59E0B; } /* Naranja elegante */
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }

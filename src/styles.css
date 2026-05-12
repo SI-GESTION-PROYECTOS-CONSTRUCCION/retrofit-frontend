@@ -50,20 +50,115 @@ body {
 .section-title {
   font-size: 16px;
   font-weight: 600;
-  color: var(--color-texto-principal);
+  color: var(--color-primario);
   margin-bottom: 16px;
 }
+.page-container {
+  margin: 0 auto;
+}
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
 
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+
+.filters-toolbar {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+}
+
+.search-box i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-divisor);
+}
+
+
+.search-box input {
+  width: 100%;
+  padding: 10px 10px 10px 35px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.table-card-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #E5E7EB;
+  padding: 0; 
+}
+
+.retrofit-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+
+.retrofit-table thead th {
+  background-color: #1A1A1A; 
+  color: white;
+  padding: 16px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.retrofit-table tbody tr {
+  border-bottom: 1px solid #F3F4F6;
+  transition: background 0.2s;
+}
+
+.retrofit-table tbody tr:hover {
+  background-color: #F9FAFB;
+}
+
+.retrofit-table td {
+  padding: 16px;
+  font-size: 14px;
+  vertical-align: middle;
+  color: #6B7280; 
+}
+
+.col-code {
+  font-weight: 600;
+  color: #4B5563; 
+}
+
+.col-name {
+  font-weight: 600;
+  color: #111827;
+  max-width: 250px;
+}
 
 /* =========================================
    TARJETAS (Cards)
    ========================================= */
 
 .card {
-  background-color: var(--color-fondo-tarjeta);
-  border: 1px solid var(--color-divisor);
   border-radius: 8px;
-  padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Sombra muy sutil, casi imperceptible */
   margin-bottom: 20px;
 }
@@ -114,31 +209,347 @@ body {
    ========================================= */
 
 .badge {
-  display: inline-block;
-  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 9999px; /* Borde completamente redondeado */
   font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* --- Colores para Prioridades --- */
+.badge-danger { /* Alta */
+  background-color: #FEE2E2;
+  color: #EF4444;
+  border: 1px solid #FECACA;
+}
+
+.badge-info { /* Media */
+  background-color: #EFF6FF;
+  color: #3B82F6;
+  border: 1px solid #BFDBFE;
+}
+
+.badge-secondary { /* Baja */
+  background-color: #F3F4F6;
+  color: #4B5563;
+  border: 1px solid #E5E7EB;
+}
+
+/* --- Colores para Estados --- */
+.badge-executing { /* En Ejecución (Fondo gris, texto oscuro) */
+  background-color: #E5E7EB;
+  color: #1F2937;
+  border: 1px solid #D1D5DB;
+}
+
+.badge-planning { /* Planeamiento (Fondo blanco/transparente, texto gris muy claro) */
+  background-color: #FAFAFA;
+  color: #D1D5DB; 
+  border: 1px solid #F3F4F6;
+}
+
+.badge-success { /* Finalizado (Verde) */
+  background-color: #D1FAE5;
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+}
+
+.badge-warning { /* Pausado (Amarillo) */
+  background-color: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FDE68A;
+}
+
+
+/* =========================================
+   SISTEMA DE MODALES (GLOBAL)
+   ========================================= */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-container {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 650px; /* Tamaño por defecto, lo puedes sobrescribir localmente si ocupas un modal más chico */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: modalFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Cabecera Oscura Global */
+.modal-header {
+  background-color: #1A1A1A; 
+  color: #FFFFFF;
+  padding: 32px;
+  position: relative;
+}
+
+.btn-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: #9CA3AF;
+  font-size: 18px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-close:hover { color: #FFFFFF; }
+
+.header-content { display: flex; flex-direction: column; gap: 8px; }
+.header-title { display: flex; align-items: center; gap: 12px; }
+.icon-title { font-size: 20px; }
+.header-title h2 { font-size: 20px; font-weight: 600; margin: 0; }
+.header-subtitle { font-size: 14px; color: #9CA3AF; margin: 0; padding-left: 32px; }
+
+/* Cuerpo y Footer Globales */
+.modal-body {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-footer {
+  padding: 20px 32px;
+  border-top: 1px solid #F3F4F6;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  background-color: #FFFFFF;
+}
+
+
+/* =========================================
+   FORMULARIOS (GLOBAL)
+   ========================================= */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Aplicamos estilos a los inputs generales del sistema */
+.form-group input, 
+.form-group select {
+  padding: 12px 16px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #111827;
+  outline: none;
+  transition: all 0.2s;
+  background-color: #FFFFFF;
+  width: 100%;
+}
+
+.form-group input::placeholder { color: #9CA3AF; }
+
+.form-group input:focus, 
+.form-group select:focus {
+  border-color: #1A1A1A;
+  box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
+}
+
+.form-group input.is-invalid, 
+.form-group select.is-invalid {
+  border-color: #EF4444;
+}
+
+.error-text {
+  font-size: 12px;
+  color: #EF4444;
+  margin-top: 2px;
+}
+
+/* =========================================
+   COMPONENTES UI (GLOBAL)
+   ========================================= */
+/* Caja de Aviso / Alerta Info */
+.info-alert {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background-color: #F9FAFB;
+  border: 1px solid #F3F4F6;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.info-alert .alert-icon {
+  color: #6B7280;
+  font-size: 20px;
+  margin-top: 2px;
+}
+
+.info-alert .alert-text h4 {
+  font-size: 14px;
   font-weight: 600;
-  border-radius: 12px; /* Bordes muy redondeados (Pill) */
-  text-align: center;
+  color: #111827;
+  margin: 0 0 4px 0;
 }
 
-/* Variaciones de color para los Badges */
-.badge-success {
-  background-color: var(--color-exito-fondo);
-  color: var(--color-exito);
+.info-alert .alert-text p {
+  font-size: 13px;
+  color: #6B7280;
+  margin: 0;
+  line-height: 1.5;
 }
 
-.badge-warning {
-  background-color: var(--color-alerta-fondo);
-  color: #B45309; /* Texto oscuro para legibilidad sobre amarillo */
+/* Variantes de Botones para Modales */
+.btn-cancel {
+  background: transparent;
+  color: #4B5563;
+}
+.btn-cancel:hover { background: #F3F4F6; }
+
+.btn-submit {
+  background-color: #1A1A1A; /* Negro puro */
+  color: #FFFFFF;
+}
+.btn-submit:hover:not(:disabled) { background-color: #000000; }
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+
+.pagination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #FFFFFF; /* Fondo blanco */
+  border-top: 1px solid #E5E7EB;
+  font-size: 14px;
+  color: #6B7280;
 }
 
-.badge-danger {
-  background-color: var(--color-peligro-fondo);
-  color: var(--color-peligro);
+.pagination-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
-.badge-info {
-  background-color: var(--color-info-fondo);
-  color: var(--color-info);
+.pagination-controls button {
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination-controls .btn-outline {
+  background-color: #FFFFFF;
+  border: 1px solid #D1D5DB;
+  color: #374151;
+}
+
+.pagination-controls .btn-outline:hover:not(:disabled) {
+  background-color: #F9FAFB;
+}
+
+.pagination-controls .btn-outline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-controls .btn-primary {
+  background-color: #111827; 
+  color: #FFFFFF;
+  border: 1px solid #111827;
+}
+
+
+/* =========================================
+   MENÚ DESPLEGABLE (3 PUNTOS)
+   ========================================= */
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%; /* Aparece justo debajo de los 3 puntos */
+  margin-top: 4px;
+  background-color: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  min-width: 150px;
+  z-index: 50; /* Para que aparezca por encima de la tabla */
+  overflow: hidden;
+  animation: dropdownFade 0.2s ease-out;
+}
+
+@keyframes dropdownFade {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4B5563;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #F9FAFB;
+  color: #111827;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #F3F4F6;
+  margin: 0;
+}
+
+.text-danger {
+  color: #EF4444 !important;
+}
+
+.dropdown-item.text-danger:hover {
+  background-color: #FEF2F2; /* Un fondo rojito muy suave al pasar el mouse */
 }

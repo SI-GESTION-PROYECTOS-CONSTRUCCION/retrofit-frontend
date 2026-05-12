@@ -1,0 +1,128 @@
+<div class="page-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Gestión de Usuarios y Roles</h1>
+            <p class="page-subtitle">Configura los niveles de acceso y permisos para cada perfil del sistema.</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-primary" (click)="openModal('create')">
+                <i class="fa-solid fa-user-plus"></i> Nuevo Usuario
+            </button>
+        </div>
+    </div>
+
+    @if (isModalOpen) {
+    <app-user-form-modal
+        [mode]="modalMode"
+        [userToEdit]="selectedUser"
+        (close)="closeModal()"
+        (saved)="onUserSaved()">
+    </app-user-form-modal>
+    }
+
+    @if (isDeleteModalOpen && userToDelete) {
+    <app-confirm-modal
+        title="Desactivar Usuario"
+        [message]="'¿Estás seguro de que deseas eliminar al usuario <strong>' + userToDelete.username + '</strong>?<br>Esta acción revocará sus accesos al sistema.'"
+        confirmText="Eliminar"
+        [isProcessing]="isDeleting"
+        (confirm)="confirmDelete()"
+        (cancel)="closeDeleteModal()">
+    </app-confirm-modal>
+    }
+
+    <div class="card table-card-container">
+        <div class="filters-toolbar">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar por nombre o usuario..." [(ngModel)]="searchTerm"
+                    (input)="onSearchChange()">
+            </div>
+
+            <select class="btn btn-outline filter-select" [(ngModel)]="selectedRole" (change)="onFilterChange()">
+                <option value="ALL">Todos los Roles</option>
+                <option value="ADMIN">Administrador</option>
+                <option value="INGENIERO_RESIDENTE">Ingeniero Residente</option>
+                <option value="ALMACENERO">Almacenero</option>
+            </select>
+        </div>
+
+        @if (isLoading) {
+        <div class="loading-state">
+            <i class="fa-solid fa-spinner fa-spin"></i> Cargando usuarios...
+        </div>
+        } @else {
+        <div class="table-responsive">
+            <table class="retrofit-table">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Nombre Completo</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (user of users; track user.id) {
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">{{ getInitials(user.name, user.lastName) }}</div>
+                                <span class="user-name">{{ user.username }}</span>
+                            </div>
+                        </td>
+                        <td>{{ user.name }} {{ user.lastName }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <span class="badge" [ngClass]="{
+                    'badge-danger': user.role === 'ADMIN',
+                    'badge-info': user.role === 'INGENIERO_RESIDENTE',
+                    'badge-secondary': user.role === 'ALMACENERO'
+                    }">{{ user.role }}</span>
+                        </td>
+                        <td>
+                            @if (user.active === true) {
+                                <span class="badge badge-success">Activo</span>
+                            } @else {
+                                <span class="badge badge-secondary">Inactivo</span>
+                            }
+                        </td>
+                        <td class="col-actions">
+                            <div class="action-buttons-group">
+                                <button class="action-btn view" title="Ver Detalle" (click)="openModal('view', user)">
+                                <i class="fa-regular fa-eye"></i>
+                                </button>
+                                <button class="action-btn edit" title="Editar" (click)="openModal('edit', user)">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                                </button>
+                                <button class="action-btn delete" title="Eliminar" (click)="openDeleteConfirm(user)">
+                                <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                            </div>
+                            </td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="6" class="empty-state">No se encontraron usuarios.</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination-footer">
+            <span>Mostrando {{ users.length }} de {{ totalElements }} usuarios</span>
+            <div class="pagination-controls">
+                <button class="btn btn-outline" [disabled]="currentPage === 0"
+                    (click)="previousPage()">Anterior</button>
+                <button class="btn btn-primary">{{ currentPage + 1 }}</button>
+                <button class="btn btn-outline" [disabled]="currentPage >= totalPages - 1"
+                    (click)="nextPage()">Siguiente</button>
+            </div>
+        </div>
+        }
+    </div>
+</div>
+

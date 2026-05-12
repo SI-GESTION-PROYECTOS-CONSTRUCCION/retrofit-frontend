@@ -1,0 +1,81 @@
+/* =========================================
+   CABECERA DEL DETALLE
+   ========================================= */
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  background-color: var(--color-fondo);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.project-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.meta-row {
+  display: flex;
+  gap: 24px;
+  color: #6B7280;
+  font-size: 14px;
+}
+
+.meta-row span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* =========================================
+   PESTAÑAS (TABS)
+   ========================================= */
+.tabs-container {
+  display: flex;
+  gap: 32px;
+  border-bottom: 1px solid #E5E7EB;
+  margin-bottom: 40px;
+}
+
+.tab-item {
+  background: none;
+  border: none;
+  padding: 12px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tab-item:hover {
+  color: #111827;
+}
+
+.tab-item.active {
+  color: #111827;
+  border-bottom-color: #111827; /* Línea negra gruesa inferior */
+}
+
+/* =========================================
+   GRID PRINCIPAL
+   ========================================= */
