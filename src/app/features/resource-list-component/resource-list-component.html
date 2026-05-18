@@ -5,7 +5,7 @@
       <h2 class="page-title">Catálogo de Recursos</h2>
       <p class="page-subtitle">Gestione los recursos base del sistema paginados desde el servidor.</p>
     </div>
-    <button class="btn btn-primary" (click)="openModal()">
+    <button *appHasPermission="'RESOURCE_CREATE'" class="btn btn-primary" (click)="openModal()">
       <i class="fa-solid fa-plus"></i> Nuevo Recurso
     </button>
   </div>
@@ -74,10 +74,10 @@
                 S/ {{ resource.resourceBasePrice | number:'1.2-2' }}
               </td>
               <td style="text-align: center;">
-                <button class="btn btn-outline" style="padding: 6px 10px;" title="Editar" (click)="openModal(resource)">
+                <button *appHasPermission="'RESOURCE_UPDATE'" class="btn btn-outline" style="padding: 6px 10px;" title="Editar" (click)="openModal(resource)">
                   <i class="fa-solid fa-pen"></i>
                 </button>
-                <button class="btn btn-outline text-danger" style="padding: 6px 10px;" title="Eliminar" (click)="openDeleteModal(resource)">
+                <button *appHasPermission="'RESOURCE_DELETE'" class="btn btn-outline text-danger" style="padding: 6px 10px;" title="Eliminar" (click)="openDeleteModal(resource)">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
               </td>
