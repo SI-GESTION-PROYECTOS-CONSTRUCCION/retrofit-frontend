@@ -1,0 +1,120 @@
+<div class="modal-backdrop">
+  <div class="modal-container" style="max-width: 900px;">
+    
+    <div class="modal-header">
+      <div class="header-content">
+        <div class="header-title">
+          <i class="fa-solid fa-calculator icon-title"></i>
+          <h2>Análisis de Precios Unitarios (APU)</h2>
+        </div>
+        <p class="header-subtitle">Partida: <b>{{ itemData.code }} - {{ itemData.description }}</b></p>
+      </div>
+      <button class="btn-close" (click)="onClose.emit()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    
+    <div class="modal-body">
+      
+      <div class="section-title" style="margin-bottom: 8px;">1. Rendimientos de la Partida</div>
+      <div class="info-alert mb-3">
+        <i class="fa-solid fa-circle-info alert-icon"></i>
+        <div class="alert-text">
+          <h4>Información de Cálculo</h4>
+          <p>El rendimiento define cuánto avanza la cuadrilla en un día de 8 horas. Modificar estos valores recalculará el APU.</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Rendimiento Mano de Obra (MO)</label>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <input type="number" [(ngModel)]="itemData.laborYield" (input)="recalculateApu()" placeholder="0.00" min="0">
+            <span class="text-muted" style="font-size: 13px; font-weight: 600;">{{ itemData.unit }} / Día</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Rendimiento Equipos (EQ)</label>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <input type="number" [(ngModel)]="itemData.equipmentYield" (input)="recalculateApu()" placeholder="0.00" min="0">
+            <span class="text-muted" style="font-size: 13px; font-weight: 600;">{{ itemData.unit }} / Día</span>
+          </div>
+        </div>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid #E5E7EB; margin: 24px 0;">
+      <div class="section-title">2. Estructura de Costos (Recursos)</div>
+      
+      <div style="display: flex; gap: 12px; align-items: flex-end; margin-bottom: 16px; background: #F9FAFB; padding: 16px; border-radius: 8px;">
+        <div class="form-group" style="flex: 1;">
+          <label>Tipo de Recurso</label>
+          <select [(ngModel)]="selectedResourceType" (change)="selectedResourceId = null">
+            <option value="LABOR">Mano de Obra</option>
+            <option value="MATERIAL">Materiales</option>
+            <option value="EQUIPMENT">Maquinaria y Equipos</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex: 2;">
+          <label>Seleccionar del Catálogo</label>
+          <select [(ngModel)]="selectedResourceId">
+            <option [ngValue]="null">-- Seleccione un recurso --</option>
+            @if (selectedResourceType === 'LABOR') { @for (r of laborCatalog; track r.id) { <option [value]="r.id">{{ r.name }} (S/ {{r.basePrice}})</option> } }
+            @if (selectedResourceType === 'MATERIAL') { @for (r of materialCatalog; track r.id) { <option [value]="r.id">{{ r.name }} (S/ {{r.basePrice}})</option> } }
+            @if (selectedResourceType === 'EQUIPMENT') { @for (r of equipmentCatalog; track r.id) { <option [value]="r.id">{{ r.name }} (S/ {{r.basePrice}})</option> } }
+          </select>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="addResourceToApu()" [disabled]="!selectedResourceId">
+          <i class="fa-solid fa-plus"></i> Agregar
+        </button>
+      </div>
+
+      <div class="table-responsive" style="border: 1px solid #E5E7EB; border-radius: 8px;">
+        <table class="retrofit-table">
+          <thead>
+            <tr>
+              <th>Recurso</th>
+              <th width="80px">Und.</th>
+              <th width="100px">Cuadrilla</th>
+              <th width="100px">Cantidad</th>
+              <th width="100px">Precio (S/)</th>
+              <th width="100px">Parcial (S/)</th>
+              <th width="50px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (apu of apuItems; track apu.resourceId; let i = $index) {
+              <tr>
+                <td class="col-name">
+                  <span class="badge" [ngClass]="{'badge-info': apu.resourceType === 'LABOR', 'badge-warning': apu.resourceType === 'MATERIAL', 'badge-success': apu.resourceType === 'EQUIPMENT'}" style="margin-right: 8px; font-size: 10px;">
+                    {{ apu.resourceType === 'LABOR' ? 'MO' : apu.resourceType === 'MATERIAL' ? 'MAT' : 'EQ' }}
+                  </span>
+                  {{ apu.resourceName }}
+                </td>
+                <td class="text-center">{{ apu.resourceUnit }}</td>
+                <td><input type="number" [(ngModel)]="apu.squad" (input)="recalculateApu()" class="cell-input text-right" [disabled]="apu.resourceType === 'MATERIAL'" [ngStyle]="{'background-color': apu.resourceType === 'MATERIAL' ? '#F3F4F6' : '#FFFFFF'}"></td>
+                <td><input type="number" [(ngModel)]="apu.quantity" (input)="recalculateApu()" class="cell-input text-right" [disabled]="apu.resourceType !== 'MATERIAL'" [ngStyle]="{'background-color': apu.resourceType !== 'MATERIAL' ? '#F3F4F6' : '#FFFFFF'}"></td>
+                <td class="text-right text-muted">S/ {{ apu.resourceBasePrice | number:'1.2-2' }}</td>
+                <td class="text-right" style="font-weight: 600;">S/ {{ apu.partialPrice | number:'1.2-2' }}</td>
+                <td class="text-center"><button class="btn-icon text-danger" (click)="removeApuItem(i)"><i class="fa-solid fa-xmark"></i></button></td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr style="background-color: #F9FAFB; border-top: 2px solid #E5E7EB;">
+              <td colspan="5" class="text-right" style="font-weight: 700;">PRECIO UNITARIO TOTAL:</td>
+              <td class="text-right" style="font-weight: 800; color: var(--color-primario);">S/ {{ calculatedUnitPrice | number:'1.2-2' }}</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="btn btn-cancel" (click)="onClose.emit()">Cancelar</button>
+      <button type="button" class="btn btn-submit" (click)="saveApu()" [disabled]="isLoading">
+        <i class="fa-solid" [ngClass]="isLoading ? 'fa-spinner fa-spin' : 'fa-floppy-disk'"></i> Guardar APU
+      </button>
+    </div>
+
+  </div>
+</div>

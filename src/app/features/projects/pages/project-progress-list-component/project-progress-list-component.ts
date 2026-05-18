@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { ProgressReportService } from '../../../../core/services/progress-report.service';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -9,7 +9,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
   templateUrl: './project-progress-list-component.html',
   styleUrl: './project-progress-list-component.css',
 })
-export class ProjectProgressListComponent {
+export class ProjectProgressListComponent implements OnInit {
   @Input({ required: true }) projectId!: number;
   
   private reportService = inject(ProgressReportService);
@@ -20,6 +20,8 @@ export class ProjectProgressListComponent {
   filterForm!: FormGroup;
   
   openPeriods: Set<string> = new Set();
+  
+  openedResources: { [reportId: number]: boolean } = {};
 
   ngOnInit() {
     this.filterForm = this.fb.group({
@@ -40,7 +42,6 @@ export class ProjectProgressListComponent {
         this.groupedReports = data;
         this.isLoading = false;
         
-        // Abrir automáticamente el primer mes (el más reciente) por defecto
         if (this.groupedReports.length > 0) {
           this.openPeriods.add(this.groupedReports[0].period);
         }
@@ -49,12 +50,11 @@ export class ProjectProgressListComponent {
     });
   }
 
-  // --- MÉTODOS DEL ACORDEÓN ---
   togglePeriod(period: string) {
     if (this.openPeriods.has(period)) {
-      this.openPeriods.delete(period); // Cierra
+      this.openPeriods.delete(period); 
     } else {
-      this.openPeriods.add(period); // Abre
+      this.openPeriods.add(period); 
     }
   }
 
@@ -62,7 +62,19 @@ export class ProjectProgressListComponent {
     return this.openPeriods.has(period);
   }
 
-  // --- MÉTODOS DE BÚSQUEDA ---
+  toggleResources(reportId: number) {
+    this.openedResources[reportId] = !this.openedResources[reportId];
+  }
+
+  isResourcesOpen(reportId: number): boolean {
+    return !!this.openedResources[reportId];
+  }
+
+  getResourceGroup(resources: any[], type: string): any[] {
+    if (!resources) return [];
+    return resources.filter(r => r.resourceType === type);
+  }
+
   applyFilters() {
     this.loadHistory();
   }

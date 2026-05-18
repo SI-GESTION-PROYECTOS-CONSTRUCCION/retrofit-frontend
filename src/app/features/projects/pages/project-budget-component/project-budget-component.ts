@@ -1,16 +1,17 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ProjectItemService } from '../../../../core/services/project-item.service';
 import { ProjectItemDto, ProjectResponseDto } from '../../../../core/models/project.model';
 import { ToastService } from '../../../../core/services/toast-service';
 import { ProjectService } from '../../../../core/services/project.service';
+import { ApuModalComponent } from '../../modal/apu-modal-component/apu-modal-component';
 
 
 @Component({
   selector: 'app-project-budget',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ApuModalComponent],
   templateUrl: './project-budget-component.html',
   styleUrls: ['./project-budget-component.css']
 })
@@ -26,6 +27,10 @@ export class ProjectBudgetComponent implements OnInit {
   isLoading = false;
   
   private readonly MIN_EMPTY_ROWS = 5;
+  isApuModalOpen = false;
+  selectedItemIndex: number | null = null;
+  selectedItemData: any = null;
+  expandedRows: { [key: number]: boolean } = {};
 
   ngOnInit() {
     this.loadProjectDetails();
@@ -54,7 +59,7 @@ export class ProjectBudgetComponent implements OnInit {
     this.itemService.getItems(this.projectId).subscribe({
       next: (data) => {
         this.itemsFormArray.clear();
-
+        console.log(data)
         if (data.length > 0) {
           data.forEach(item => this.addRow(item));
         }
@@ -69,19 +74,37 @@ export class ProjectBudgetComponent implements OnInit {
 
   addRow(item?: any) {
     const row = this.fb.group({
+      id: [item?.id || null],
       code: [{ value: item?.code || '', disabled: true }],
       level: [item?.level || 0],
-      description: [item?.description || ''], // Quitamos el Validator.required temporalmente para las filas fantasma
+      description: [item?.description || ''], 
       unit: [item?.unit || ''],
       totalQuantity: [item?.totalQuantity || null],
       unitPrice: [item?.unitPrice || null],
-      executedQuantity: [{ value: item?.executedQuantity || 0, disabled: true }]
+      executedQuantity: [{ value: item?.executedQuantity || 0, disabled: true }],
+      laborYield: [item?.laborYield || 0],
+      equipmentYield: [item?.equipmentYield || 0],
+      apuDetails: [item?.apuDetails || []]
     });
     this.itemsFormArray.push(row);
   }
 
+  toggleApuView(index: number) {
+    const row = this.itemsFormArray.at(index);
+    const apuDetails = row.get('apuDetails')?.value;
+
+    if (!apuDetails || apuDetails.length === 0) {
+      this.toastService.show('Esta partida aún no tiene recursos en su APU.', 'warning');
+      return;
+    }
+
+    // Si estaba abierto, lo cierra. Si estaba cerrado, lo abre.
+    this.expandedRows[index] = !this.expandedRows[index];
+  }
+
   removeRow(index: number) {
     this.itemsFormArray.removeAt(index);
+    delete this.expandedRows[index]; 
     this.recalculateWBS();
     this.ensureEmptyRows();
   }
@@ -175,7 +198,7 @@ export class ProjectBudgetComponent implements OnInit {
       let generatedCode = counters.slice(0, level + 1).join('.');
       
       if (level === 0) {
-        // CORRECCIÓN: padStart necesita el '0' para que no ponga un espacio en blanco
+       
         generatedCode = generatedCode.padStart(2); 
       }
 
@@ -183,7 +206,7 @@ export class ProjectBudgetComponent implements OnInit {
     }
   }
 
-  // --- 3. SANITIZACIÓN AL GUARDAR ---
+  
   isParent(index: number): boolean {
     const rows = this.itemsFormArray.controls;
     if (index >= rows.length - 1) return false;
@@ -191,7 +214,7 @@ export class ProjectBudgetComponent implements OnInit {
     const currentLevel = rows[index].get('level')?.value;
     const nextLevel = rows[index + 1].get('level')?.value;
 
-    // Es padre si el siguiente elemento tiene un nivel de sangría mayor
+    
     return nextLevel > currentLevel;
   }
 
@@ -234,7 +257,7 @@ export class ProjectBudgetComponent implements OnInit {
     
     const rawData = this.itemsFormArray.getRawValue();
     
-    // --- 1. VALIDACIÓN ESPECÍFICA DE NEGOCIO ---
+  
     for (let i = 0; i < rawData.length; i++) {
       const item = rawData[i];
       if (!item.description || item.description.trim() === '') continue;
@@ -255,19 +278,21 @@ export class ProjectBudgetComponent implements OnInit {
       }
     }
 
-    // --- 2. PREPARACIÓN DEL PAYLOAD ---
     const payload: ProjectItemDto[] = rawData
       .filter(item => item.description && item.description.trim() !== '')
       .map((item, index) => {
         const formattedItem = {
           ...item,
+          itemOrder: index, 
           totalQuantity: Number(item.totalQuantity),
           unitPrice: Number(item.unitPrice),
-          level: Number(item.level)
+          level: Number(item.level),
+          laborYield: Number(item.laborYield || 0),
+          equipmentYield: Number(item.equipmentYield || 0)
         };
 
         if (this.isParent(index)) {
-          return { ...formattedItem, unit: null, totalQuantity: null, unitPrice: null };
+          return { ...formattedItem, unit: null, totalQuantity: null, unitPrice: null, laborYield: 0, equipmentYield: 0 };
         }
         return formattedItem;
       });
@@ -286,4 +311,38 @@ export class ProjectBudgetComponent implements OnInit {
       error: () => this.toastService.show('Error de conexión al guardar el presupuesto.', 'error')
     });
   }
+
+  // Al abrir el modal, cargamos los detalles que ya existían
+  openApuModal(index: number) {
+    const row = this.itemsFormArray.at(index);
+    if (!row.get('id')?.value) {
+      this.toastService.show('Primero debe "Guardar Presupuesto".', 'warning');
+      return;
+    }
+    
+    this.selectedItemIndex = index;
+    // Extraemos la fila entera para enviársela al hijo
+    this.selectedItemData = row.getRawValue(); 
+    this.isApuModalOpen = true;
+  }
+
+  handleApuSaved(updatedItem: ProjectItemDto) {
+    this.isApuModalOpen = false;
+    this.selectedItemData = null;
+    
+    this.loadExistingItems(); 
+    
+    this.toastService.show('Vista de presupuesto actualizada.', 'success');
+  }
+
+  getApuGroup(apuDetails: any[], type: string): any[] {
+    if (!apuDetails) return [];
+    return apuDetails.filter(apu => apu.resourceType === type);
+  }
+
+  getApuGroupTotal(apuDetails: any[], type: string): number {
+    const group = this.getApuGroup(apuDetails, type);
+    return group.reduce((sum, item) => sum + (item.partialPrice || 0), 0);
+  }
+
 }

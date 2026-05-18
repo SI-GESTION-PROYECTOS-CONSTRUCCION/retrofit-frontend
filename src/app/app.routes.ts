@@ -23,6 +23,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/projects/pages/project-list/project-list').then(m => m.ProjectList)
       },
       {
+        path: 'recursos',
+        loadComponent: () => import('./features/resource-list-component/resource-list-component').then(m => m.ResourceListComponent)
+      },
+      {
         path: 'portafolio/proyecto/:code',
         loadComponent: () => import('./features/projects/pages/project-detail-component/project-detail-component').then(m => m.ProjectDetailComponent)
       },
@@ -33,6 +37,10 @@ export const routes: Routes = [
       {
         path: 'gestionUsuarios',
         loadComponent: () => import('./features/gestion-usuarios/gestion-usuarios').then(m => m.GestionUsuariosComponent)
+      },
+      {
+        path: 'roles',
+        loadComponent: () => import('./features/auth/pages/role-list-component/role-list-component').then(m => m.RoleListComponent)
       },
       {
         path: 'gestionTrabajadores',

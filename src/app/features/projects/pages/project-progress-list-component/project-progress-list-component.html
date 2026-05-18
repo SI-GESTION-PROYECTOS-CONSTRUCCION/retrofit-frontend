@@ -88,6 +88,81 @@
                         </div>
                       </div>
 
+                      @if (report.usedResources && report.usedResources.length > 0) {
+                        <div style="margin-top: 16px; margin-bottom: 12px;">
+                          <button type="button" class="btn btn-outline btn-sm" style="color: var(--color-primario); border-color: #CBD5E1; background: #F8FAFC;" (click)="toggleResources(report.id)">
+                            <i class="fa-solid" [ngClass]="isResourcesOpen(report.id) ? 'fa-chevron-up' : 'fa-scale-balanced'"></i>
+                            {{ isResourcesOpen(report.id) ? 'Ocultar Control de Costos' : 'Ver Control de Costos (Real vs APU)' }}
+                          </button>
+                        </div>
+
+                        @if (isResourcesOpen(report.id)) {
+                          <div class="table-responsive fade-in" style="border: 1px solid #E2E8F0; border-radius: 8px; margin-bottom: 16px; overflow: hidden;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                              <thead style="background: #F8FAFC; border-bottom: 2px solid #E2E8F0;">
+                                <tr>
+                                  <th style="padding: 10px; font-size: 12px; color: #64748B;">Recurso</th>
+                                  <th style="padding: 10px; font-size: 12px; color: #64748B; text-align: center;">Und.</th>
+                                  <th style="padding: 10px; font-size: 12px; color: #64748B; text-align: right;">Teórico APU</th>
+                                  <th style="padding: 10px; font-size: 12px; color: #0F172A; text-align: right;">Gasto Real</th>
+                                  <th style="padding: 10px; font-size: 12px; color: #64748B; text-align: right;">Estado</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+
+                                @for (type of ['LABOR', 'MATERIAL', 'EQUIPMENT']; track type) {
+                                  @if (getResourceGroup(report.usedResources, type).length > 0) {
+                                    <tr>
+                                      <td colspan="5" style="padding: 6px 10px; font-size: 11px; font-weight: 700; background: #F8FAFC;"
+                                          [ngStyle]="{'color': type === 'LABOR' ? '#0097A7' : type === 'MATERIAL' ? '#F59E0B' : '#10B981'}">
+                                        {{ type === 'LABOR' ? 'MANO DE OBRA' : type === 'MATERIAL' ? 'MATERIALES' : 'MAQUINARIA Y EQUIPOS' }}
+                                      </td>
+                                    </tr>
+                                    
+                                    @for (resource of getResourceGroup(report.usedResources, type); track resource.resourceId) {
+                                      <tr style="border-bottom: 1px solid #F1F5F9; background: white;">
+                                        <td style="padding: 8px 10px; font-size: 13px; font-weight: 500; color: #334155;">
+                                          <span class="badge" [ngClass]="type === 'LABOR' ? 'badge-info' : type === 'MATERIAL' ? 'badge-warning' : 'badge-success'" style="font-size: 10px; margin-right: 6px;">
+                                            {{ type === 'LABOR' ? 'MO' : type === 'MATERIAL' ? 'MAT' : 'EQ' }}
+                                          </span> 
+                                          {{ resource.resourceName }}
+                                        </td>
+                                        <td style="padding: 8px 10px; font-size: 12px; text-align: center; color: #64748B;">{{ resource.resourceUnit }}</td>
+                                        
+                                        <td style="padding: 8px 10px; font-size: 13px; text-align: right; color: #64748B;">
+                                          {{ resource.theoreticalQuantity | number:'1.2-2' }}
+                                        </td>
+                                        
+                                        <td style="padding: 8px 10px; font-size: 13px; text-align: right; font-weight: 700; color: #0F172A;">
+                                          {{ resource.realQuantity | number:'1.2-2' }}
+                                        </td>
+
+                                        <td style="padding: 8px 10px; font-size: 12px; text-align: right; font-weight: 700;">
+                                          @if (resource.realQuantity > resource.theoreticalQuantity) {
+                                            <span style="color: #EF4444; background: #FEE2E2; padding: 2px 6px; border-radius: 4px;">
+                                              <i class="fa-solid fa-arrow-up"></i> Sobrecosto
+                                            </span>
+                                          } @else if (resource.realQuantity < resource.theoreticalQuantity) {
+                                            <span style="color: #10B981; background: #D1FAE5; padding: 2px 6px; border-radius: 4px;">
+                                              <i class="fa-solid fa-arrow-down"></i> Ahorro
+                                            </span>
+                                          } @else {
+                                            <span style="color: #64748B; background: #F1F5F9; padding: 2px 6px; border-radius: 4px;">
+                                              <i class="fa-solid fa-equals"></i> Exacto
+                                            </span>
+                                          }
+                                        </td>
+                                      </tr>
+                                    }
+                                  }
+                                }
+
+                              </tbody>
+                            </table>
+                          </div>
+                        }
+                      }
+
                       @if (report.observations) {
                         <div class="observation-box">
                           <i class="fa-solid fa-quote-left"></i>

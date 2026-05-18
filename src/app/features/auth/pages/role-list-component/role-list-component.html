@@ -1,0 +1,147 @@
+<div class="page-container">
+  
+  <div class="page-header mb-4">
+    <div>
+      <h2 class="page-title">Roles y Permisos</h2>
+      <p class="page-subtitle">Gestione los niveles de acceso dinámicos del sistema.</p>
+    </div>
+    <button class="btn btn-primary" (click)="openModal()">
+      <i class="fa-solid fa-shield-halved"></i> Nuevo Rol
+    </button>
+  </div>
+
+  <div class="table-card-container">
+    <table class="retrofit-table">
+      <thead>
+        <tr>
+          <th width="200px">Nombre del Rol</th>
+          <th>Descripción</th>
+          <th style="text-align: center;">Permisos Asignados</th>
+          <th style="text-align: center;" width="120px">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading) {
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 32px;">
+              <i class="fa-solid fa-spinner fa-spin text-muted"></i> Cargando roles...
+            </td>
+          </tr>
+        } @else {
+          @for (role of roles; track role.id) {
+            <tr>
+              <td>
+                <span class="badge badge-info" style="font-size: 13px; font-weight: 700;">
+                  <i class="fa-solid fa-user-shield me-1"></i> {{ role.name }}
+                </span>
+              </td>
+              <td>{{ role.description }}</td>
+              <td style="text-align: center;">
+                <span class="badge badge-secondary">{{ role.permissions.length }} Accesos</span>
+              </td>
+              <td style="text-align: center;">
+                <button class="btn btn-outline" style="padding: 6px 10px;" title="Configurar Matriz" (click)="openModal(role)">
+                  <i class="fa-solid fa-sliders"></i>
+                </button>
+                @if (role.name !== 'ADMIN') {
+                  <button class="btn btn-outline text-danger" style="padding: 6px 10px;" title="Eliminar" (click)="openDeleteModal(role)">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+@if (isModalOpen) {
+  <div class="modal-backdrop">
+    <div class="modal-container" style="max-width: 750px;">
+      
+      <div class="modal-header">
+        <button type="button" class="btn-close" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div class="header-content">
+          <div class="header-title">
+            <i class="fa-solid fa-key icon-title"></i>
+            <h2>{{ editingId ? 'Configurar Privilegios: ' + roleForm.value.name : 'Crear Nuevo Rol' }}</h2>
+          </div>
+          <p class="header-subtitle">Defina qué acciones puede realizar este perfil en cada módulo.</p>
+        </div>
+      </div>
+
+      <form [formGroup]="roleForm" (ngSubmit)="saveRole()">
+        <div class="modal-body" style="padding: 24px 32px;">
+          
+          <div class="form-row" style="margin-bottom: 24px;">
+            <div class="form-group">
+              <label>Código / Nombre del Rol</label>
+              <input type="text" formControlName="name" placeholder="Ej: AUDITOR_EXTERNO" style="text-transform: uppercase;">
+              @if (roleForm.get('name')?.invalid && roleForm.get('name')?.touched) {
+                <span class="error-text">Obligatorio</span>
+              }
+            </div>
+            <div class="form-group">
+              <label>Descripción del perfil</label>
+              <input type="text" formControlName="description" placeholder="Ej: Solo visualiza proyectos y recursos">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label style="margin-bottom: 8px;">Matriz de Accesos (CRUD)</label>
+            <div style="border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden;">
+              <table class="retrofit-table" style="margin: 0;">
+                <thead>
+                  <tr>
+                    <th style="background-color: #F9FAFB; color: #4B5563;">Módulo del Sistema</th>
+                    <th style="background-color: #F9FAFB; color: #4B5563; text-align: center;">Crear (POST)</th>
+                    <th style="background-color: #F9FAFB; color: #4B5563; text-align: center;">Leer (GET)</th>
+                    <th style="background-color: #F9FAFB; color: #4B5563; text-align: center;">Editar (PUT)</th>
+                    <th style="background-color: #F9FAFB; color: #4B5563; text-align: center;">Borrar (DEL)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (mod of modules; track mod.prefix) {
+                    <tr>
+                      <td style="font-weight: 600; color: #111827;">{{ mod.label }}</td>
+                      @for (act of actions; track act) {
+                        <td style="text-align: center;">
+                          <input type="checkbox" 
+                                 style="width: 18px; height: 18px; cursor: pointer; accent-color: #1A1A1A;"
+                                 [checked]="hasPermission(mod.prefix, act)"
+                                 (change)="togglePermission(mod.prefix, act)">
+                        </td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" (click)="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-submit" [disabled]="roleForm.invalid">
+            <i class="fa-solid fa-floppy-disk"></i> Guardar Matriz
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+}
+
+@if (isDeleteModalOpen && roleToDelete) {
+  <app-confirm-modal
+    title="Eliminar Rol"
+    [message]="'¿Seguro que deseas eliminar el rol <strong>' + roleToDelete.name + '</strong>?<br>Los usuarios con este rol podrían perder acceso.'"
+    confirmText="Eliminar"
+    [isProcessing]="isDeleting"
+    (confirm)="confirmDelete()"
+    (cancel)="closeDeleteModal()">
+  </app-confirm-modal>
+}

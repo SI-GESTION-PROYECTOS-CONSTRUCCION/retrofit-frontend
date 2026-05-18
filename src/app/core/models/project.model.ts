@@ -27,12 +27,36 @@ export interface ProjectResponseDto {
 }
 export interface ProjectItemDto {
   id?: number;
+  itemOrder?: number;
   description: string;
   code: string;
   unit: string;
   totalQuantity: number;
   unitPrice: number;
   executedQuantity?: number;
+  
+  level?: number; 
+  laborYield?: number;
+  equipmentYield?: number;
+  apuDetails?: ProjectItemResourceResponseDto[]; // Lista que vendrá del backend con los recursos
+}
+
+export interface ProjectItemResourceRequestDto {
+  resourceId: number;
+  squad: number | null;
+  quantity: number | null;
+}
+
+export interface ProjectItemResourceResponseDto {
+  id: number;
+  resourceId: number;
+  resourceName: string;
+  resourceUnit: string;
+  resourceBasePrice: number;
+  resourceType: string; // 'LABOR' | 'EQUIPMENT' | 'MATERIAL'
+  squad: number;
+  quantity: number;
+  partialPrice: number;
 }
 
 export interface ProgressReportRequestDto{
