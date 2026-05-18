@@ -1,8 +1,8 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { ResourceService } from '../../../core/services/resource.service';
-import { ProjectItemDto, ProjectItemResourceRequestDto } from '../../../core/models/project.model';
-import { ProjectItemService } from '../../../core/services/project-item.service';
-import { ToastService } from '../../../core/services/toast-service';
+import { ResourceService } from '../../../../core/services/resource.service';
+import { ProjectItemDto, ProjectItemResourceRequestDto } from '../../../../core/models/project.model';
+import { ProjectItemService } from '../../../../core/services/project-item.service';
+import { ToastService } from '../../../../core/services/toast-service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 

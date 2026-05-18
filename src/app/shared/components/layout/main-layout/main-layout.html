@@ -1,16 +1,23 @@
-<div class="app-shell" [class.sidebar-active]="isSidebarOpen">
-  
-  <app-sidebar class="app-sidebar"></app-sidebar>
-
-  <div class="sidebar-overlay" (click)="toggleSidebar()"></div>
-
-  <div class="app-main-wrapper">
-    <app-header class="app-header" (toggleMenu)="toggleSidebar()"></app-header>
+@if (isReady) {
+  <div class="app-shell" [class.sidebar-active]="isSidebarOpen">
     
-    <main class="app-content">
-      <router-outlet></router-outlet>
-    </main>
+    <app-sidebar class="app-sidebar"></app-sidebar>
 
-    <app-footer class="app-footer"></app-footer>
+    <div class="sidebar-overlay" (click)="toggleSidebar()"></div>
+
+    <div class="app-main-wrapper">
+      <app-header class="app-header" (toggleMenu)="toggleSidebar()"></app-header>
+      
+      <main class="app-content">
+        <router-outlet></router-outlet>
+      </main>
+
+      <app-footer class="app-footer"></app-footer>
+    </div>
   </div>
-</div>
+} @else {
+  <div class="retrofit-loading-screen" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background-color: #FAFAFA;">
+    <i class="fa-solid fa-spinner fa-spin fa-2xl" style="color: #1A1A1A; margin-bottom: 16px;"></i>
+    <p style="font-family: sans-serif; color: #6B7280; font-size: 14px; font-weight: 500;">Validando credenciales...</p>
+  </div>
+}

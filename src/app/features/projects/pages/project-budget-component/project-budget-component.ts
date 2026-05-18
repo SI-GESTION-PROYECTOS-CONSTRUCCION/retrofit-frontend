@@ -5,8 +5,7 @@ import { ProjectItemService } from '../../../../core/services/project-item.servi
 import { ProjectItemDto, ProjectResponseDto } from '../../../../core/models/project.model';
 import { ToastService } from '../../../../core/services/toast-service';
 import { ProjectService } from '../../../../core/services/project.service';
-import { ResourceService } from '../../../../core/services/resource.service';
-import { ApuModalComponent } from '../../apu-modal-component/apu-modal-component';
+import { ApuModalComponent } from '../../modal/apu-modal-component/apu-modal-component';
 
 
 @Component({

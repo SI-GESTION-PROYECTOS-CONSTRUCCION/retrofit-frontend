@@ -39,6 +39,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/gestion-usuarios/gestion-usuarios').then(m => m.GestionUsuariosComponent)
       },
       {
+        path: 'roles',
+        loadComponent: () => import('./features/auth/pages/role-list-component/role-list-component').then(m => m.RoleListComponent)
+      },
+      {
         path: 'gestionTrabajadores',
         loadComponent: () => import('./features/gestion-workers/gestion-workers').then(m => m.GestionWorkersComponent)
       },

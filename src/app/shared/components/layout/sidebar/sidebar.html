@@ -8,15 +8,28 @@
     <p class="menu-label">OPERACIONES</p>
     <ul>
       <li><a routerLink="/dashboard" routerLinkActive="active"><i class="fa-solid fa-border-all"></i> Dashboard</a></li>
-      <li><a routerLink="/portafolio" routerLinkActive="active"><i class="fa-solid fa-suitcase"></i> Portafolio</a></li>
-      <li><a routerLink="/asignacionProyectos" routerLinkActive="active"><i class="fa-solid fa-tasks"></i> Asignación a Proyectos</a></li>
-      <li><a routerLink="/recursos" routerLinkActive="active"><i class="fa-solid fa-helmet-safety"></i>Recursos</a></li>
+      <li *appHasPermission="'PROJECT_READ'">
+        <a routerLink="/portafolio" routerLinkActive="active"><i class="fa-solid fa-suitcase"></i> Portafolio</a>
+      </li>
+      <li *appHasPermission="'WORKER_READ'">
+        <a routerLink="/asignacionProyectos" routerLinkActive="active"><i class="fa-solid fa-tasks"></i> Asignación a Proyectos</a>
+      </li>
+      <li *appHasPermission="'RESOURCE_READ'">
+        <a routerLink="/recursos" routerLinkActive="active"><i class="fa-solid fa-helmet-safety"></i> Recursos</a>
+      </li>
     </ul>
 
     <p class="menu-label">ADMINISTRACIÓN</p>
     <ul>
-      <li><a routerLink="/gestionUsuarios" routerLinkActive="active"><i class="fa-solid fa-users"></i> Usuarios</a></li>
-      <li><a routerLink="/gestionTrabajadores" routerLinkActive="active"><i class="fa-solid fa-users"></i> Trabajadores</a></li>
+      <li *appHasPermission="'USER_READ'">
+        <a routerLink="/gestionUsuarios" routerLinkActive="active"><i class="fa-solid fa-users"></i> Usuarios</a>
+      </li>
+      <li *appHasPermission="'WORKER_READ'">
+        <a routerLink="/gestionTrabajadores" routerLinkActive="active"><i class="fa-solid fa-users-gear"></i> Trabajadores</a>
+      </li>
+      <li *appHasPermission="'SECURITY_READ'">
+        <a routerLink="/roles" routerLinkActive="active"><i class="fa-solid fa-shield-halved"></i> Roles y permisos</a>
+      </li>
     </ul>
   </nav>
 
