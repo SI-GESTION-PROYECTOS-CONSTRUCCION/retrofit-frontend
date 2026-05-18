@@ -61,6 +61,98 @@
               </div>
             </div>
           </div>
+
+          <div class="resources-tracking-section" style="margin-top: 24px; padding-top: 24px; border-top: 1px dashed #CBD5E1;" formArrayName="usedResources">
+            <h4 style="font-size: 14px; color: var(--color-primario); margin-bottom: 16px; font-weight: 700;">
+              <i class="fa-solid fa-scale-balanced" style="margin-right: 6px;"></i> Consumo Real vs. Teórico (APU)
+            </h4>
+
+            @if (usedResourcesFormArray.length === 0) {
+              <div class="text-muted" style="font-size: 13px; text-align: center; padding: 12px; background: #F8FAFC; border-radius: 8px;">
+                Ingrese el metrado avanzado para calcular los recursos.
+              </div>
+            } @else {
+              <div class="table-responsive" style="border: 1px solid #E2E8F0; border-radius: 8px; overflow: hidden;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                  <thead style="background: #F8FAFC; border-bottom: 2px solid #E2E8F0;">
+                    <tr>
+                      <th style="padding: 10px; font-size: 12px; color: #64748B;">Recurso</th>
+                      <th style="padding: 10px; font-size: 12px; color: #64748B; text-align: center;">Und.</th>
+                      <th style="padding: 10px; font-size: 12px; color: #64748B; text-align: right;" title="Coeficiente Unitario del APU">Cant. Unit.</th>
+                      <th style="padding: 10px; font-size: 12px; color: #64748B; text-align: right;" title="Lo que dicta el APU para este metrado">Teórico APU</th>
+                      <th style="padding: 10px; font-size: 12px; color: #0F172A; text-align: right; background: #FFFBEB;">Gasto Real</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    @if (getResourceControls('LABOR').length > 0) {
+                      <tr><td colspan="5" style="padding: 6px 10px; font-size: 11px; font-weight: 700; color: #0097A7; background: #F8FAFC;">MANO DE OBRA</td></tr>
+                      @for (control of getResourceControls('LABOR'); track control.get('resourceId')?.value) {
+                        <tr [formGroup]="$any(control)" style="border-bottom: 1px solid #F1F5F9;">
+                          <td style="padding: 8px 10px; font-size: 13px; font-weight: 500; color: #334155;">
+                            <span class="badge badge-info" style="font-size: 10px; margin-right: 6px;">MO</span> {{ control.get('resourceName')?.value }}
+                          </td>
+                          <td style="padding: 8px 10px; font-size: 12px; text-align: center; color: #64748B;">{{ control.get('resourceUnit')?.value }}</td>
+                          <td style="padding: 8px 10px; font-size: 13px; text-align: right; color: #94A3B8;">
+                            {{ control.get('unitCoefficient')?.value | number:'1.2-4' }}
+                          </td>
+                          <td style="padding: 8px 10px; font-size: 13px; text-align: right; color: #64748B; font-weight: 600;">
+                            {{ control.get('theoreticalQuantity')?.value | number:'1.2-2' }}
+                          </td>
+                          <td style="padding: 4px 10px; background: #FFFBEB;">
+                            <input type="number" formControlName="realQuantity" class="form-control" style="text-align: right; padding: 4px 8px; font-weight: 700; border-color: #FCD34D;" min="0" step="0.01">
+                          </td>
+                        </tr>
+                      }
+                    }
+
+                    @if (getResourceControls('MATERIAL').length > 0) {
+                      <tr><td colspan="5" style="padding: 6px 10px; font-size: 11px; font-weight: 700; color: #F59E0B; background: #F8FAFC;">MATERIALES</td></tr>
+                      @for (control of getResourceControls('MATERIAL'); track control.get('resourceId')?.value) {
+                        <tr [formGroup]="$any(control)" style="border-bottom: 1px solid #F1F5F9;">
+                          <td style="padding: 8px 10px; font-size: 13px; font-weight: 500; color: #334155;">
+                            <span class="badge badge-warning" style="font-size: 10px; margin-right: 6px;">MAT</span> {{ control.get('resourceName')?.value }}
+                          </td>
+                          <td style="padding: 8px 10px; font-size: 12px; text-align: center; color: #64748B;">{{ control.get('resourceUnit')?.value }}</td>
+                          <td style="padding: 8px 10px; font-size: 13px; text-align: right; color: #94A3B8;">
+                            {{ control.get('unitCoefficient')?.value | number:'1.2-4' }}
+                          </td>
+                          <td style="padding: 8px 10px; font-size: 13px; text-align: right; color: #64748B; font-weight: 600;">
+                            {{ control.get('theoreticalQuantity')?.value | number:'1.2-2' }}
+                          </td>
+                          <td style="padding: 4px 10px; background: #FFFBEB;">
+                            <input type="number" formControlName="realQuantity" class="form-control" style="text-align: right; padding: 4px 8px; font-weight: 700; border-color: #FCD34D;" min="0" step="0.01">
+                          </td>
+                        </tr>
+                      }
+                    }
+
+                    @if (getResourceControls('EQUIPMENT').length > 0) {
+                      <tr><td colspan="5" style="padding: 6px 10px; font-size: 11px; font-weight: 700; color: #10B981; background: #F8FAFC;">MAQUINARIA Y EQUIPOS</td></tr>
+                      @for (control of getResourceControls('EQUIPMENT'); track control.get('resourceId')?.value) {
+                        <tr [formGroup]="$any(control)" style="border-bottom: 1px solid #F1F5F9;">
+                          <td style="padding: 8px 10px; font-size: 13px; font-weight: 500; color: #334155;">
+                            <span class="badge badge-success" style="font-size: 10px; margin-right: 6px;">EQ</span> {{ control.get('resourceName')?.value }}
+                          </td>
+                          <td style="padding: 8px 10px; font-size: 12px; text-align: center; color: #64748B;">{{ control.get('resourceUnit')?.value }}</td>
+                          <td style="padding: 8px 10px; font-size: 13px; text-align: right; color: #94A3B8;">
+                            {{ control.get('unitCoefficient')?.value | number:'1.2-4' }}
+                          </td>
+                          <td style="padding: 8px 10px; font-size: 13px; text-align: right; color: #64748B; font-weight: 600;">
+                            {{ control.get('theoreticalQuantity')?.value | number:'1.2-2' }}
+                          </td>
+                          <td style="padding: 4px 10px; background: #FFFBEB;">
+                            <input type="number" formControlName="realQuantity" class="form-control" style="text-align: right; padding: 4px 8px; font-weight: 700; border-color: #FCD34D;" min="0" step="0.01">
+                          </td>
+                        </tr>
+                      }
+                    }
+
+                  </tbody>
+                </table>
+              </div>
+            }
+          </div>
         }
       </div>
 
