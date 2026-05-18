@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api-retrofit-ai8ph.ondigitalocean.app/api/v1'
+  apiUrl: 'https://retrofit-nxaez.ondigitalocean.app/api/v1'
 };
