@@ -1,0 +1,112 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Catálogo de Recursos</h1>
+      <p class="page-subtitle">Gestiona los precios base para los Análisis de Precios Unitarios (APU).</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="openModal()">
+        <i class="fa-solid fa-plus"></i> Nuevo Recurso
+      </button>
+    </div>
+  </div>
+
+  <div class="tabs-container">
+    @for (tab of tabs; track tab.id) {
+      <button class="tab-btn" 
+              [class.active]="activeTab.id === tab.id" 
+              (click)="switchTab(tab)">
+        <i class="fa-solid" [ngClass]="tab.icon"></i> {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <div class="table-card-container">
+    @if (isLoading) {
+      <div style="padding: 40px; text-align: center; color: var(--color-texto);">
+        <i class="fa-solid fa-spinner fa-spin"></i> Cargando catálogo...
+      </div>
+    } @else {
+      <table class="retrofit-table">
+        <thead>
+          <tr>
+            <th>Nombre del Recurso</th>
+            <th>Unidad</th>
+            <th>Precio Base (S/)</th>
+            <th style="text-align: right;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of resources; track item.id) {
+            <tr>
+              <td class="col-name">{{ item.name }}</td>
+              <td><span class="badge badge-info">{{ item.unit }}</span></td>
+              <td class="col-price">S/ {{ item.basePrice | number:'1.2-2' }}</td>
+              <td style="text-align: right;">
+                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                  <button class="btn btn-outline" style="padding: 6px 10px;" title="Editar" (click)="openModal(item)">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                  <button class="btn btn-outline text-danger" style="padding: 6px 10px;" title="Eliminar" (click)="deleteResource(item.id)">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" style="text-align: center; padding: 40px; color: var(--color-texto);">
+                <i class="fa-solid fa-box-open" style="font-size: 24px; margin-bottom: 8px;"></i>
+                <p>No hay recursos registrados en este catálogo.</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+@if (isModalOpen) {
+  <div class="modal-backdrop">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="header-content">
+          <div class="header-title">
+            <i class="fa-solid icon-title" [ngClass]="activeTab.icon"></i>
+            <h2>{{ editingId ? 'Editar' : 'Nuevo' }} Recurso</h2>
+          </div>
+          <p class="header-subtitle">Agrega un nuevo ítem al catálogo de {{ activeTab.label | lowercase }}</p>
+        </div>
+        <button class="btn-close" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      
+      <form [formGroup]="resourceForm" (ngSubmit)="saveResource()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nombre del Recurso</label>
+            <input type="text" formControlName="name" placeholder="Ej. Cemento Pacasmayo">
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Unidad</label>
+              <input type="text" formControlName="unit" placeholder="Ej. m3, hh, bls">
+            </div>
+            <div class="form-group">
+              <label>Precio Base (S/)</label>
+              <input type="number" formControlName="basePrice" step="0.01">
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" (click)="closeModal()">Cancelar</button>
+          <button type="submit" class="btn btn-submit" [disabled]="resourceForm.invalid">
+            <i class="fa-solid fa-floppy-disk"></i> Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
