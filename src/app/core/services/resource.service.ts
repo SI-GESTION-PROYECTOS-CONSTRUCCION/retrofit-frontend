@@ -26,4 +26,15 @@ export class ResourceService {
   deleteResource(endpoint: string, id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${endpoint}/${id}`);
   }
+
+  getResourcesPaginated(page: number, size: number, search: string, type: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/resources/paginated`, {
+      params: {
+        page: page.toString(),
+        size: size.toString(),
+        search: search,
+        type: type 
+      }
+    });
+  }
 }

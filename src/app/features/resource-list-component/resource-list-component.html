@@ -1,68 +1,116 @@
 <div class="page-container">
-  <div class="page-header">
+  
+  <div class="page-header mb-4">
     <div>
-      <h1 class="page-title">Catálogo de Recursos</h1>
-      <p class="page-subtitle">Gestiona los precios base para los Análisis de Precios Unitarios (APU).</p>
+      <h2 class="page-title">Catálogo de Recursos</h2>
+      <p class="page-subtitle">Gestione los recursos base del sistema paginados desde el servidor.</p>
     </div>
-    <div class="header-actions">
-      <button class="btn btn-primary" (click)="openModal()">
-        <i class="fa-solid fa-plus"></i> Nuevo Recurso
-      </button>
-    </div>
+    <button class="btn btn-primary" (click)="openModal()">
+      <i class="fa-solid fa-plus"></i> Nuevo Recurso
+    </button>
   </div>
 
-  <div class="tabs-container">
-    @for (tab of tabs; track tab.id) {
-      <button class="tab-btn" 
-              [class.active]="activeTab.id === tab.id" 
+  <div class="tabs-navigation mb-4" style="display: flex; gap: 8px; border-bottom: 2px solid #E5E7EB; padding-bottom: 8px;">
+    @for (tab of tabs; track tab.type) {
+      <button class="btn" 
+              [ngClass]="activeTab.type === tab.type ? 'btn-primary' : 'btn-outline'" 
               (click)="switchTab(tab)">
-        <i class="fa-solid" [ngClass]="tab.icon"></i> {{ tab.label }}
+        <i class="fa-solid {{ tab.icon }}"></i> {{ tab.label }}
       </button>
     }
   </div>
 
+  <div class="filters-toolbar mb-4">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input 
+        type="text" 
+        placeholder="Buscar en la categoría actual..." 
+        [(ngModel)]="searchTerm" 
+        (input)="onSearchChange()">
+    </div>
+  </div>
+
   <div class="table-card-container">
-    @if (isLoading) {
-      <div style="padding: 40px; text-align: center; color: var(--color-texto);">
-        <i class="fa-solid fa-spinner fa-spin"></i> Cargando catálogo...
-      </div>
-    } @else {
-      <table class="retrofit-table">
-        <thead>
+    <table class="retrofit-table">
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Nombre del Recurso</th>
+          <th style="text-align: center;">Und.</th>
+          <th style="text-align: right;">Precio Base (S/)</th>
+          <th style="text-align: center;" width="120px">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading) {
           <tr>
-            <th>Nombre del Recurso</th>
-            <th>Unidad</th>
-            <th>Precio Base (S/)</th>
-            <th style="text-align: right;">Acciones</th>
+            <td colspan="5" style="text-align: center; padding: 32px;">
+              <i class="fa-solid fa-spinner fa-spin text-muted"></i> Cargando recursos...
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          @for (item of resources; track item.id) {
+        } @else if (resources.length === 0) {
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 32px;" class="text-muted">
+              No hay registros en esta categoría con el filtro seleccionado.
+            </td>
+          </tr>
+        } @else {
+          @for (resource of resources; track resource.resourceId) {
             <tr>
-              <td class="col-name">{{ item.name }}</td>
-              <td><span class="badge badge-info">{{ item.unit }}</span></td>
-              <td class="col-price">S/ {{ item.basePrice | number:'1.2-2' }}</td>
-              <td style="text-align: right;">
-                <div style="display: flex; gap: 8px; justify-content: flex-end;">
-                  <button class="btn btn-outline" style="padding: 6px 10px;" title="Editar" (click)="openModal(item)">
-                    <i class="fa-solid fa-pen"></i>
-                  </button>
-                  <button class="btn btn-outline text-danger" style="padding: 6px 10px;" title="Eliminar" (click)="deleteResource(item.id)">
-                    <i class="fa-solid fa-trash-can"></i>
-                  </button>
-                </div>
+              <td>
+                <span class="badge" 
+                      [ngClass]="{
+                        'badge-info': resource.resourceType === 'LABOR',
+                        'badge-warning': resource.resourceType === 'MATERIAL',
+                        'badge-success': resource.resourceType === 'EQUIPMENT'
+                      }">
+                  {{ resource.resourceType === 'LABOR' ? 'MO' : resource.resourceType === 'MATERIAL' ? 'MAT' : 'EQ' }}
+                </span>
               </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="4" style="text-align: center; padding: 40px; color: var(--color-texto);">
-                <i class="fa-solid fa-box-open" style="font-size: 24px; margin-bottom: 8px;"></i>
-                <p>No hay recursos registrados en este catálogo.</p>
+              <td class="col-name">{{ resource.resourceName }}</td>
+              <td style="text-align: center;">{{ resource.resourceUnit }}</td>
+              <td style="text-align: right; font-weight: 600; color: #111827;">
+                S/ {{ resource.resourceBasePrice | number:'1.2-2' }}
+              </td>
+              <td style="text-align: center;">
+                <button class="btn btn-outline" style="padding: 6px 10px;" title="Editar" (click)="openModal(resource)">
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+                <button class="btn btn-outline text-danger" style="padding: 6px 10px;" title="Eliminar" (click)="openDeleteModal(resource)">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
               </td>
             </tr>
           }
-        </tbody>
-      </table>
+        }
+      </tbody>
+    </table>
+
+    @if (totalPages > 1) {
+      <div class="pagination-footer">
+        <span>
+          Mostrando página <strong>{{ currentPage }}</strong> de <strong>{{ totalPages }}</strong> ({{ totalElements }} recursos en total)
+        </span>
+        
+        <div class="pagination-controls">
+          <button class="btn btn-outline" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+            Anterior
+          </button>
+          
+          @for (page of pagesArray; track page) {
+            <button class="btn" 
+                    [ngClass]="page === currentPage ? 'btn-primary' : 'btn-outline'" 
+                    (click)="changePage(page)">
+              {{ page }}
+            </button>
+          }
+          
+          <button class="btn btn-outline" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+            Siguiente
+          </button>
+        </div>
+      </div>
     }
   </div>
 </div>
@@ -70,43 +118,68 @@
 @if (isModalOpen) {
   <div class="modal-backdrop">
     <div class="modal-container">
+      
       <div class="modal-header">
+        <button type="button" class="btn-close" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
         <div class="header-content">
           <div class="header-title">
-            <i class="fa-solid icon-title" [ngClass]="activeTab.icon"></i>
-            <h2>{{ editingId ? 'Editar' : 'Nuevo' }} Recurso</h2>
+            <i class="fa-solid fa-circle-info icon-title"></i>
+            <h2>{{ editingId ? 'Modificar ' + activeTab.label : 'Registrar Nuevo Insumo (' + activeTab.label + ')' }}</h2>
           </div>
-          <p class="header-subtitle">Agrega un nuevo ítem al catálogo de {{ activeTab.label | lowercase }}</p>
+          <p class="header-subtitle">Defina las especificaciones comerciales del recurso técnico.</p>
         </div>
-        <button class="btn-close" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      
+
       <form [formGroup]="resourceForm" (ngSubmit)="saveResource()">
         <div class="modal-body">
-          <div class="form-group">
-            <label>Nombre del Recurso</label>
-            <input type="text" formControlName="name" placeholder="Ej. Cemento Pacasmayo">
-          </div>
           
+          <div class="form-group">
+            <label>Descripción / Nombre del Recurso</label>
+            <input type="text" formControlName="name" placeholder="Ej: Cemento Portland Tipo I, Operario de Obra..." autocomplete="off">
+            @if (resourceForm.get('name')?.invalid && resourceForm.get('name')?.touched) {
+              <span class="error-text">El nombre del recurso es obligatorio.</span>
+            }
+          </div>
+
           <div class="form-row">
             <div class="form-group">
-              <label>Unidad</label>
-              <input type="text" formControlName="unit" placeholder="Ej. m3, hh, bls">
+              <label>Unidad de Medida</label>
+              <input type="text" formControlName="unit" placeholder="Ej: und, hh, hm, m3, kg...">
+              @if (resourceForm.get('unit')?.invalid && resourceForm.get('unit')?.touched) {
+                <span class="error-text">Especifique la unidad métrica.</span>
+              }
             </div>
+
             <div class="form-group">
-              <label>Precio Base (S/)</label>
-              <input type="number" formControlName="basePrice" step="0.01">
+              <label>Precio Unitario Base (S/)</label>
+              <input type="number" formControlName="basePrice" placeholder="0.00" min="0" step="0.01">
+              @if (resourceForm.get('basePrice')?.invalid && resourceForm.get('basePrice')?.touched) {
+                <span class="error-text">El precio base debe ser mayor o igual a 0.</span>
+              }
             </div>
           </div>
+
         </div>
-        
+
         <div class="modal-footer">
           <button type="button" class="btn btn-cancel" (click)="closeModal()">Cancelar</button>
           <button type="submit" class="btn btn-submit" [disabled]="resourceForm.invalid">
-            <i class="fa-solid fa-floppy-disk"></i> Guardar
+            <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios
           </button>
         </div>
       </form>
+
     </div>
   </div>
+}
+
+@if (isDeleteModalOpen && resourceToDelete) {
+  <app-confirm-modal
+    title="Eliminar Recurso"
+    [message]="'¿Estás seguro de que deseas eliminar el recurso <strong>' + resourceToDelete.resourceName + '</strong>?<br>Esta acción no se puede deshacer.'"
+    confirmText="Eliminar"
+    [isProcessing]="isDeleting"
+    (confirm)="confirmDelete()"
+    (cancel)="closeDeleteModal()">
+  </app-confirm-modal>
 }
