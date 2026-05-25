@@ -4,7 +4,7 @@ export interface ProjectRequestDto {
   client: string;
   location: string;             
   description: string;         
-  estimatedDeliveryDate: string;
+  startDate: string;
   status: string;
   priority: string;
   managerId: number;
@@ -17,7 +17,7 @@ export interface ProjectResponseDto {
   client: string;
   location: string;            
   description: string;          
-  estimatedDeliveryDate: string;
+  startDate: string;
   status: string;
   priority: string;
   managerId: number;
@@ -82,4 +82,25 @@ export interface ProgressReportResponseDto {
 export interface GroupedProgressReportDto {
   period: string;
   reports: ProgressReportResponseDto[]; 
+}
+
+export interface GanttItemResponseDto {
+  id: number;
+  name: string;
+  totalQuantity: number;
+  laborYield: number;
+  code: string;
+  startDate: string; 
+  endDate: string;
+  predecessorId: number | null;
+  baseDurationDays: number;
+  currentProgressPercentage: number;
+  parentId: number | null;
+  type: string;
+}
+
+export interface GanttUpdateDto {
+  startDate: string;
+  endDate: string;
+  predecessorId: number | null;
 }

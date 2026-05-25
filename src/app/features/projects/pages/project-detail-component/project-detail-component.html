@@ -50,7 +50,7 @@
           <app-project-budget [projectId]="project.id"></app-project-budget>
         }
         @case ('CRONOGRAMA') {
-          <div class="empty-state">Módulo de Gantt en construcción...</div>
+          <app-project-gantt-component [projectId]="project.id" [projectStartDate]="project.startDate"></app-project-gantt-component>
         }
         @case ('AVANCES') {
           <app-project-progress-list-component [projectId]="project.id"></app-project-progress-list-component>

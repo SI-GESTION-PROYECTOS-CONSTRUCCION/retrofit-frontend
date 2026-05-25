@@ -54,11 +54,11 @@
           </div>
           
           <div class="form-group">
-            <label>FECHA ESTIMADA DE ENTREGA</label>
-            <input type="date" formControlName="estimatedDeliveryDate"
-                   [class.is-invalid]="hasError('estimatedDeliveryDate')">
-            @if (backendErrors['estimatedDeliveryDate']) { <span class="error-text">{{ backendErrors['estimatedDeliveryDate'] }}</span> }
-            @else if (projectForm.get('estimatedDeliveryDate')?.invalid && projectForm.get('estimatedDeliveryDate')?.touched) { <span class="error-text">Requerido</span> }
+            <label>FECHA DE INICIO</label>
+            <input type="date" formControlName="startDate"
+                   [class.is-invalid]="hasError('startDate')">
+            @if (backendErrors['startDate']) { <span class="error-text">{{ backendErrors['startDate'] }}</span> }
+            @else if (projectForm.get('startDate')?.invalid && projectForm.get('startDate')?.touched) { <span class="error-text">Requerido</span> }
           </div>
         </div>
 

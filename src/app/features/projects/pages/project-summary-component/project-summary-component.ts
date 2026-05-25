@@ -14,7 +14,6 @@ export class ProjectSummaryComponent implements OnInit{
   @Input({ required: true }) project!: ProjectResponseDto;
 
   ngOnInit(): void{
-    console.log(this.project)
   }
 
   formatDate(dateString: string): string {

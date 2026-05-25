@@ -59,7 +59,6 @@ export class ProjectBudgetComponent implements OnInit {
     this.itemService.getItems(this.projectId).subscribe({
       next: (data) => {
         this.itemsFormArray.clear();
-        console.log(data)
         if (data.length > 0) {
           data.forEach(item => this.addRow(item));
         }

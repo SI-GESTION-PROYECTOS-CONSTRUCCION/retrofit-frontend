@@ -1,0 +1,87 @@
+.gantt-wrapper {
+  width: 100%;
+  height: 600px; /* Puedes ajustar la altura según tu diseño */
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.gantt-chart {
+  width: 100%;
+  height: 100%;
+}
+
+
+/* =========================================
+   DISEÑO PROFESIONAL GANTT (TIPO MS PROJECT)
+   ========================================= */
+
+/* 1. CABECERAS Y TABLA IZQUIERDA */
+.gantt_grid_scale {
+  background-color: var(--color-fondo-app);
+  color: var(--color-primario);
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-secundario);
+}
+
+/* 2. FILAS PADRE (TÍTULOS) EN LA TABLA */
+.gantt_row.gantt_project .gantt_cell {
+  font-weight: 700; /* Negrita para resaltar la jerarquía */
+  color: var(--color-primario);
+  background-color: #FAFAFA; /* Un gris levísimo para separar secciones */
+}
+
+/* 3. BARRAS DE TAREAS HIJAS (LAS QUE SE EJECUTAN) */
+.mi-barra-hija {
+  background-color: var(--color-secundario) !important; /* Verde agua */
+  border: 1px solid var(--color-secundario) !important;
+  border-radius: 6px; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+.mi-barra-hija .gantt_task_content {
+  color: #FFFFFF !important;
+  font-weight: 500;
+}
+
+/* 4. BARRAS PADRE (CONTENEDORES / GRAPAS) */
+.mi-barra-padre {
+  background-color: var(--color-primario) !important; /* Azul oscuro */
+  border: 1px solid var(--color-primario) !important;
+  border-radius: 4px;
+  box-shadow: none;
+}
+/* DHTMLX usa seudoelementos para dibujar las alitas de los contenedores, las pintamos también */
+.mi-barra-padre .gantt_project_left, 
+.mi-barra-padre .gantt_project_right {
+   background-color: var(--color-primario) !important;
+}
+/* DHTMLX le pone unos "bracitos" a los proyectos, los pintamos también */
+.gantt_project .gantt_project_left, 
+.gantt_project .gantt_project_right {
+   background-color: var(--color-primario) !important;
+}
+
+/* 5. EFECTO HOVER (AL PASAR EL MOUSE) */
+.gantt_row:hover, .gantt_task_row:hover {
+  background-color: var(--color-info-fondo) !important; /* Azul clarito de tu paleta */
+  transition: background-color 0.2s ease;
+}
+
+/* 6. FLECHAS DE DEPENDENCIA (LINKS) */
+.gantt_task_link .gantt_line_wrapper div {
+  background-color: var(--color-divisor); /* Gris formal */
+}
+.gantt_task_link .gantt_link_arrow_right {
+  border-left-color: var(--color-divisor);
+}
+.gantt_task_link .gantt_link_arrow_left {
+  border-right-color: var(--color-divisor);
+}
+.gantt_task_link:hover .gantt_line_wrapper div {
+  background-color: var(--color-info); /* Azul al pasar el mouse por la flecha */
+  box-shadow: 0 0 5px var(--color-info);
+}
+.gantt_task_link:hover .gantt_link_arrow_right {
+  border-left-color: var(--color-info);
+}
