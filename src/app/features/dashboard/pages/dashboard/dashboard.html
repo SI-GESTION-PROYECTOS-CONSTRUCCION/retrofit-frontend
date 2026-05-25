@@ -1,4 +1,137 @@
-<div style="padding: 50px; text-align: center;">
-  <h1>Bienvenido al Dashboard</h1>
-  <p>Has iniciado sesión correctamente en Retrofit.</p>
+<div class="dashboard-container">
+  
+  <div class="header d-flex justify-content-between align-items-center">
+    <div>
+      <h2>Dashboard Gerencial</h2>
+      <p>Análisis de valor ganado y rendimiento en tiempo real.</p>
+    </div>
+    
+    <div class="project-selector">
+      <label for="projectSelect"><i class="fa-solid fa-building"></i> Proyecto:</label>
+      <select id="projectSelect" [(ngModel)]="selectedProjectId" (change)="onProjectChange()">
+        @for (p of projects; track p.id) {
+          <option [value]="p.id">{{ p.name }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-state">
+      <i class="fa-solid fa-circle-notch fa-spin"></i> Cargando métricas...
+    </div>
+  } @else if (data) {
+    
+    <div class="kpi-grid">
+      
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Presupuesto (PV)</span>
+          <div class="tooltip-container">
+            <i class="fa-solid fa-circle-info text-gray"></i>
+            <span class="tooltip-text"><b>Planned Value (PV):</b> Es el presupuesto meta o total autorizado para la obra (BAC) según el APU.</span>
+          </div>
+        </div>
+        <span class="kpi-value text-blue">S/ {{ data.plannedValue | number:'1.2-2' }}</span>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Valor Ganado (EV)</span>
+          <div class="tooltip-container">
+            <i class="fa-solid fa-circle-info text-gray"></i>
+            <span class="tooltip-text"><b>Earned Value (EV):</b> Cuánto dinero se "ganó" o justificó en base al avance físico de metrados en obra.</span>
+          </div>
+        </div>
+        <span class="kpi-value text-green">S/ {{ data.earnedValue | number:'1.2-2' }}</span>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Costo Real (AC)</span>
+          <div class="tooltip-container">
+            <i class="fa-solid fa-circle-info text-gray"></i>
+            <span class="tooltip-text"><b>Actual Cost (AC):</b> La suma total del costo de los recursos (MO, Materiales y Equipos) realmente consumidos y reportados.</span>
+          </div>
+        </div>
+        <span class="kpi-value text-red">S/ {{ data.actualCost | number:'1.2-2' }}</span>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Desviación (CV)</span>
+          <div class="tooltip-container">
+            <i class="fa-solid fa-circle-info text-gray"></i>
+            <span class="tooltip-text"><b>Cost Variance (CV = EV - AC):</b> Indica en dinero si estás ahorrando (positivo) o perdiendo (negativo) respecto al avance.</span>
+          </div>
+        </div>
+        <span class="kpi-value" [class.text-red]="data.costVariance < 0" [class.text-green]="data.costVariance >= 0">
+          S/ {{ data.costVariance | number:'1.2-2' }}
+        </span>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Índice Desempeño (CPI)</span>
+          <div class="tooltip-container">
+            <i class="fa-solid fa-circle-info text-gray"></i>
+            <span class="tooltip-text"><b>Cost Performance Index (CPI = EV / AC):</b> Mide la eficiencia. Si es menor a 1, la obra está siendo ineficiente financieramente.</span>
+          </div>
+        </div>
+        <span class="kpi-value" [class.text-red]="data.cpi < 1" [class.text-green]="data.cpi >= 1">
+          {{ data.cpi | number:'1.2-2' }}
+        </span>
+      </div>
+
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card s-curve-card">
+        <h3>Evolución de Costos (Curva S)</h3>
+        <div class="canvas-container">
+          <canvas #sCurveChart></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-card donut-card">
+        <h3>Gasto Real por Recurso</h3>
+        <div class="canvas-container">
+          <canvas #donutChart></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="alerts-section">
+      <h3><i class="fa-solid fa-triangle-exclamation text-red"></i> Partidas Críticas (Sobrecosto)</h3>
+      
+      @if (data.criticalItems.length === 0) {
+        <div class="alert-success">
+          <i class="fa-solid fa-check-circle"></i> Todo en orden. No hay partidas con sobrecosto.
+        </div>
+      } @else {
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Partida</th>
+              <th>Valor Ganado (EV)</th>
+              <th>Costo Real (AC)</th>
+              <th>Pérdida</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of data.criticalItems; track item.itemId) {
+              <tr>
+                <td>{{ item.itemCode }}</td>
+                <td>{{ item.description }}</td>
+                <td>S/ {{ item.earnedValue | number:'1.2-2' }}</td>
+                <td class="text-red">S/ {{ item.actualCost | number:'1.2-2' }}</td>
+                <td class="text-red font-bold">- S/ {{ item.lossAmount | number:'1.2-2' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  }
 </div>
