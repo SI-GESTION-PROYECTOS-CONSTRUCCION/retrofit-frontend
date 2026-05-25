@@ -1,0 +1,17 @@
+.modal-container {
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-body {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-backdrop {
+  overflow-y: auto;
+  align-items: flex-start;
+  padding: 20px 0;
+}
