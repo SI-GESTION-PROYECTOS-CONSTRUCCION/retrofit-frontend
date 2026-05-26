@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
-import { ProjectItemDto, ProjectItemResourceRequestDto } from '../models/project.model';
+import { GanttItemResponseDto, GanttUpdateDto, ProjectItemDto, ProjectItemResourceRequestDto } from '../models/project.model';
 
 @Injectable({
   providedIn: 'root',
@@ -29,5 +29,12 @@ export class ProjectItemService {
       `${this.apiUrl}/${projectId}/items/${itemId}/apu?laborYield=${laborYield}&equipmentYield=${equipmentYield}`, 
       payload
     );
+  }
+
+  getGanttItems(projectId: number): Observable<GanttItemResponseDto[]> {
+    return this.http.get<GanttItemResponseDto[]>(`${this.apiUrl}/${projectId}/items/gantt`);
+  }
+  updateGanttDates(projectId: number, itemId: number, dto: GanttUpdateDto): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${projectId}/items/${itemId}/gantt`, dto);
   }
 }

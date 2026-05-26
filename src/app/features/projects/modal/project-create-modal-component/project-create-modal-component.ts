@@ -34,7 +34,7 @@ export class ProjectCreateModalComponent implements OnInit {
       client: ['', Validators.required],
       location: [''],
       description: [''],
-      estimatedDeliveryDate: ['', Validators.required],
+      startDate: ['', Validators.required],
       status: ['PLANNING', Validators.required], 
       priority: ['MEDIUM', Validators.required],
       managerId: [null, Validators.required]
@@ -51,7 +51,7 @@ export class ProjectCreateModalComponent implements OnInit {
         client: this.projectToEdit.client,
         location: this.projectToEdit.location,
         description: this.projectToEdit.description,
-        estimatedDeliveryDate: this.projectToEdit.estimatedDeliveryDate,
+        startDate: this.projectToEdit.startDate,
         status: this.projectToEdit.status,
         priority: this.projectToEdit.priority
         // managerId lo setearemos después de cargar la lista de managers

@@ -215,7 +215,7 @@
         
         <div class="dark-card-footer">
           <span>Código: {{ project.code }}</span>
-          <span>Estimado: {{ project.estimatedDeliveryDate | date:'dd MMM yyyy' }}</span>
+          <span>Estimado: {{ project.startDate | date:'dd MMM yyyy' }}</span>
         </div>
       </div>
     } @else {

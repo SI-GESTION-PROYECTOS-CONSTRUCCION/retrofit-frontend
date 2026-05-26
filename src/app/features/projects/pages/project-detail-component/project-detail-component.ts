@@ -7,11 +7,12 @@ import { switchMap } from 'rxjs/operators';
 import { ProjectBudgetComponent } from '../project-budget-component/project-budget-component';
 import { ProjectSummaryComponent } from '../project-summary-component/project-summary-component';
 import { ProjectProgressListComponent } from '../project-progress-list-component/project-progress-list-component';
+import { ProjectGanttComponent } from '../project-gantt-component/project-gantt-component';
 
 @Component({
   selector: 'app-project-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, ProjectBudgetComponent, ProjectSummaryComponent, ProjectProgressListComponent],
+  imports: [CommonModule, RouterModule, ProjectBudgetComponent, ProjectSummaryComponent, ProjectProgressListComponent, ProjectGanttComponent],
   templateUrl: './project-detail-component.html',
   styleUrl: './project-detail-component.css'
 })
