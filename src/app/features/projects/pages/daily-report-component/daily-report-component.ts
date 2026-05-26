@@ -5,12 +5,13 @@ import { ProjectItemService } from '../../../../core/services/project-item.servi
 import { ProgressReportRequestDto, ProjectItemDto, ProjectResponseDto } from '../../../../core/models/project.model';
 import { ProgressReportService } from '../../../../core/services/progress-report.service';
 import { ProjectService } from '../../../../core/services/project.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ToastService } from '../../../../core/services/toast-service';
+import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 
 @Component({
   selector: 'app-daily-report-component',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, Skeleton],
   templateUrl: './daily-report-component.html',
   styleUrl: './daily-report-component.css',
 })
@@ -162,10 +163,11 @@ export class DailyReportComponent implements OnInit {
         this.selectedItemInfo = null;
         this.isLoading = false;
         this.loadProjectItems();
+        this.loadProjectDetails();
       },
       error: (err) => {
         const errorMsg = err.error?.message || err.error || 'Error de conexión al enviar el reporte.';
-        this.toastService.show(`❌ ${errorMsg}`, `error`);
+        this.toastService.show(`${errorMsg}`, `error`);
         this.isLoading = false;
       }
     });

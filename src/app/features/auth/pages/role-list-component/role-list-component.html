@@ -22,11 +22,30 @@
       </thead>
       <tbody>
         @if (isLoading) {
-          <tr>
-            <td colspan="4" style="text-align: center; padding: 32px;">
-              <i class="fa-solid fa-spinner fa-spin text-muted"></i> Cargando roles...
-            </td>
-          </tr>
+          @for (i of [1, 2, 3]; track i) {
+            <tr>
+              <td>
+                <app-skeleton width="150px" height="26px" borderRadius="12px" marginBottom="0"></app-skeleton>
+              </td>
+              
+              <td>
+                <app-skeleton width="280px" height="16px" marginBottom="0"></app-skeleton>
+              </td>
+              
+              <td style="text-align: center;">
+                <div style="display: flex; justify-content: center;">
+                  <app-skeleton width="90px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton>
+                </div>
+              </td>
+              
+              <td style="text-align: center;">
+                <div style="display: flex; gap: 8px; justify-content: center;">
+                  <app-skeleton width="32px" height="32px" borderRadius="6px" marginBottom="0"></app-skeleton>
+                  <app-skeleton width="32px" height="32px" borderRadius="6px" marginBottom="0"></app-skeleton>
+                </div>
+              </td>
+            </tr>
+          }
         } @else {
           @for (role of roles; track role.id) {
             <tr>

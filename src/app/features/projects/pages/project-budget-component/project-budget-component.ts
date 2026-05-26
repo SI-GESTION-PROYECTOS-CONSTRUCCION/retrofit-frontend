@@ -6,12 +6,14 @@ import { ProjectItemDto, ProjectResponseDto } from '../../../../core/models/proj
 import { ToastService } from '../../../../core/services/toast-service';
 import { ProjectService } from '../../../../core/services/project.service';
 import { ApuModalComponent } from '../../modal/apu-modal-component/apu-modal-component';
+import { debounceTime } from 'rxjs';
+import { Resizable } from '../../../../core/directives/resizable';
 
 
 @Component({
   selector: 'app-project-budget',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, ApuModalComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ApuModalComponent, Resizable],
   templateUrl: './project-budget-component.html',
   styleUrls: ['./project-budget-component.css']
 })
@@ -25,7 +27,7 @@ export class ProjectBudgetComponent implements OnInit {
   project: ProjectResponseDto | null = null;
   budgetForm!: FormGroup;
   isLoading = false;
-  
+
   private readonly MIN_EMPTY_ROWS = 5;
   isApuModalOpen = false;
   selectedItemIndex: number | null = null;
@@ -37,12 +39,27 @@ export class ProjectBudgetComponent implements OnInit {
     this.budgetForm = this.fb.group({
       items: this.fb.array([])
     });
+
+
+    this.budgetForm.get('items')?.valueChanges.pipe(
+      debounceTime(300)
+    ).subscribe(() => {
+      this.recalculateAllSubtotals();
+    });
+
     this.loadExistingItems();
   }
 
   loadProjectDetails() {
     this.projectService.getProjectById(this.projectId).subscribe({
-      next: (data) => this.project = data
+      next: (data) => {
+        this.project = data;
+        if (this.isLocked) {
+          this.itemsFormArray.controls.forEach(row => {
+            row.get('unit')?.disable();
+          });
+        }
+      }
     });
   }
 
@@ -58,34 +75,74 @@ export class ProjectBudgetComponent implements OnInit {
     this.isLoading = true;
     this.itemService.getItems(this.projectId).subscribe({
       next: (data) => {
-        this.itemsFormArray.clear();
+
         if (data.length > 0) {
-          data.forEach(item => this.addRow(item));
+          const formGroups = data.map(item => this.crearFila(item));
+          this.budgetForm.setControl('items', this.fb.array(formGroups));
+        } else {
+          this.itemsFormArray.clear();
         }
-        
+
         this.recalculateWBS();
-        this.ensureEmptyRows(); 
+        this.ensureEmptyRows();
+        this.recalculateAllSubtotals();
+
         this.isLoading = false;
       },
       error: () => this.isLoading = false
     });
   }
 
-  addRow(item?: any) {
-    const row = this.fb.group({
+
+  recalculateAllSubtotals() {
+    const rows = this.itemsFormArray.getRawValue();
+
+    for (let i = rows.length - 1; i >= 0; i--) {
+      const currentRow = rows[i];
+      const control = this.itemsFormArray.at(i);
+
+      if (!this.isParent(i)) {
+        const sub = (currentRow.totalQuantity || 0) * (currentRow.unitPrice || 0);
+
+        control.get('subtotal')?.setValue(sub, { emitEvent: false });
+
+      } else {
+        let totalPadre = 0;
+
+        for (let j = i + 1; j < rows.length; j++) {
+          const nextRow = rows[j];
+
+          if (nextRow.level <= currentRow.level) break;
+
+          if (!this.isParent(j)) {
+            totalPadre += this.itemsFormArray.at(j).get('subtotal')?.value || 0;
+          }
+        }
+        control.get('subtotal')?.setValue(totalPadre, { emitEvent: false });
+      }
+    }
+  }
+
+  private crearFila(item?: any): FormGroup {
+    return this.fb.group({
       id: [item?.id || null],
       code: [{ value: item?.code || '', disabled: true }],
       level: [item?.level || 0],
-      description: [item?.description || ''], 
-      unit: [item?.unit || ''],
+      description: [item?.description || ''],
+      unit: [{ value: item?.unit || '', disabled: this.isLocked }],
       totalQuantity: [item?.totalQuantity || null],
       unitPrice: [item?.unitPrice || null],
       executedQuantity: [{ value: item?.executedQuantity || 0, disabled: true }],
       laborYield: [item?.laborYield || 0],
       equipmentYield: [item?.equipmentYield || 0],
-      apuDetails: [item?.apuDetails || []]
+      apuDetails: [item?.apuDetails || []],
+      subtotal: [{ value: 0, disabled: true }]
     });
-    this.itemsFormArray.push(row);
+  }
+
+
+  addRow(item?: any) {
+    this.itemsFormArray.push(this.crearFila(item));
   }
 
   toggleApuView(index: number) {
@@ -103,7 +160,7 @@ export class ProjectBudgetComponent implements OnInit {
 
   removeRow(index: number) {
     this.itemsFormArray.removeAt(index);
-    delete this.expandedRows[index]; 
+    delete this.expandedRows[index];
     this.recalculateWBS();
     this.ensureEmptyRows();
   }
@@ -111,7 +168,7 @@ export class ProjectBudgetComponent implements OnInit {
   ensureEmptyRows() {
     const controls = this.itemsFormArray.controls;
     let emptyCount = 0;
-    
+
     for (let i = controls.length - 1; i >= 0; i--) {
       if (!controls[i].get('description')?.value) {
         emptyCount++;
@@ -125,7 +182,7 @@ export class ProjectBudgetComponent implements OnInit {
     for (let i = 0; i < rowsToAdd; i++) {
       this.addRow();
     }
-    
+
     this.recalculateWBS();
   }
 
@@ -155,23 +212,23 @@ export class ProjectBudgetComponent implements OnInit {
     const row = this.itemsFormArray.at(index);
     let currentLevel = row.get('level')?.value;
     let newLevel = currentLevel + delta;
-    
+
     if (newLevel < 0) newLevel = 0;
-    
+
     row.get('level')?.setValue(newLevel);
     this.recalculateWBS();
   }
 
   recalculateWBS() {
-    let counters = [0, 0, 0, 0, 0, 0, 0]; 
+    let counters = [0, 0, 0, 0, 0, 0, 0];
 
     let lastValidIndex = -1;
     for (let i = this.itemsFormArray.length - 1; i >= 0; i--) {
       const row = this.itemsFormArray.at(i);
       const desc = row.get('description')?.value || '';
       // FORZAMOS A QUE SEA NÚMERO PARA EVITAR ERRORES MATEMÁTICOS
-      const level = Number(row.get('level')?.value || 0); 
-      
+      const level = Number(row.get('level')?.value || 0);
+
       if (desc.trim() !== '' || level > 0) {
         lastValidIndex = i;
         break;
@@ -180,7 +237,7 @@ export class ProjectBudgetComponent implements OnInit {
 
     for (let i = 0; i < this.itemsFormArray.length; i++) {
       const row = this.itemsFormArray.at(i);
-      
+
       if (i > lastValidIndex) {
         row.get('code')?.setValue('', { emitEvent: false });
         continue;
@@ -195,17 +252,17 @@ export class ProjectBudgetComponent implements OnInit {
       }
 
       let generatedCode = counters.slice(0, level + 1).join('.');
-      
+
       if (level === 0) {
-       
-        generatedCode = generatedCode.padStart(2); 
+
+        generatedCode = generatedCode.padStart(2);
       }
 
       row.get('code')?.setValue(generatedCode, { emitEvent: false });
     }
   }
 
-  
+
   isParent(index: number): boolean {
     const rows = this.itemsFormArray.controls;
     if (index >= rows.length - 1) return false;
@@ -213,7 +270,7 @@ export class ProjectBudgetComponent implements OnInit {
     const currentLevel = rows[index].get('level')?.value;
     const nextLevel = rows[index + 1].get('level')?.value;
 
-    
+
     return nextLevel > currentLevel;
   }
 
@@ -234,7 +291,7 @@ export class ProjectBudgetComponent implements OnInit {
     // Recorremos las filas siguientes
     for (let i = index + 1; i < rows.length; i++) {
       const nextRow = rows[i];
-      
+
       // Si encontramos una fila con nivel igual o menor, paramos (ya no es su hijo)
       if (nextRow.level <= parentLevel) break;
 
@@ -253,10 +310,10 @@ export class ProjectBudgetComponent implements OnInit {
       this.toastService.show('No se puede modificar el presupuesto de una obra en ejecución.', 'error');
       return;
     }
-    
+
     const rawData = this.itemsFormArray.getRawValue();
-    
-  
+
+
     for (let i = 0; i < rawData.length; i++) {
       const item = rawData[i];
       if (!item.description || item.description.trim() === '') continue;
@@ -282,7 +339,7 @@ export class ProjectBudgetComponent implements OnInit {
       .map((item, index) => {
         const formattedItem = {
           ...item,
-          itemOrder: index, 
+          itemOrder: index,
           totalQuantity: Number(item.totalQuantity),
           unitPrice: Number(item.unitPrice),
           level: Number(item.level),
@@ -305,7 +362,7 @@ export class ProjectBudgetComponent implements OnInit {
     this.itemService.saveBulkItems(this.projectId, payload).subscribe({
       next: () => {
         this.toastService.show('Presupuesto guardado con éxito.', 'success');
-        this.loadExistingItems(); 
+        this.loadExistingItems();
       },
       error: () => this.toastService.show('Error de conexión al guardar el presupuesto.', 'error')
     });
@@ -318,19 +375,19 @@ export class ProjectBudgetComponent implements OnInit {
       this.toastService.show('Primero debe "Guardar Presupuesto".', 'warning');
       return;
     }
-    
+
     this.selectedItemIndex = index;
     // Extraemos la fila entera para enviársela al hijo
-    this.selectedItemData = row.getRawValue(); 
+    this.selectedItemData = row.getRawValue();
     this.isApuModalOpen = true;
   }
 
   handleApuSaved(updatedItem: ProjectItemDto) {
     this.isApuModalOpen = false;
     this.selectedItemData = null;
-    
-    this.loadExistingItems(); 
-    
+
+    this.loadExistingItems();
+
     this.toastService.show('Vista de presupuesto actualizada.', 'success');
   }
 

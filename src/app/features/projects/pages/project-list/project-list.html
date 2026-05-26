@@ -6,7 +6,7 @@
       <p class="page-subtitle">Gestión centralizada de obras, servicios y mantenimientos industriales.</p>
     </div>
     <div class="header-actions">
-      <button class="btn btn-outline"><i class="fa-solid fa-download"></i> Exportar</button>
+     <!-- <button class="btn btn-outline"><i class="fa-solid fa-download"></i> Exportar</button>-->
       <button class="btn btn-primary" (click)="openNewProjectModal()">
         <i class="fa-solid fa-plus"></i> Nuevo Proyecto
       </button>
@@ -66,8 +66,55 @@
 
 <div class="card table-card-container">
     @if (isLoading) {
-      <div class="loading-state">
-        <i class="fa-solid fa-spinner fa-spin"></i> Cargando portafolio...
+      <div class="table-responsive">
+        <table class="retrofit-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nombre del Proyecto</th>
+              <th>Cliente</th>
+              <th>Progreso</th>
+              <th>Prioridad</th>
+              <th>Estado</th>
+              <th>Responsable</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (i of [1, 2, 3, 4, 5]; track i) {
+              <tr>
+                <td><app-skeleton width="60px" height="16px" marginBottom="0"></app-skeleton></td>
+                
+                <td><app-skeleton width="180px" height="16px" marginBottom="0"></app-skeleton></td>
+                
+                <td><app-skeleton width="120px" height="16px" marginBottom="0"></app-skeleton></td>
+                
+                <td>
+                  <app-skeleton width="30px" height="12px" marginBottom="6px"></app-skeleton>
+                  <app-skeleton width="100%" height="8px" borderRadius="10px" marginBottom="0"></app-skeleton>
+                </td>
+                
+                <td><app-skeleton width="80px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton></td>
+                
+                <td><app-skeleton width="80px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton></td>
+                
+                <td>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <app-skeleton width="28px" height="28px" borderRadius="50%" marginBottom="0"></app-skeleton>
+                    <app-skeleton width="100px" height="16px" marginBottom="0"></app-skeleton>
+                  </div>
+                </td>
+                
+                <td class="col-actions">
+                  <div style="display: flex; gap: 8px;">
+                    <app-skeleton width="32px" height="32px" borderRadius="6px" marginBottom="0"></app-skeleton>
+                    <app-skeleton width="32px" height="32px" borderRadius="6px" marginBottom="0"></app-skeleton>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     } @else if (errorMessage) {
       <div class="error-state text-danger">{{ errorMessage }}</div>

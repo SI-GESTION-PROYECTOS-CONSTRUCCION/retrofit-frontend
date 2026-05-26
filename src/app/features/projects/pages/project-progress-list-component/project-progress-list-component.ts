@@ -2,10 +2,11 @@ import { Component, inject, Input, OnInit } from '@angular/core';
 import { ProgressReportService } from '../../../../core/services/progress-report.service';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 
 @Component({
   selector: 'app-project-progress-list-component',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, Skeleton],
   templateUrl: './project-progress-list-component.html',
   styleUrl: './project-progress-list-component.css',
 })

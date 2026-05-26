@@ -8,11 +8,12 @@ import { ResourceService } from '../../core/services/resource.service';
 import { ToastService } from '../../core/services/toast-service';
 import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-modal';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { Skeleton } from '../../shared/components/skeleton/skeleton';
 
 @Component({
   selector: 'app-resource-list-component',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, ConfirmModal, HasPermissionDirective],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ConfirmModal, HasPermissionDirective, Skeleton],
   templateUrl: './resource-list-component.html',
   styleUrl: './resource-list-component.css',
 })

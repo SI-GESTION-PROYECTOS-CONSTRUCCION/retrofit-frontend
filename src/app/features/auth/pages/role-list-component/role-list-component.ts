@@ -4,10 +4,11 @@ import { ToastService } from '../../../../core/services/toast-service';
 import { RoleService } from '../../../../core/services/role.service';
 import { CommonModule } from '@angular/common';
 import { ConfirmModal } from '../../../../shared/components/confirm-modal/confirm-modal';
+import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 
 @Component({
   selector: 'app-role-list-component',
-  imports: [CommonModule, ReactiveFormsModule, ConfirmModal],
+  imports: [CommonModule, ReactiveFormsModule, ConfirmModal, Skeleton],
   templateUrl: './role-list-component.html',
   styleUrl: './role-list-component.css',
 })

@@ -5,13 +5,19 @@
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   overflow: hidden;
+  overscroll-behavior-x: none;
 }
 
 .gantt-chart {
   width: 100%;
   height: 100%;
+  overscroll-behavior-x: none;
 }
 
+
+.gantt_layout_cell, .gantt_task, .gantt_grid {
+  overscroll-behavior-x: none !important;
+}
 
 /* =========================================
    DISEÑO PROFESIONAL GANTT (TIPO MS PROJECT)

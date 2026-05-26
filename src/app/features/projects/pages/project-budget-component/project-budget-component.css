@@ -94,3 +94,20 @@
   cursor: not-allowed;
   background: transparent;
 }
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 5px;
+  cursor: col-resize;
+  user-select: none;
+  z-index: 1;
+}
+
+/* Opcional: Que se pinte del color primario al pasar el mouse por encima para que el usuario sepa que puede arrastrar */
+.resize-handle:hover {
+  background-color: var(--color-primario, #0097A7);
+  opacity: 0.5;
+}

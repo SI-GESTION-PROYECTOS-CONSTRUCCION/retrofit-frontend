@@ -5,10 +5,11 @@ import { UserService } from '../../core/services/user.service';
 import { UserDto } from '../../core/models/user.model';
 import { ConfirmModal } from "../../shared/components/confirm-modal/confirm-modal";
 import { UserFormModalComponent } from "./user-form-modal/user-form-modal";
+import { Skeleton } from '../../shared/components/skeleton/skeleton';
 
 @Component({
   selector: 'app-gestion-usuarios',
-  imports: [CommonModule, FormsModule, ConfirmModal, UserFormModalComponent],
+  imports: [CommonModule, FormsModule, ConfirmModal, UserFormModalComponent, Skeleton],
   templateUrl: './gestion-usuarios.html',
   styleUrl: './gestion-usuarios.css',
 })

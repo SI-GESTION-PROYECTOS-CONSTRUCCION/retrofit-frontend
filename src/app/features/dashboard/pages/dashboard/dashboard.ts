@@ -6,12 +6,13 @@ import { ProjectDashboardResponseDto } from '../../../../core/models/dashboard.m
 import { ProjectService } from '../../../../core/services/project.service';
 import { FormsModule } from '@angular/forms';
 import { ProjectResponseDto } from '../../../../core/models/project.model';
+import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Skeleton],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })

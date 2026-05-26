@@ -48,8 +48,47 @@
         </div>
 
         @if (isLoading) {
-        <div class="loading-state">
-            <i class="fa-solid fa-spinner fa-spin"></i> Cargando usuarios...
+        <div class="table-responsive">
+            <table class="retrofit-table">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Nombre Completo</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (i of [1, 2, 3, 4, 5]; track i) {
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <app-skeleton width="36px" height="36px" borderRadius="50%" marginBottom="0"></app-skeleton>
+                                <app-skeleton width="100px" height="16px" marginBottom="0"></app-skeleton>
+                            </div>
+                        </td>
+                        
+                        <td><app-skeleton width="160px" height="16px" marginBottom="0"></app-skeleton></td>
+                        
+                        <td><app-skeleton width="180px" height="16px" marginBottom="0"></app-skeleton></td>
+                        
+                        <td><app-skeleton width="130px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton></td>
+                        
+                        <td><app-skeleton width="60px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton></td>
+                        
+                        <td class="col-actions">
+                            <div style="display: flex; gap: 8px;">
+                                <app-skeleton width="32px" height="32px" borderRadius="6px" marginBottom="0"></app-skeleton>
+                                <app-skeleton width="32px" height="32px" borderRadius="6px" marginBottom="0"></app-skeleton>
+                                <app-skeleton width="32px" height="32px" borderRadius="6px" marginBottom="0"></app-skeleton>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
         </div>
         } @else {
         <div class="table-responsive">

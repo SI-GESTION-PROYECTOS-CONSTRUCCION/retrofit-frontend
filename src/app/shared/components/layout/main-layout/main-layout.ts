@@ -5,10 +5,11 @@ import { Sidebar } from '../sidebar/sidebar';
 import { Header } from '../header/header';
 import { Footer } from '../footer/footer';
 import { AuthService } from '../../../../core/services/auth.service';
+import { Skeleton } from '../../skeleton/skeleton';
 
 @Component({
   selector: 'app-main-layout',
-  imports: [CommonModule, RouterModule, Sidebar, Header, Footer],
+  imports: [CommonModule, RouterModule, Sidebar, Header, Footer, Skeleton],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.css',
 })

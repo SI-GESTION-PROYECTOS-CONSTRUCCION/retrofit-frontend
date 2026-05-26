@@ -7,8 +7,86 @@
   </div>
 
   @if (isLoading) {
-    <div class="loading-state">
-      <i class="fa-solid fa-spinner fa-spin"></i> Cargando matriz de recursos...
+    <div class="kpi-row">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="kpi-card">
+          <div class="kpi-info" style="width: 100%;">
+            <app-skeleton width="110px" height="12px" marginBottom="12px"></app-skeleton>
+            <app-skeleton width="40px" height="28px" marginBottom="0"></app-skeleton>
+          </div>
+          <div class="kpi-icon" style="background: transparent;">
+            <app-skeleton width="48px" height="48px" borderRadius="12px" marginBottom="0"></app-skeleton>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="assignment-layout">
+      
+      <div class="matrix-card">
+        <div class="table-responsive">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th class="sticky-col header-first">
+                  <app-skeleton width="160px" height="16px" marginBottom="0"></app-skeleton>
+                </th>
+                @for (i of [1, 2, 3]; track i) {
+                  <th>
+                    <div class="project-header" style="align-items: center;">
+                      <app-skeleton width="140px" height="14px" marginBottom="6px"></app-skeleton>
+                      <app-skeleton width="60px" height="12px" marginBottom="0"></app-skeleton>
+                    </div>
+                  </th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (i of [1, 2, 3, 4, 5]; track i) {
+                <tr>
+                  <td class="sticky-col">
+                    <div class="worker-info" style="display: flex; align-items: center; gap: 12px;">
+                      <app-skeleton width="36px" height="36px" borderRadius="50%" marginBottom="0"></app-skeleton>
+                      <div class="user-details" style="width: 100%;">
+                        <app-skeleton width="130px" height="14px" marginBottom="6px"></app-skeleton>
+                        <app-skeleton width="90px" height="12px" marginBottom="0"></app-skeleton>
+                      </div>
+                    </div>
+                  </td>
+                  
+                  @for (j of [1, 2, 3]; track j) {
+                    <td class="matrix-cell" style="text-align: center; vertical-align: middle;">
+                      <div style="display: flex; justify-content: center;">
+                        <app-skeleton width="32px" height="32px" borderRadius="6px" marginBottom="0"></app-skeleton>
+                      </div>
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="available-sidebar">
+        <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <app-skeleton width="150px" height="18px" marginBottom="0"></app-skeleton>
+          <app-skeleton width="60px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton>
+        </div>
+        
+        <div class="available-list" style="padding-top: 16px;">
+          @for (i of [1, 2, 3, 4]; track i) {
+            <div class="available-item" style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+              <app-skeleton width="32px" height="32px" borderRadius="50%" marginBottom="0"></app-skeleton>
+              <div class="worker-details" style="width: 100%;">
+                <app-skeleton width="120px" height="14px" marginBottom="6px"></app-skeleton>
+                <app-skeleton width="80px" height="12px" marginBottom="0"></app-skeleton>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
     </div>
   } @else {
     

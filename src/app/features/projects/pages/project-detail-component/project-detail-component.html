@@ -1,10 +1,60 @@
 <div class="page-container">
   
   @if (isLoading) {
-    <div class="loading-state" style="padding: 40px; text-align: center; color: #6B7280;">
-      <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-      <p style="margin-top: 10px;">Cargando detalles del proyecto...</p>
+    <div class="detail-header" style="margin-bottom: 24px;">
+      <div class="header-main">
+        <div class="title-row" style="display: flex; align-items: center; gap: 16px; margin-bottom: 12px;">
+          <app-skeleton width="45%" height="32px" marginBottom="0"></app-skeleton>
+          <app-skeleton width="80px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton>
+        </div>
+        <div class="meta-row" style="display: flex; gap: 24px;">
+          <app-skeleton width="120px" height="18px" marginBottom="0"></app-skeleton>
+          <app-skeleton width="200px" height="18px" marginBottom="0"></app-skeleton>
+          <app-skeleton width="180px" height="18px" marginBottom="0"></app-skeleton>
+        </div>
+      </div>
     </div>
+
+    <div class="tabs-container" style="display: flex; gap: 8px; border-bottom: 1px solid #E5E7EB; margin-bottom: 24px; padding-bottom: 0;">
+      <app-skeleton width="100px" height="38px" borderRadius="8px 8px 0 0" marginBottom="0"></app-skeleton>
+      <app-skeleton width="130px" height="38px" borderRadius="8px 8px 0 0" marginBottom="0"></app-skeleton>
+      <app-skeleton width="180px" height="38px" borderRadius="8px 8px 0 0" marginBottom="0"></app-skeleton>
+      <app-skeleton width="100px" height="38px" borderRadius="8px 8px 0 0" marginBottom="0"></app-skeleton>
+    </div>
+
+    <div class="tab-content" style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
+      
+      <div class="left-panel">
+        <app-skeleton width="30%" height="24px" marginBottom="16px"></app-skeleton>
+        <app-skeleton width="100%" height="14px" marginBottom="8px"></app-skeleton>
+        <app-skeleton width="90%" height="14px" marginBottom="8px"></app-skeleton>
+        <app-skeleton width="95%" height="14px" marginBottom="32px"></app-skeleton>
+        
+        <div style="display: flex; gap: 32px; margin-bottom: 32px;">
+          <div>
+            <app-skeleton width="120px" height="12px" marginBottom="8px"></app-skeleton>
+            <app-skeleton width="150px" height="20px" marginBottom="0"></app-skeleton>
+          </div>
+          <div>
+            <app-skeleton width="120px" height="12px" marginBottom="8px"></app-skeleton>
+            <app-skeleton width="120px" height="20px" marginBottom="0"></app-skeleton>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 16px;">
+          <app-skeleton width="220px" height="110px" borderRadius="12px"></app-skeleton>
+          <app-skeleton width="220px" height="110px" borderRadius="12px"></app-skeleton>
+        </div>
+      </div>
+      
+      <div class="right-panel">
+        <app-skeleton width="50%" height="24px" marginBottom="24px"></app-skeleton>
+        <app-skeleton width="100%" height="48px" borderRadius="8px" marginBottom="12px"></app-skeleton>
+        <app-skeleton width="100%" height="48px" borderRadius="8px" marginBottom="12px"></app-skeleton>
+      </div>
+
+    </div>
+
   } @else if (errorMessage) {
     <div class="error-state text-danger" style="padding: 20px; text-align: center;">
       {{ errorMessage }}
@@ -30,7 +80,7 @@
         </div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-primary"><i class="fa-solid fa-arrow-up-from-bracket"></i> Subir Planos</button>
+        <!--<button class="btn btn-primary"><i class="fa-solid fa-arrow-up-from-bracket"></i> Subir Planos</button>-->
       </div>
     </div>
 

@@ -27,10 +27,10 @@ export class ProjectGanttComponent {
     gantt.config.drag_links = true; 
     gantt.config.drag_progress = false; 
     gantt.config.columns = [
-      {name: "code", label: "Item", width: "*", tree: true},
-      {name: "text", label: "Partida", width: "*", tree: true},
-      {name: "start_date", label: "Inicio", align: "center"},
-      {name: "duration", label: "Días", align: "center"}
+      {name: "code", label: "Item", width: 80, resize: true}, 
+      {name: "text", label: "Partida", width: 200, tree: true, resize: true}, 
+      {name: "start_date", label: "Inicio", align: "center", width: 120, resize: true},
+      {name: "duration", label: "Días", align: "center", width: 60, resize: true}
     ];
 
     gantt.attachEvent("onAfterTaskDrag", (id: string | number, mode: string, e: Event) => {

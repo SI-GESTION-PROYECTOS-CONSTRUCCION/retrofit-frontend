@@ -553,3 +553,17 @@ body {
 .dropdown-item.text-danger:hover {
   background-color: #FEF2F2; /* Un fondo rojito muy suave al pasar el mouse */
 }
+
+.skeleton {
+  background: #E2E8F0; /* Gris base */
+  background: linear-gradient(110deg, #E2E8F0 8%, #F8FAFC 18%, #E2E8F0 33%);
+  border-radius: 6px;
+  background-size: 200% 100%;
+  animation: 1.5s shimmer linear infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position-x: -200%;
+  }
+}

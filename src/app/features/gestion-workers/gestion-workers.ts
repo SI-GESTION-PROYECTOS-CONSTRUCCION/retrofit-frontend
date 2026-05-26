@@ -5,10 +5,11 @@ import { WorkerFormModalComponent } from './worker-form-modal/worker-form-modal'
 import { WorkerService } from '../../core/services/worker.service';
 import { WorkerDto } from '../../core/models/worker.model';
 import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-modal';
+import { Skeleton } from '../../shared/components/skeleton/skeleton';
 
 @Component({
   selector: 'app-gestion-workers',
-  imports: [CommonModule, FormsModule, WorkerFormModalComponent, ConfirmModal],
+  imports: [CommonModule, FormsModule, WorkerFormModalComponent, ConfirmModal, Skeleton],
   templateUrl: './gestion-workers.html',
   styleUrl: './gestion-workers.css',
 })

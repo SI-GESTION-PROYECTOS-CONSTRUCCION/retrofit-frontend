@@ -33,10 +33,83 @@
   </form>
 
   @if (isLoading) {
-    <div class="loading-state">
-      <i class="fa-solid fa-circle-notch fa-spin"></i>
-      <p>Cargando historial...</p>
+    <div class="accordions-wrapper" style="margin-top: 24px;">
+      
+      <div class="accordion-item" style="margin-bottom: 16px; border: 1px solid #E2E8F0; border-radius: 8px;">
+        <div class="accordion-header" style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0;">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <app-skeleton width="40px" height="40px" borderRadius="8px" marginBottom="0"></app-skeleton>
+            <div>
+              <app-skeleton width="150px" height="16px" marginBottom="8px"></app-skeleton>
+              <app-skeleton width="90px" height="12px" marginBottom="0"></app-skeleton>
+            </div>
+          </div>
+          <app-skeleton width="24px" height="24px" borderRadius="50%" marginBottom="0"></app-skeleton>
+        </div>
+        
+        <div class="accordion-body" style="padding: 24px;">
+          <div class="timeline" style="border-left: 2px solid #E2E8F0; padding-left: 24px; position: relative;">
+            
+            <div style="margin-bottom: 32px; position: relative;">
+              <div style="position: absolute; left: -31px; top: 0; width: 14px; height: 14px; border-radius: 50%; background: #E2E8F0; border: 2px solid white;"></div>
+              
+              <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+                <app-skeleton width="120px" height="14px" marginBottom="0"></app-skeleton>
+                <app-skeleton width="80px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton>
+              </div>
+              <app-skeleton width="80%" height="20px" marginBottom="16px"></app-skeleton>
+              
+              <div style="background: #F8FAFC; padding: 16px; border-radius: 8px; display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                <app-skeleton width="40px" height="40px" borderRadius="50%" marginBottom="0"></app-skeleton>
+                <div>
+                  <app-skeleton width="140px" height="12px" marginBottom="8px"></app-skeleton>
+                  <app-skeleton width="100px" height="20px" marginBottom="0"></app-skeleton>
+                </div>
+              </div>
+              
+              <app-skeleton width="220px" height="32px" borderRadius="6px" marginBottom="16px"></app-skeleton>
+              
+              <div style="display: flex; gap: 12px;">
+                <app-skeleton width="120px" height="90px" borderRadius="8px" marginBottom="0"></app-skeleton>
+                <app-skeleton width="120px" height="90px" borderRadius="8px" marginBottom="0"></app-skeleton>
+              </div>
+            </div>
+
+            <div style="position: relative;">
+              <div style="position: absolute; left: -31px; top: 0; width: 14px; height: 14px; border-radius: 50%; background: #E2E8F0; border: 2px solid white;"></div>
+              <div style="display: flex; gap: 16px; margin-bottom: 12px;">
+                <app-skeleton width="120px" height="14px" marginBottom="0"></app-skeleton>
+                <app-skeleton width="80px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton>
+              </div>
+              <app-skeleton width="60%" height="20px" marginBottom="16px"></app-skeleton>
+              <div style="background: #F8FAFC; padding: 16px; border-radius: 8px; display: flex; align-items: center; gap: 16px;">
+                <app-skeleton width="40px" height="40px" borderRadius="50%" marginBottom="0"></app-skeleton>
+                <div>
+                  <app-skeleton width="140px" height="12px" marginBottom="8px"></app-skeleton>
+                  <app-skeleton width="80px" height="20px" marginBottom="0"></app-skeleton>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item" style="border: 1px solid #E2E8F0; border-radius: 8px;">
+        <div class="accordion-header" style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <app-skeleton width="40px" height="40px" borderRadius="8px" marginBottom="0"></app-skeleton>
+            <div>
+              <app-skeleton width="150px" height="16px" marginBottom="8px"></app-skeleton>
+              <app-skeleton width="90px" height="12px" marginBottom="0"></app-skeleton>
+            </div>
+          </div>
+          <app-skeleton width="24px" height="24px" borderRadius="50%" marginBottom="0"></app-skeleton>
+        </div>
+      </div>
+
     </div>
+
   } @else if (groupedReports.length === 0) {
     <div class="empty-state">
       <div class="empty-icon-wrapper">

@@ -44,11 +44,36 @@
       </thead>
       <tbody>
         @if (isLoading) {
-          <tr>
-            <td colspan="5" style="text-align: center; padding: 32px;">
-              <i class="fa-solid fa-spinner fa-spin text-muted"></i> Cargando recursos...
-            </td>
-          </tr>
+          @for (i of [1, 2, 3, 4, 5]; track i) {
+            <tr>
+              <td>
+                <app-skeleton width="45px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton>
+              </td>
+              
+              <td class="col-name">
+                <app-skeleton width="250px" height="16px" marginBottom="0"></app-skeleton>
+              </td>
+              
+              <td style="text-align: center;">
+                <div style="display: flex; justify-content: center;">
+                  <app-skeleton width="30px" height="16px" marginBottom="0"></app-skeleton>
+                </div>
+              </td>
+              
+              <td style="text-align: right;">
+                <div style="display: flex; justify-content: flex-end;">
+                  <app-skeleton width="80px" height="16px" marginBottom="0"></app-skeleton>
+                </div>
+              </td>
+              
+              <td style="text-align: center;">
+                <div style="display: flex; gap: 8px; justify-content: center;">
+                  <app-skeleton width="32px" height="32px" borderRadius="6px" marginBottom="0"></app-skeleton>
+                  <app-skeleton width="32px" height="32px" borderRadius="6px" marginBottom="0"></app-skeleton>
+                </div>
+              </td>
+            </tr>
+          }
         } @else if (resources.length === 0) {
           <tr>
             <td colspan="5" style="text-align: center; padding: 32px;" class="text-muted">

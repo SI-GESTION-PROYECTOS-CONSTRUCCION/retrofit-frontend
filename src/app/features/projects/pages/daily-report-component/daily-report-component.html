@@ -1,5 +1,11 @@
 <div class="report-layout">
   <div class="main-content">
+
+    <div style="margin-bottom: 24px;">
+      <button type="button" class="btn btn-outline" [routerLink]="['/portafolio/proyecto', project?.code]">
+        <i class="fa-solid fa-arrow-left-long" style="margin-right: 6px;"></i> Volver al Resumen
+      </button>
+    </div>
     <div class="page-header">
       <h1 class="page-title">Registro de Avance Diario</h1>
       <p class="page-subtitle">Reporte técnico de actividades y evidencias en sitio.</p>
@@ -29,7 +35,7 @@
       </div>
 
       <div class="card section-card">
-        <h3 class="section-title"><i class="fa-regular fa-circle-check"></i> Registro de Metrados</h3>
+        <h3 class="section-title"><i class="fa-regular fa-circle-check"></i> Registro de avance</h3>
         
         <div class="form-group mb-4">
           <label>SELECCIONE LA PARTIDA EJECUTADA HOY</label>
@@ -44,7 +50,7 @@
         @if (selectedItemInfo) {
           <div class="metrado-info-box">
             <div class="info-item">
-              <span class="info-label">Metrado Total Planeado</span>
+              <span class="info-label">Total Planeado</span>
               <span class="info-value">{{ selectedItemInfo.totalQuantity }} {{ selectedItemInfo.unit }}</span>
             </div>
             <div class="info-item">
@@ -54,7 +60,7 @@
               </span>
             </div>
             <div class="form-group metrado-input-group">
-              <label>METRADO AVANZADO HOY</label>
+              <label>AVANZADO HOY</label>
               <div class="input-with-unit">
                 <input type="number" formControlName="executedQuantity" class="form-control highlight-input" placeholder="0.00">
                 <span class="unit-addon">{{ selectedItemInfo.unit }}</span>
@@ -215,13 +221,19 @@
         
         <div class="dark-card-footer">
           <span>Código: {{ project.code }}</span>
-          <span>Estimado: {{ project.startDate | date:'dd MMM yyyy' }}</span>
+          <span>Inicio: {{ project.startDate | date:'dd MMM yyyy' }}</span>
         </div>
       </div>
     } @else {
-      <div class="card dark-card" style="display: flex; justify-content: center; align-items: center; min-height: 200px;">
-        <i class="fa-solid fa-spinner fa-spin fa-2x text-muted"></i>
+      <div class="card dark-card" style="padding: 24px;">
+      <app-skeleton width="40%" height="14px" marginBottom="20px"></app-skeleton>
+      <app-skeleton width="70%" height="32px" marginBottom="24px"></app-skeleton>
+      <app-skeleton width="100%" height="8px" borderRadius="10px" marginBottom="24px"></app-skeleton>
+      <div style="display: flex; justify-content: space-between;">
+        <app-skeleton width="30%" height="12px"></app-skeleton>
+        <app-skeleton width="30%" height="12px"></app-skeleton>
       </div>
+    </div>
     }
     
   </div>
