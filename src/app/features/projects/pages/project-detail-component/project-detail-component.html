@@ -89,6 +89,7 @@
       <button class="tab-item" [class.active]="activeTab === 'PRESUPUESTO'" (click)="activeTab = 'PRESUPUESTO'">PRESUPUESTO</button>
       <button class="tab-item" [class.active]="activeTab === 'CRONOGRAMA'" (click)="activeTab = 'CRONOGRAMA'">CRONOGRAMA (GANTT)</button>
       <button class="tab-item" [class.active]="activeTab === 'AVANCES'" (click)="activeTab = 'AVANCES'">AVANCES</button>
+      <button class="tab-item" [class.active]="activeTab === 'INVENTARIO'" (click)="activeTab = 'INVENTARIO'">INVENTARIO</button>
     </div>
 
     <div class="tab-content">
@@ -104,6 +105,9 @@
         }
         @case ('AVANCES') {
           <app-project-progress-list-component [projectId]="project.id"></app-project-progress-list-component>
+        }
+        @case ('INVENTARIO') {
+          <app-project-inventory [projectId]="project.id"></app-project-inventory>
         }
       }
     </div>
