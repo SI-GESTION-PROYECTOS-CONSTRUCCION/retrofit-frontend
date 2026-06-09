@@ -382,6 +382,32 @@ export class ProjectBudgetComponent implements OnInit {
     this.isApuModalOpen = true;
   }
 
+
+
+  isDownloadingPdf = false;
+
+  exportToPdf() {
+    if (!this.projectId) return;
+    this.isDownloadingPdf = true;
+    this.projectService.downloadApuReport(this.projectId).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `reporte_presupuesto_proyecto_${this.project?.name}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.isDownloadingPdf = false;
+      },
+      error: (err) => {
+        console.error('Error al descargar el PDF:', err);
+        this.isDownloadingPdf = false;
+      }
+    });
+  }
+
   handleApuSaved(updatedItem: ProjectItemDto) {
     this.isApuModalOpen = false;
     this.selectedItemData = null;
