@@ -6,7 +6,9 @@
   <nav class="nav-menu">
     <p class="menu-label">OPERACIONES</p>
     <ul>
-      <li><a routerLink="/dashboard" routerLinkActive="active"><i class="fa-solid fa-border-all"></i> Dashboard</a></li>
+      <li>
+        <a routerLink="/dashboard" routerLinkActive="active"><i class="fa-solid fa-border-all"></i> Dashboard</a>
+      </li>
       <li *appHasPermission="'PROJECT_READ'">
         <a routerLink="/portafolio" routerLinkActive="active"><i class="fa-solid fa-suitcase"></i> Portafolio</a>
       </li>
@@ -28,6 +30,9 @@
       </li>
       <li *appHasPermission="'SECURITY_READ'">
         <a routerLink="/roles" routerLinkActive="active"><i class="fa-solid fa-shield-halved"></i> Roles y permisos</a>
+      </li>
+      <li *appHasPermission="'AUDIT_READ'">
+        <a routerLink="/auditLog" routerLinkActive="active"><i class="fa-solid fa-info-circle"></i> Auditoría</a>
       </li>
     </ul>
   </nav>

@@ -19,6 +19,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dashboard/pages/dashboard/dashboard').then(m => m.DashboardComponent)
       },
       {
+        path: 'auditLog',
+        loadComponent: () => import('./features/audit-log/audit-log').then(m => m.AuditLogComponent)
+      },
+      {
         path: 'portafolio',
         loadComponent: () => import('./features/projects/pages/project-list/project-list').then(m => m.ProjectList)
       },

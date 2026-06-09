@@ -1,0 +1,143 @@
+.audit-container {
+  padding: 24px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.audit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.header-titles h2 { margin: 0; color: #0f172a; font-weight: 700; }
+.header-titles p { margin: 4px 0 0 0; color: #64748b; font-size: 0.9rem; }
+.header-actions { display: flex; gap: 12px; }
+
+/* Buttons */
+button { border-radius: 6px; padding: 8px 16px; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; gap: 8px; font-size: 0.85rem;}
+.btn-primary { background-color: #1e293b; color: white; }
+.btn-outline { background-color: white; border: 1px solid #cbd5e1; color: #334155; }
+.btn-secondary { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+.w-100 { width: 100%; justify-content: center; }
+
+/* Stats */
+.stats-row { display: flex; gap: 16px; margin-bottom: 24px; }
+.stat-card { background: white; padding: 16px; border-radius: 8px; flex: 1; border: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+.stat-label { font-size: 0.75rem; font-weight: 700; color: #64748b; margin-bottom: 8px; }
+.stat-value { font-size: 1.5rem; font-weight: 700; color: #0f172a; }
+.text-danger { color: #ef4444 !important; }
+.text-success { color: #10b981 !important; }
+.text-muted { color: #94a3b8 !important; }
+
+/* Filters */
+.filters-row { display: flex; gap: 16px; background: white; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 24px; align-items: flex-end; }
+.filter-group { display: flex; flex-direction: column; flex: 1; }
+.filter-group.flex-2 { flex: 2; }
+.filter-group label { font-size: 0.75rem; font-weight: 700; color: #64748b; margin-bottom: 6px; }
+.filter-group input, .filter-group select { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; }
+.input-icon { position: relative; }
+.input-icon i { position: absolute; left: 12px; top: 10px; color: #94a3b8; }
+.input-icon input { padding-left: 36px; width: 100%; box-sizing: border-box;}
+
+/* Main Grid Layout */
+.content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Table Section */
+.table-wrapper { background: white; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden; }
+.styled-table { width: 100%; border-collapse: collapse; }
+.styled-table th { background-color: #0f172a; color: white; text-align: left; padding: 12px 16px; font-size: 0.8rem; letter-spacing: 0.5px; }
+.styled-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; font-size: 0.85rem; cursor: pointer; }
+.styled-table tr:hover { background-color: #f8fafc; }
+.styled-table tr.active-row { background-color: #eff6ff; }
+
+/* User Cell */
+.user-cell { display: flex; align-items: center; gap: 12px; }
+.avatar { width: 32px; height: 32px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #64748b; }
+.user-info { display: flex; flex-direction: column; }
+.user-name { font-weight: 600; color: #0f172a; }
+.user-role { font-size: 0.7rem; color: #64748b; text-transform: uppercase; }
+
+/* Badges */
+.badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+.badge-update { background-color: #dbeafe; color: #2563eb; }
+.badge-create { background-color: #dcfce3; color: #16a34a; }
+.badge-delete { background-color: #fee2e2; color: #dc2626; }
+.badge-login { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+.badge-export { background-color: #e0e7ff; color: #0284c7; }
+
+.log-desc { display: block; font-weight: 500; color: #0f172a; }
+.log-id { font-size: 0.75rem; }
+
+/* Pagination & Info Alert */
+.pagination { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem; color: #64748b;}
+.page-controls button { padding: 4px 12px; border: 1px solid #cbd5e1; background: white; cursor: pointer; border-radius: 4px;}
+.info-alert { display: flex; gap: 12px; padding: 16px; background-color: #eff6ff; color: #1e3a8a; font-size: 0.85rem; align-items: flex-start; }
+.info-alert p { margin: 4px 0 0 0; }
+
+/* Details Panel */
+.details-panel { background: white; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+.details-header { background: #0f172a; color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; }
+.details-header h3 { margin: 0; font-size: 1rem; }
+.details-body { padding: 20px; }
+.details-body h4 { font-size: 0.75rem; color: #64748b; letter-spacing: 0.5px; margin-bottom: 12px; margin-top: 0;}
+.mt-3 { margin-top: 12px; }
+.mt-4 { padding-top: 24px; }
+
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.info-item label { font-size: 0.75rem; color: #64748b; font-weight: 600; display: block; margin-bottom: 4px;}
+.info-box { background: #f8fafc; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: #334155; border: 1px solid #e2e8f0; font-family: monospace;}
+
+/* JSON Payload Areas */
+.payload-section { border-radius: 6px; padding: 12px; border: 1px solid transparent; }
+.payload-title { font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; display: block; }
+.payload-section pre { margin: 0; font-family: monospace; font-size: 0.8rem; white-space: pre-wrap; }
+.old-data { background-color: #fef2f2; border-color: #fca5a5; color: #991b1b; }
+.new-data { background-color: #f0fdf4; border-color: #86efac; color: #166534; }
+.payload-divider { text-align: center; color: #cbd5e1; margin: 8px 0; }
+
+.details-footer { padding: 16px; display: flex; gap: 12px; border-top: 1px solid #e2e8f0; }
+
+.pagination {
+  display: flex;
+  justify-content: space-between; /* Separa el texto a la izquierda y los botones a la derecha */
+  align-items: center;
+  padding: 1rem 0;
+  margin-left: 1rem;
+  border-top: 1px solid #eee; /* Opcional: una lineecita sutil arriba */
+}
+
+.page-controls {
+  display: flex;
+  gap: 8px; /* Espacio horizontal entre los botones */
+  margin-right: 1rem;
+}
+
+/* (Opcional) Para que los botones se vean del mismo tamaño */
+.page-controls button {
+  min-width: 90px;
+  padding: 6px 12px;
+}
+
+/* Color rojizo muy suave para indicar alerta */
+tr.alert-row {
+  background-color: #fff5f5; 
+}
+
+/* Un poquito más oscuro cuando pasas el mouse por encima */
+tr.alert-row:hover {
+  background-color: #ffebeb;
+}
+
+/* Si hacen clic en la alerta, la resaltamos aún más con un borde rojo fuerte */
+tr.alert-row.active-row {
+  background-color: #ffe0e0;
+  border-left: 4px solid #dc3545; /* Rojo fuerte de Bootstrap/peligro */
+}
