@@ -127,7 +127,10 @@
                             {{ control.get('theoreticalQuantity')?.value | number:'1.2-2' }}
                           </td>
                           <td style="padding: 4px 10px; background: #FFFBEB;">
-                            <input type="number" formControlName="realQuantity" class="form-control" style="text-align: right; padding: 4px 8px; font-weight: 700; border-color: #FCD34D;" min="0" step="0.01">
+                            <div style="position: relative; display: flex; align-items: center;">
+                              <input type="number" formControlName="realQuantity" class="form-control" style="text-align: right; padding: 4px 30px 4px 8px; font-weight: 700; border-color: #CBD5E1; background-color: #F8FAFC;" min="0" step="0.01" readonly title="Calculado automáticamente desde las salidas de almacén">
+                              <i class="fas fa-lock" style="color: #94A3B8; position: absolute; right: 8px; pointer-events: none;" title="Sincronizado con Almacén"></i>
+                            </div>
                           </td>
                         </tr>
                       }

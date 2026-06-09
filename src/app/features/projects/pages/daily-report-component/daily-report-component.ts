@@ -8,6 +8,7 @@ import { ProjectService } from '../../../../core/services/project.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ToastService } from '../../../../core/services/toast-service';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
+import { InventoryService } from '../../../../core/services/inventory.service';
 
 @Component({
   selector: 'app-daily-report-component',
@@ -23,6 +24,7 @@ export class DailyReportComponent implements OnInit {
   private reportService = inject(ProgressReportService);
   private itemService = inject(ProjectItemService);
   private projectService = inject(ProjectService);
+  private inventoryService = inject(InventoryService);
   private route = inject(ActivatedRoute);
 
   reportForm!: FormGroup;
@@ -71,7 +73,8 @@ export class DailyReportComponent implements OnInit {
     if (!this.selectedItemInfo || !this.selectedItemInfo.apuDetails) return;
 
     this.selectedItemInfo.apuDetails.forEach(apu => {
-      this.usedResourcesFormArray.push(this.fb.group({
+      const isMaterial = apu.resourceType === 'MATERIAL';
+      const rowGroup = this.fb.group({
         resourceId: [apu.resourceId],
         resourceName: [apu.resourceName],
         resourceType: [apu.resourceType],
@@ -80,8 +83,22 @@ export class DailyReportComponent implements OnInit {
         unitCoefficient: [apu.quantity], 
         
         theoreticalQuantity: [{ value: 0, disabled: true }], // Solo lectura
-        realQuantity: [0, [Validators.required, Validators.min(0)]] // El ingeniero digita esto
-      }));
+        realQuantity: [{ value: 0, disabled: isMaterial }, [Validators.required, Validators.min(0)]] // El ingeniero digita esto si no es material
+      });
+
+      this.usedResourcesFormArray.push(rowGroup);
+
+      // Si es material, traemos la cantidad automáticamente desde el almacén
+      if (isMaterial && this.selectedItemInfo?.id) {
+        this.inventoryService.getConsumedQuantity(this.selectedItemInfo.id, apu.resourceId).subscribe({
+          next: (qty) => {
+            rowGroup.get('realQuantity')?.setValue(qty || 0);
+          },
+          error: (err) => {
+            console.error('Error fetching consumed quantity', err);
+          }
+        });
+      }
     });
   }
 
@@ -91,7 +108,11 @@ export class DailyReportComponent implements OnInit {
       const theoretical = Number((coeff * metradoHoy).toFixed(2));
       
       row.get('theoreticalQuantity')?.setValue(theoretical);
-      row.get('realQuantity')?.setValue(theoretical); 
+      
+      // Solo copiamos el teórico al real si NO es material (los materiales vienen de almacén)
+      if (row.get('resourceType')?.value !== 'MATERIAL') {
+        row.get('realQuantity')?.setValue(theoretical); 
+      }
     });
   }
 
