@@ -3,16 +3,18 @@ import { AuditService } from '../../core/services/audit.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuditLog } from '../../core/models/auditLog.model';
+import { Skeleton } from '../../shared/components/skeleton/skeleton';
 
 @Component({
   selector: 'app-audit-log',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Skeleton],
   templateUrl: './audit-log.html',
   styleUrl: './audit-log.css',
 })
 export class AuditLogComponent implements OnInit {
   private auditService = inject(AuditService);
 
+  isLoading = true;
   logs: AuditLog[] = [];
   selectedLog: AuditLog | null = null;
   
@@ -44,6 +46,7 @@ export class AuditLogComponent implements OnInit {
   }
 
   loadLogs(): void {
+    this.isLoading = true;
     this.auditService.getLogs(
       this.currentPage, 
       10, 
@@ -61,8 +64,12 @@ export class AuditLogComponent implements OnInit {
         } else {
           this.selectedLog = null;
         }
+        this.isLoading = false;
       },
-      error: (err) => console.error('Error al cargar logs', err)
+      error: (err) => {
+        console.error('Error al cargar logs', err);
+        this.isLoading = false;
+      }
     });
   }
 

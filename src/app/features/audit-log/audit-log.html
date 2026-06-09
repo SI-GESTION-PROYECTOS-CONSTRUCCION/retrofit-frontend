@@ -82,31 +82,60 @@
           </tr>
         </thead>
         <tbody>
-          @for (log of logs; track log.logId) {
-            <tr 
-            (click)="selectLog(log)"
-            [class.active-row]="selectedLog?.logId === log.logId"
-            [class.alert-row]="isAlert(log)">
-              <td class="text-muted">{{ log.timestamp | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-              <td>
-                <div class="user-cell">
-                  <!-- Un avatar por defecto o icono -->
-                  <div class="avatar"><i class="fa-solid fa-user"></i></div>
-                  <div class="user-info">
-                    <span class="user-name">{{ log.userName }}</span>
-                    <span class="user-role">{{ log.userRole }}</span>
+          @if (isLoading) {
+            @for (item of [1,2,3,4,5,6,7,8,9,10]; track item) {
+              <tr>
+                <td><app-skeleton width="150px" height="16px" marginBottom="0"></app-skeleton></td>
+                <td>
+                  <div class="user-cell">
+                    <app-skeleton width="32px" height="32px" borderRadius="50%" marginBottom="0"></app-skeleton>
+                    <div class="user-info" style="display: flex; flex-direction: column; gap: 4px; margin-left: 10px;">
+                      <app-skeleton width="100px" height="14px" marginBottom="0"></app-skeleton>
+                      <app-skeleton width="80px" height="12px" marginBottom="0"></app-skeleton>
+                    </div>
                   </div>
-                </div>
-              </td>
-              <td>
-                <span class="badge" [ngClass]="getBadgeClass(log.action)">{{ log.action }}</span>
-              </td>
-              <td class="text-muted">{{ log.module }}</td>
-              <td>
-                <span class="log-desc">{{ log.description }}</span>
-                <span class="log-id text-muted">{{ log.logId }}</span>
-              </td>
-            </tr>
+                </td>
+                <td><app-skeleton width="80px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton></td>
+                <td><app-skeleton width="100px" height="16px" marginBottom="0"></app-skeleton></td>
+                <td style="display: flex; flex-direction: column; gap: 4px;">
+                  <app-skeleton width="200px" height="16px" marginBottom="0"></app-skeleton>
+                  <app-skeleton width="60px" height="12px" marginBottom="0"></app-skeleton>
+                </td>
+              </tr>
+            }
+          } @else {
+            @if (logs.length === 0) {
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 2rem;">No se encontraron registros</td>
+              </tr>
+            } @else {
+              @for (log of logs; track log.logId) {
+                <tr 
+                (click)="selectLog(log)"
+                [class.active-row]="selectedLog?.logId === log.logId"
+                [class.alert-row]="isAlert(log)">
+                  <td class="text-muted">{{ log.timestamp | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                  <td>
+                    <div class="user-cell">
+                      <!-- Un avatar por defecto o icono -->
+                      <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                      <div class="user-info">
+                        <span class="user-name">{{ log.userName }}</span>
+                        <span class="user-role">{{ log.userRole }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="getBadgeClass(log.action)">{{ log.action }}</span>
+                  </td>
+                  <td class="text-muted">{{ log.module }}</td>
+                  <td>
+                    <span class="log-desc">{{ log.description }}</span>
+                    <span class="log-id text-muted">{{ log.logId }}</span>
+                  </td>
+                </tr>
+              }
+            }
           }
         </tbody>
       </table>
