@@ -40,6 +40,15 @@ export class ProjectService {
     return this.http.put<ProjectResponseDto>(`${this.apiUrl}/${id}`, dto);
   }
 
+  saveApuDetails(projectItemId: number, laborYield: number, equipmentYield: number, resources: any[]): Observable<any> {
+    const url = `${this.apiUrl}/project-items/${projectItemId}/apu?laborYield=${laborYield}&equipmentYield=${equipmentYield}`;
+    return this.http.put<any>(url, resources);
+  }
+
+  downloadApuReport(projectId: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${projectId}/reports/apu`, { responseType: 'blob' });
+  }
+
   deleteProject(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
