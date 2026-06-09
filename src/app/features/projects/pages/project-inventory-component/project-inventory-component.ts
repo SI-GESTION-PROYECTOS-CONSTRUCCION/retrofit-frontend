@@ -38,6 +38,34 @@ export class ProjectInventoryComponent implements OnInit {
   kardexData: any[] = [];
   selectedResourceName = '';
 
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalElements = 0;
+  totalPages = 0;
+
+  get startIndex(): number {
+    if (this.totalElements === 0) return 0;
+    return (this.currentPage - 1) * this.itemsPerPage + 1;
+  }
+
+  get endIndex(): number {
+    return Math.min(this.currentPage * this.itemsPerPage, this.totalElements);
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadInventory();
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadInventory();
+    }
+  }
+
   ngOnInit(): void {
     this.initForms();
     this.loadInventory();
@@ -65,13 +93,24 @@ export class ProjectInventoryComponent implements OnInit {
 
   loadInventory(): void {
     this.isLoading = true;
-    this.inventoryService.getProjectStockSummary(this.projectId).subscribe({
-      next: (data) => {
-        this.inventoryData = data;
+    this.inventoryService.getProjectStockSummary(this.projectId, this.currentPage - 1, this.itemsPerPage).subscribe({
+      next: (pageData: any) => {
+        if (Array.isArray(pageData)) {
+          this.inventoryData = pageData;
+          this.totalElements = pageData.length;
+          this.totalPages = Math.ceil(pageData.length / this.itemsPerPage);
+        } else {
+          this.inventoryData = pageData.content || [];
+          this.totalElements = pageData.totalElements || 0;
+          this.totalPages = pageData.totalPages || 0;
+        }
         this.isLoading = false;
       },
       error: (err) => {
         console.error('Error al cargar el inventario:', err);
+        this.inventoryData = [];
+        this.totalElements = 0;
+        this.totalPages = 0;
         this.isLoading = false;
       }
     });
@@ -131,8 +170,7 @@ export class ProjectInventoryComponent implements OnInit {
     if (this.inboundForm.invalid) return;
     const request = {
       ...this.inboundForm.value,
-      projectId: this.projectId,
-      createdBy: 'fcastro'
+      projectId: this.projectId
     };
     
     this.inventoryService.registerInbound(request).subscribe({
@@ -148,8 +186,7 @@ export class ProjectInventoryComponent implements OnInit {
     if (this.outboundForm.invalid) return;
     const request = {
       ...this.outboundForm.value,
-      projectId: this.projectId,
-      createdBy: 'admin'
+      projectId: this.projectId
     };
 
     this.inventoryService.registerOutbound(request).subscribe({

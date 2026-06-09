@@ -3,6 +3,8 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment'; 
 import { InventoryTransactionRequest, InventoryTransactionResponse, StockSummary } from '../models/inventory.model';
+import { SupplyControl } from '../models/supply-control.model';
+import { Page } from '../models/page.model';
 
 @Injectable({
   providedIn: 'root'
@@ -47,13 +49,28 @@ export class InventoryService {
     return this.http.get<InventoryTransactionResponse[]>(`${this.apiUrl}/kardex`, { params });
   }
 
-  getProjectStockSummary(projectId: number): Observable<StockSummary[]> {
-    const params = new HttpParams().set('projectId', projectId.toString());
-    return this.http.get<StockSummary[]>(`${this.apiUrl}/summary`, { params });
+  getProjectStockSummary(projectId: number, page: number = 0, size: number = 10): Observable<Page<StockSummary>> {
+    const params = new HttpParams()
+      .set('projectId', projectId.toString())
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<Page<StockSummary>>(`${this.apiUrl}/summary`, { params });
   }
 
   getPlannedMaterials(projectId: number): Observable<any[]> {
     const params = new HttpParams().set('projectId', projectId.toString());
     return this.http.get<any[]>(`${this.apiUrl}/planned-materials`, { params });
+  }
+
+  getSupplyControl(projectId: number): Observable<SupplyControl[]> {
+    const params = new HttpParams().set('projectId', projectId.toString());
+    return this.http.get<SupplyControl[]>(`${this.apiUrl}/supply-control`, { params });
+  }
+
+  getConsumedQuantity(projectItemId: number, resourceId: number): Observable<number> {
+    const params = new HttpParams()
+      .set('projectItemId', projectItemId.toString())
+      .set('resourceId', resourceId.toString());
+    return this.http.get<number>(`${this.apiUrl}/consumed-quantity`, { params });
   }
 }

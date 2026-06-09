@@ -90,6 +90,7 @@
       <button class="tab-item" [class.active]="activeTab === 'CRONOGRAMA'" (click)="activeTab = 'CRONOGRAMA'">CRONOGRAMA (GANTT)</button>
       <button class="tab-item" [class.active]="activeTab === 'AVANCES'" (click)="activeTab = 'AVANCES'">AVANCES</button>
       <button class="tab-item" [class.active]="activeTab === 'INVENTARIO'" (click)="activeTab = 'INVENTARIO'">INVENTARIO</button>
+      <button class="tab-item" [class.active]="activeTab === 'ABASTECIMIENTO'" (click)="activeTab = 'ABASTECIMIENTO'">ABASTECIMIENTO</button>
     </div>
 
     <div class="tab-content">
@@ -108,6 +109,9 @@
         }
         @case ('INVENTARIO') {
           <app-project-inventory [projectId]="project.id"></app-project-inventory>
+        }
+        @case ('ABASTECIMIENTO') {
+          <app-project-supply-control [projectId]="project.id"></app-project-supply-control>
         }
       }
     </div>

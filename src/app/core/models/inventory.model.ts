@@ -32,6 +32,7 @@ export interface InventoryTransactionResponse {
   resourceUnit: string;
   projectItemId?: number;
   projectItemCode?: string;
+  projectItemDescription?: string;
   transactionType: TransactionType;
   reason: TransactionReason;
   quantity: number;

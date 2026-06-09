@@ -10,11 +10,12 @@ import { ProjectProgressListComponent } from '../project-progress-list-component
 import { ProjectGanttComponent } from '../project-gantt-component/project-gantt-component';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 import { ProjectInventoryComponent } from '../project-inventory-component/project-inventory-component';
+import { ProjectSupplyControlComponent } from '../project-supply-control-component/project-supply-control-component';
 
 @Component({
   selector: 'app-project-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, ProjectBudgetComponent, ProjectSummaryComponent, ProjectProgressListComponent, ProjectGanttComponent, Skeleton, ProjectInventoryComponent],
+  imports: [CommonModule, RouterModule, ProjectBudgetComponent, ProjectSummaryComponent, ProjectProgressListComponent, ProjectGanttComponent, Skeleton, ProjectInventoryComponent, ProjectSupplyControlComponent],
   templateUrl: './project-detail-component.html',
   styleUrl: './project-detail-component.css'
 })

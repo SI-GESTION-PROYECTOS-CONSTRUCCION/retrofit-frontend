@@ -18,7 +18,6 @@
     <table class="retrofit-table">
       <thead>
         <tr>
-          <th>Código</th>
           <th>Material / Recurso</th>
           <th>Und.</th>
           <th>Stock Físico Actual</th>
@@ -29,17 +28,25 @@
       <tbody>
         @if (isLoading) {
           <tr>
-            <td><div class="skeleton" style="height: 20px; width: 60px;"></div></td>
             <td><div class="skeleton" style="height: 20px; width: 200px;"></div></td>
             <td><div class="skeleton" style="height: 20px; width: 40px;"></div></td>
             <td><div class="skeleton" style="height: 20px; width: 80px;"></div></td>
             <td><div class="skeleton" style="height: 24px; width: 80px; border-radius: 9999px;"></div></td>
             <td><div class="skeleton" style="height: 20px; width: 30px;"></div></td>
           </tr>
+        } @else if (!inventoryData || inventoryData.length === 0) {
+          <tr>
+            <td colspan="6" class="text-center py-5">
+              <div class="empty-state-message" style="display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; padding: 20px;">
+                <i class="fa-solid fa-box-open" style="font-size: 32px; margin-bottom: 12px; color: #cbd5e1;"></i>
+                <span style="font-weight: 500; font-size: 15px;">No hay materiales registrados en almacén</span>
+                <span style="font-size: 13px; margin-top: 4px;">Los ingresos que registres aparecerán aquí</span>
+              </div>
+            </td>
+          </tr>
         } @else {
           @for (item of inventoryData; track item.resourceId) {
             <tr>
-              <td class="col-code"></td> 
               <td class="col-name">{{ item.resourceName }}</td>
               <td>{{ item.resourceUnit }}</td>
               <td style="font-weight: 600; color: #111827;">{{ item.currentStock | number:'1.2-2' }}</td>
@@ -66,10 +73,10 @@
     </table>
     
     <div class="pagination-footer">
-      <span>Mostrando 1 a 10 de 45 materiales</span>
+      <span>Mostrando {{ startIndex }} a {{ endIndex }} de {{ totalElements }} materiales</span>
       <div class="pagination-controls">
-        <button class="btn-outline" disabled>Anterior</button>
-        <button class="btn-outline">Siguiente</button>
+        <button class="btn-outline" [disabled]="currentPage === 1" (click)="previousPage()">Anterior</button>
+        <button class="btn-outline" [disabled]="currentPage === totalPages || totalPages === 0" (click)="nextPage()">Siguiente</button>
       </div>
     </div>
   </div>
@@ -238,7 +245,7 @@
                 <td style="font-weight: 600;" [ngStyle]="{'color': mov.transactionType === 'INBOUND' ? '#10B981' : '#EF4444'}">
                   {{ mov.transactionType === 'INBOUND' ? '+' : '-' }}{{ mov.quantity | number:'1.2-2' }}
                 </td>
-                <td style="font-size: 12px;">{{ mov.projectItemCode ? mov.projectItemCode : '--' }}</td>
+                <td style="font-size: 12px;">{{ mov.projectItemCode ? mov.projectItemCode + ' - ' + mov.projectItemDescription : '--' }}</td>
                 <td style="font-size: 12px;">{{ mov.createdBy }}</td>
               </tr>
             }
