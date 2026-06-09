@@ -1,8 +1,5 @@
 .supply-control-container {
-  background: white;
   border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   animation: fadeIn 0.3s ease-in-out;
 }
 
@@ -13,11 +10,7 @@
   margin-bottom: 1.5rem;
 }
 
-.flex-header h3 {
-  margin: 0;
-  color: #1f2937;
-  font-weight: 600;
-}
+
 
 .table-container {
   overflow-x: auto;
