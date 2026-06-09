@@ -10,18 +10,27 @@
 
   <!-- Stats Section (Mocks for layout) -->
   <section class="stats-row">
-    <div class="stat-card">
-      <span class="stat-label">EVENTOS HOY</span>
-      <span class="stat-value">{{ stats.todayEvents }}</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-label">MODIFICACIONES</span>
-      <span class="stat-value text-muted">{{ stats.modifications }}</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-label">ALERTAS SISTEMA</span>
-      <span class="stat-value text-danger">{{ stats.alerts }}</span>
-    </div>
+    @if (isLoadingStats) {
+      @for (item of [1,2,3]; track item) {
+        <div class="stat-card" style="display: flex; flex-direction: column; gap: 10px; padding: 1.5rem;">
+          <app-skeleton width="120px" height="12px" marginBottom="0"></app-skeleton>
+          <app-skeleton width="80px" height="32px" marginBottom="0"></app-skeleton>
+        </div>
+      }
+    } @else {
+      <div class="stat-card">
+        <span class="stat-label">EVENTOS HOY</span>
+        <span class="stat-value">{{ stats.todayEvents }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">MODIFICACIONES</span>
+        <span class="stat-value text-muted">{{ stats.modifications }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">ALERTAS SISTEMA</span>
+        <span class="stat-value text-danger">{{ stats.alerts }}</span>
+      </div>
+    }
   </section>
 
   <!-- Filters Section -->

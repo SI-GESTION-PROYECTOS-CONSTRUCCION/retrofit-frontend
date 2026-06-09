@@ -15,6 +15,7 @@ export class AuditLogComponent implements OnInit {
   private auditService = inject(AuditService);
 
   isLoading = true;
+  isLoadingStats = true;
   logs: AuditLog[] = [];
   selectedLog: AuditLog | null = null;
   
@@ -39,9 +40,16 @@ export class AuditLogComponent implements OnInit {
   }
 
   loadStats(): void {
+    this.isLoadingStats = true;
     this.auditService.getStats().subscribe({
-      next: (res) => this.stats = res,
-      error: (err) => console.error('Error cargando stats', err)
+      next: (res) => {
+        this.stats = res;
+        this.isLoadingStats = false;
+      },
+      error: (err) => {
+        console.error('Error cargando stats', err);
+        this.isLoadingStats = false;
+      }
     });
   }
 
