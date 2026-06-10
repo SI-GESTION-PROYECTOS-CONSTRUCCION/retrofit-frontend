@@ -38,7 +38,7 @@
             <th width="50px"></th> </tr>
         </thead>
         <tbody formArrayName="items">
-          @for (row of itemsFormArray.controls; track row; let idx = $index) {
+          @for (row of itemsFormArray.controls; track row.get('id')?.value || $index; let idx = $index) {
             
             <tr [formGroupName]="idx" [ngClass]="{'is-parent-row': isParent(idx)}">
               
