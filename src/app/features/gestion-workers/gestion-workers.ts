@@ -6,10 +6,11 @@ import { WorkerService } from '../../core/services/worker.service';
 import { WorkerDto } from '../../core/models/worker.model';
 import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-modal';
 import { Skeleton } from '../../shared/components/skeleton/skeleton';
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 
 @Component({
   selector: 'app-gestion-workers',
-  imports: [CommonModule, FormsModule, WorkerFormModalComponent, ConfirmModal, Skeleton],
+  imports: [CommonModule, FormsModule, WorkerFormModalComponent, ConfirmModal, Skeleton, HasPermissionDirective],
   templateUrl: './gestion-workers.html',
   styleUrl: './gestion-workers.css',
 })

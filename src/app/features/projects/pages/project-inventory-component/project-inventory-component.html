@@ -6,11 +6,11 @@
       <input type="text" placeholder="Buscar material por código o nombre...">
     </div>
     
-    <button class="btn btn-outline" (click)="openInboundModal()">
-      <span>+ Ingreso</span>
+    <button *appHasPermission="'INVENTORY_CREATE'" class="btn btn-outline" (click)="openInboundModal()">
+      <i class="fa-solid fa-arrow-turn-down"></i> Registrar Ingreso
     </button>
-    <button class="btn btn-primary" (click)="openOutboundModal()">
-      <span>- Salida / Consumo</span>
+    <button *appHasPermission="'INVENTORY_CREATE'" class="btn btn-primary" (click)="openOutboundModal()">
+      <i class="fa-solid fa-arrow-turn-up"></i> Registrar Salida
     </button>
   </div>
 
@@ -57,9 +57,9 @@
                   <span class="badge badge-danger">Crítico</span>
                 }
               </td>
-              <td>
-                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" (click)="openOutboundModal(item.resourceId)">
-                  Retirar
+              <td style="text-align: right;">
+                <button *appHasPermission="'INVENTORY_CREATE'" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" (click)="openOutboundModal(item.resourceId)">
+                  Despachar
                 </button>
 
                 <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; border-color: transparent;" (click)="openKardexModal(item.resourceId, item.resourceName)">

@@ -6,10 +6,11 @@ import { UserDto } from '../../core/models/user.model';
 import { ConfirmModal } from "../../shared/components/confirm-modal/confirm-modal";
 import { UserFormModalComponent } from "./user-form-modal/user-form-modal";
 import { Skeleton } from '../../shared/components/skeleton/skeleton';
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 
 @Component({
   selector: 'app-gestion-usuarios',
-  imports: [CommonModule, FormsModule, ConfirmModal, UserFormModalComponent, Skeleton],
+  imports: [CommonModule, FormsModule, ConfirmModal, UserFormModalComponent, Skeleton, HasPermissionDirective],
   templateUrl: './gestion-usuarios.html',
   styleUrl: './gestion-usuarios.css',
 })

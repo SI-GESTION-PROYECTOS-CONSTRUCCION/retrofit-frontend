@@ -115,10 +115,9 @@
                 <thead>
                   <tr>
                     <th style="background-color: #F9FAFB; color: #4B5563;">Módulo del Sistema</th>
-                    <th style="background-color: #F9FAFB; color: #4B5563; text-align: center;">Crear (POST)</th>
-                    <th style="background-color: #F9FAFB; color: #4B5563; text-align: center;">Leer (GET)</th>
-                    <th style="background-color: #F9FAFB; color: #4B5563; text-align: center;">Editar (PUT)</th>
-                    <th style="background-color: #F9FAFB; color: #4B5563; text-align: center;">Borrar (DEL)</th>
+                    @for (act of actions; track act) {
+                      <th style="background-color: #F9FAFB; color: #4B5563; text-align: center;">{{ act }}</th>
+                    }
                   </tr>
                 </thead>
                 <tbody>
@@ -127,10 +126,14 @@
                       <td style="font-weight: 600; color: #111827;">{{ mod.label }}</td>
                       @for (act of actions; track act) {
                         <td style="text-align: center;">
-                          <input type="checkbox" 
-                                 style="width: 18px; height: 18px; cursor: pointer; accent-color: #1A1A1A;"
-                                 [checked]="hasPermission(mod.prefix, act)"
-                                 (change)="togglePermission(mod.prefix, act)">
+                          @if (isPermissionApplicable(mod.prefix, act)) {
+                            <input type="checkbox" 
+                                   style="width: 18px; height: 18px; cursor: pointer; accent-color: #1A1A1A;"
+                                   [checked]="hasPermission(mod.prefix, act)"
+                                   (change)="togglePermission(mod.prefix, act)">
+                          } @else {
+                            <span style="color: #9CA3AF; font-size: 12px;" title="No aplica">N/A</span>
+                          }
                         </td>
                       }
                     </tr>

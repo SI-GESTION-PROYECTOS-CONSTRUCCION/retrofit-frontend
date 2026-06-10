@@ -5,7 +5,7 @@
       <p class="page-subtitle">Gestión de operarios, técnicos y especialistas de Retrofit S.A.C.</p>
     </div>
     <div class="header-actions">
-      <button class="btn btn-primary" (click)="openModal('create')">
+      <button *appHasPermission="'WORKER_CREATE'" class="btn btn-primary" (click)="openModal('create')">
         <i class="fa-solid fa-person-digging"></i> Nuevo Trabajador
       </button>
     </div>
@@ -131,8 +131,8 @@
                 <td class="col-actions">
                   <div class="action-buttons-group">
                     <button class="action-btn view" (click)="openModal('view', worker)"><i class="fa-regular fa-eye"></i></button>
-                    <button class="action-btn edit" (click)="openModal('edit', worker)"><i class="fa-regular fa-pen-to-square"></i></button>
-                    <button class="action-btn delete" (click)="openDeleteConfirm(worker)"><i class="fa-regular fa-trash-can"></i></button>
+                    <button *appHasPermission="'WORKER_UPDATE'" class="action-btn edit" (click)="openModal('edit', worker)"><i class="fa-regular fa-pen-to-square"></i></button>
+                    <button *appHasPermission="'WORKER_DELETE'" class="action-btn delete" (click)="openDeleteConfirm(worker)"><i class="fa-regular fa-trash-can"></i></button>
                   </div>
                 </td>
               </tr>

@@ -155,8 +155,8 @@
                       } @else if (isWorkerAssignedAnywhere(worker.id)) {
                         <div class="blocked-cell"></div>
                       } @else {
-                        <button class="btn-assign" (click)="onAssignClick(worker, project)" title="Asignar">
-                          <i class="fa-solid fa-plus"></i>
+                        <button *appHasPermission="'WORKER_UPDATE'" class="btn-assign" (click)="onAssignClick(worker, project)" title="Asignar">
+                          <i class="fa-solid fa-arrow-right"></i>
                         </button>
                       }
                     </td>
