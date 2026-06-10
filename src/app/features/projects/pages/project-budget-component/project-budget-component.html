@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="actions">
-      <button class="btn btn-dark" (click)="saveBudget()" [disabled]="isLocked || isLoading">
+      <button *appHasPermission="'PROJECT_UPDATE'" class="btn btn-dark" (click)="saveBudget()" [disabled]="isLocked || isLoading">
         <i class="fa-solid fa-floppy-disk"></i> Guardar Presupuesto
       </button>
     </div>
@@ -105,14 +105,14 @@
                       }
 
                       @if (!isLocked) {
-                        <button type="button" class="btn btn-outline text-primario" style="padding: 4px 8px;" (click)="openApuModal(idx)" title="Configurar APU">
-                          <i class="fa-solid fa-calculator"></i>
+                        <button *appHasPermission="'PROJECT_UPDATE'" type="button" class="btn btn-outline text-primario" style="padding: 4px 8px;" (click)="openApuModal(idx)" title="Configurar APU">
+                          <i class="fa-solid fa-gears"></i>
                         </button>
                       }
                     }
 
                     @if (!isLocked) {
-                      <button type="button" class="btn btn-outline text-danger" style="padding: 4px 8px;" (click)="removeRow(idx)" title="Eliminar fila">
+                      <button *appHasPermission="'PROJECT_UPDATE'" type="button" class="btn btn-outline text-danger" style="padding: 4px 8px;" (click)="removeRow(idx)" title="Eliminar fila">
                         <i class="fa-solid fa-trash-can"></i>
                       </button>
                     }

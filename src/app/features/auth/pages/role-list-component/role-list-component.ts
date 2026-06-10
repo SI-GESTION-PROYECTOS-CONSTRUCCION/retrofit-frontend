@@ -24,15 +24,19 @@ export class RoleListComponent {
   allPermissions: any[] = [];
   permissionMap: { [key: string]: number } = {}; // Ej: { 'PROJECT_CREATE': 1, 'PROJECT_READ': 2 }
   selectedPermissionIds = new Set<number>(); 
-  modules = [
-    { prefix: 'PROJECT', label: 'Proyectos y APUs' },
-    { prefix: 'RESOURCE', label: 'Catálogo de Recursos' },
-    { prefix: 'REPORT', label: 'Reportes de Avance' },
-    { prefix: 'WORKER', label: 'Trabajadores y Asignaciones' },
-    { prefix: 'USER', label: 'Usuarios del Sistema' },
-    { prefix: 'SECURITY', label: 'Roles y Seguridad' }
-  ];
-  actions = ['CREATE', 'READ', 'UPDATE', 'DELETE'];
+  modules: { prefix: string, label: string }[] = [];
+  actions: string[] = [];
+  
+  labelMap: Record<string, string> = {
+    'PROJECT': 'Proyectos y APUs',
+    'RESOURCE': 'Catálogo de Recursos',
+    'REPORT': 'Reportes de Avance',
+    'WORKER': 'Trabajadores y Asignaciones',
+    'USER': 'Usuarios del Sistema',
+    'SECURITY': 'Roles y Seguridad',
+    'INVENTORY': 'Inventario (Almacén)',
+    'AUDIT': 'Auditoría'
+  };
 
   // --- MODALES ---
   isModalOpen = false;
@@ -58,12 +62,55 @@ export class RoleListComponent {
 
   loadPermissions() {
     this.roleService.getAllPermissions().subscribe({
-      next: (data) => {
-        this.allPermissions = data;
-        // Mapeamos el nombre con su ID para buscarlo rápido
-        data.forEach(p => this.permissionMap[p.name] = p.id);
+      next: (res: any[]) => {
+        this.allPermissions = res;
+        this.permissionMap = {};
+        res.forEach(p => {
+          this.permissionMap[p.name] = p.id;
+        });
+        this.buildDynamicMatrix(res);
+      },
+      error: (err) => {
+        this.toastService.show('Error al cargar diccionario de permisos', 'error');
       }
     });
+  }
+
+  buildDynamicMatrix(perms: any[]) {
+    const prefixSet = new Set<string>();
+    const actionSet = new Set<string>();
+
+    perms.forEach(p => {
+      const parts = p.name.split('_');
+      if (parts.length >= 2) {
+        const action = parts.pop();
+        const prefix = parts.join('_');
+        if (prefix) prefixSet.add(prefix);
+        if (action) actionSet.add(action);
+      } else {
+        prefixSet.add(p.name);
+        actionSet.add('ACCESS');
+      }
+    });
+
+    const standardActions = ['CREATE', 'READ', 'UPDATE', 'DELETE', 'EXPORT'];
+    this.actions = Array.from(actionSet).sort((a, b) => {
+      const idxA = standardActions.indexOf(a);
+      const idxB = standardActions.indexOf(b);
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return a.localeCompare(b);
+    });
+
+    this.modules = Array.from(prefixSet).map(prefix => ({
+      prefix,
+      label: this.labelMap[prefix] || prefix
+    }));
+  }
+
+  isPermissionApplicable(prefix: string, action: string): boolean {
+    return this.permissionMap[`${prefix}_${action}`] !== undefined;
   }
 
   loadRoles() {

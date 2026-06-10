@@ -7,11 +7,12 @@ import { FormsModule } from '@angular/forms'; // <--- IMPORTANTE AGREGAR ESTO
 import { ProjectCreateModalComponent } from '../../modal/project-create-modal-component/project-create-modal-component';
 import { ConfirmModal } from '../../../../shared/components/confirm-modal/confirm-modal';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
+import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [RouterModule, CommonModule, ProjectCreateModalComponent, FormsModule, ConfirmModal, Skeleton], 
+  imports: [RouterModule, CommonModule, ProjectCreateModalComponent, FormsModule, ConfirmModal, Skeleton, HasPermissionDirective], 
   templateUrl: './project-list.html',
   styleUrl: './project-list.css',
 })

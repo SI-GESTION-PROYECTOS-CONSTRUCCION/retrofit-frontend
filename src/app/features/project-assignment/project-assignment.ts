@@ -8,10 +8,11 @@ import { ProjectService } from '../../core/services/project.service';
 import { forkJoin } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Skeleton } from '../../shared/components/skeleton/skeleton';
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 
 @Component({
   selector: 'app-project-assignment',
-  imports: [CommonModule, Skeleton],
+  imports: [CommonModule, Skeleton, HasPermissionDirective],
   templateUrl: './project-assignment.html',
   styleUrl: './project-assignment.css',
 })

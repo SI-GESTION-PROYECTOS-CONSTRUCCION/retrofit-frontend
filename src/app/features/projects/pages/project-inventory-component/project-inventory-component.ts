@@ -6,11 +6,12 @@ import { ResourceService } from '../../../../core/services/resource.service';
 import { ProjectItemService } from '../../../../core/services/project-item.service';
 import { StockSummary, TransactionReason } from '../../../../core/models/inventory.model';
 import { ToastService } from '../../../../core/services/toast-service';
+import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 
 @Component({
   selector: 'app-project-inventory',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, HasPermissionDirective],
   templateUrl: './project-inventory-component.html',
   styleUrls: ['./project-inventory-component.css']
 })

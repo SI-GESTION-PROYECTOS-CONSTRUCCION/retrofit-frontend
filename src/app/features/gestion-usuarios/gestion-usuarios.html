@@ -5,7 +5,7 @@
             <p class="page-subtitle">Configura los niveles de acceso y permisos para cada perfil del sistema.</p>
         </div>
         <div class="header-actions">
-            <button class="btn btn-primary" (click)="openModal('create')">
+            <button *appHasPermission="'USER_CREATE'" class="btn btn-primary" (click)="openModal('create')">
                 <i class="fa-solid fa-user-plus"></i> Nuevo Usuario
             </button>
         </div>
@@ -133,10 +133,10 @@
                                 <button class="action-btn view" title="Ver Detalle" (click)="openModal('view', user)">
                                 <i class="fa-regular fa-eye"></i>
                                 </button>
-                                <button class="action-btn edit" title="Editar" (click)="openModal('edit', user)">
+                                <button *appHasPermission="'USER_UPDATE'" class="action-btn edit" title="Editar" (click)="openModal('edit', user)">
                                 <i class="fa-regular fa-pen-to-square"></i>
                                 </button>
-                                <button class="action-btn delete" title="Eliminar" (click)="openDeleteConfirm(user)">
+                                <button *appHasPermission="'USER_DELETE'" class="action-btn delete" title="Eliminar" (click)="openDeleteConfirm(user)">
                                 <i class="fa-regular fa-trash-can"></i>
                                 </button>
                             </div>

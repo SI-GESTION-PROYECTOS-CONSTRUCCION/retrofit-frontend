@@ -7,8 +7,8 @@
     </div>
     <div class="header-actions">
      <!-- <button class="btn btn-outline"><i class="fa-solid fa-download"></i> Exportar</button>-->
-      <button class="btn btn-primary" (click)="openNewProjectModal()">
-        <i class="fa-solid fa-plus"></i> Nuevo Proyecto
+      <button *appHasPermission="'PROJECT_CREATE'" class="btn btn-primary" (click)="openNewProjectModal()">
+        <i class="fa-solid fa-folder-plus"></i> Nuevo Proyecto
       </button>
 
       @if (isModalOpen) {
@@ -175,16 +175,18 @@
 
                     <!-- El Menú Desplegable (Solo se muestra si su ID coincide) -->
                     @if (activeMenuId === project.id) {
-                      <div class="dropdown-menu">
-                        <button class="dropdown-item" (click)="openEditModal(project)">
-                          <i class="fa-solid fa-pen"></i> Editar
+                      <ul class="dropdown-menu">
+                        <li>
+                        <button *appHasPermission="'PROJECT_UPDATE'" class="dropdown-item" (click)="openEditModal(project)">
+                          <i class="fa-solid fa-pen" style="margin-right: 8px;"></i> Editar Info.
                         </button>
-                        <div class="dropdown-divider"></div>
-                        <button class="dropdown-item text-danger" (click)="openDeleteModal(project)">
-                          <i class="fa-solid fa-trash-can"></i> Eliminar
+                        </li>
+                        <li>
+                        <button *appHasPermission="'PROJECT_DELETE'" class="dropdown-item text-danger" (click)="openDeleteModal(project)">
+                          <i class="fa-solid fa-trash" style="margin-right: 8px;"></i> Eliminar Proyecto
                         </button>
-                      </div>
-                    }
+                        </li>
+                      </ul>}
 
                   </div>
                 </td>

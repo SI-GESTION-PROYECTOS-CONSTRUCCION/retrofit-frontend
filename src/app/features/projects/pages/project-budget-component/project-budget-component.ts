@@ -8,12 +8,13 @@ import { ProjectService } from '../../../../core/services/project.service';
 import { ApuModalComponent } from '../../modal/apu-modal-component/apu-modal-component';
 import { debounceTime } from 'rxjs';
 import { Resizable } from '../../../../core/directives/resizable';
+import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 
 
 @Component({
   selector: 'app-project-budget',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, ApuModalComponent, Resizable],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ApuModalComponent, Resizable, HasPermissionDirective],
   templateUrl: './project-budget-component.html',
   styleUrls: ['./project-budget-component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
