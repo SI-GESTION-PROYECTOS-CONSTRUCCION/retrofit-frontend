@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ProjectItemService } from '../../../../core/services/project-item.service';
@@ -15,7 +15,8 @@ import { Resizable } from '../../../../core/directives/resizable';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule, ApuModalComponent, Resizable],
   templateUrl: './project-budget-component.html',
-  styleUrls: ['./project-budget-component.css']
+  styleUrls: ['./project-budget-component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectBudgetComponent implements OnInit {
   @Input({ required: true }) projectId!: number;
@@ -23,7 +24,8 @@ export class ProjectBudgetComponent implements OnInit {
   private fb = inject(FormBuilder);
   private itemService = inject(ProjectItemService);
   private toastService = inject(ToastService);
-  private projectService = inject(ProjectService)
+  private projectService = inject(ProjectService);
+  private cdr = inject(ChangeDetectorRef);
   project: ProjectResponseDto | null = null;
   budgetForm!: FormGroup;
   isLoading = false;
@@ -59,6 +61,7 @@ export class ProjectBudgetComponent implements OnInit {
             row.get('unit')?.disable();
           });
         }
+        this.cdr.markForCheck();
       }
     });
   }
@@ -88,39 +91,44 @@ export class ProjectBudgetComponent implements OnInit {
         this.recalculateAllSubtotals();
 
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => this.isLoading = false
+      error: () => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      }
     });
   }
 
 
   recalculateAllSubtotals() {
     const rows = this.itemsFormArray.getRawValue();
+    const levelSubtotals: number[] = new Array(15).fill(0); // Soportar hasta 15 niveles de profundidad
 
     for (let i = rows.length - 1; i >= 0; i--) {
       const currentRow = rows[i];
       const control = this.itemsFormArray.at(i);
 
-      if (!this.isParent(i)) {
-        const sub = (currentRow.totalQuantity || 0) * (currentRow.unitPrice || 0);
+      const currentLevel = Number(currentRow.level) || 0;
+      const nextLevel = (i < rows.length - 1) ? (Number(rows[i + 1].level) || 0) : -1;
+      const isParent = nextLevel > currentLevel;
 
+      if (!isParent) {
+        const sub = (Number(currentRow.totalQuantity) || 0) * (Number(currentRow.unitPrice) || 0);
         control.get('subtotal')?.setValue(sub, { emitEvent: false });
-
+        levelSubtotals[currentLevel] += sub;
       } else {
-        let totalPadre = 0;
-
-        for (let j = i + 1; j < rows.length; j++) {
-          const nextRow = rows[j];
-
-          if (nextRow.level <= currentRow.level) break;
-
-          if (!this.isParent(j)) {
-            totalPadre += this.itemsFormArray.at(j).get('subtotal')?.value || 0;
-          }
+        let sumChildren = 0;
+        for (let l = currentLevel + 1; l < levelSubtotals.length; l++) {
+          sumChildren += levelSubtotals[l];
+          levelSubtotals[l] = 0; // Limpiar los acumulados porque ya subieron de nivel
         }
-        control.get('subtotal')?.setValue(totalPadre, { emitEvent: false });
+        control.get('subtotal')?.setValue(sumChildren, { emitEvent: false });
+        levelSubtotals[currentLevel] += sumChildren; // Empujar la suma al nivel actual
       }
     }
+    
+    this.cdr.markForCheck(); // Notificar a Angular que hay cambios para la tabla OnPush
   }
 
   private crearFila(item?: any): FormGroup {

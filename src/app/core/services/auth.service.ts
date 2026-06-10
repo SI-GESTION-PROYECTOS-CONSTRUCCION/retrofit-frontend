@@ -34,6 +34,19 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/login`, credenciales);
   }
 
+  refreshToken(): Observable<any> {
+    const token = this.getToken();
+    return this.http.post<any>(`${this.apiUrl}/refresh`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).pipe(
+      tap(res => {
+        if (res && res.jwt) {
+          this.saveToken(res.jwt);
+        }
+      })
+    );
+  }
+
   saveToken(token: string): void {
     sessionStorage.setItem('retrofit_jwt', token);
   }

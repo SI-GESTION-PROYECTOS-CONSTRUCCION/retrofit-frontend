@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { gantt } from 'dhtmlx-gantt';
 import { ProjectItemService } from '../../../../core/services/project-item.service';
 
@@ -7,7 +7,8 @@ import { ProjectItemService } from '../../../../core/services/project-item.servi
   imports: [],
   templateUrl: './project-gantt-component.html',
   styleUrl: './project-gantt-component.css',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProjectGanttComponent {
   @ViewChild('ganttContainer', { static: true }) ganttContainer!: ElementRef;
@@ -16,7 +17,7 @@ export class ProjectGanttComponent {
   @Input() projectId!: number;
   @Input() projectStartDate!: string;
 
-  constructor(private projectService: ProjectItemService) {}
+  constructor(private projectService: ProjectItemService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
   }
@@ -92,10 +93,12 @@ export class ProjectGanttComponent {
       next: () => {
         console.log(`Partida ${taskId} actualizada correctamente en BD.`);
         this.loadGanttData(); 
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Error al guardar la partida', err);
         alert('Hubo un error al guardar las fechas');
+        this.cdr.markForCheck();
       }
     });
   }
@@ -115,10 +118,13 @@ export class ProjectGanttComponent {
     this.projectService.getGanttItems(this.projectId).subscribe({
       next: (backendItems) => {
         
+        // OPTIMIZACIÓN: Crear Set de parentIds (O(N)) en lugar de buscar con .some() dentro del map
+        const parentIds = new Set(backendItems.map(b => b.parentId));
+
         const tasks = backendItems.map(item => {
           
-          // 1. Detectamos a la fuerza si esta partida tiene hijos en la lista
-          const hasChildren = backendItems.some(child => child.parentId === item.id);
+          // 1. Detectamos si esta partida tiene hijos en la lista (O(1))
+          const hasChildren = parentIds.has(item.id);
           
           // Es padre si el backend lo dice, o si tiene hijas adentro
           const isParent = item.type === 'project' || hasChildren;
@@ -156,8 +162,12 @@ export class ProjectGanttComponent {
         // 3. Limpiar y dibujar
         gantt.clearAll();
         gantt.parse({ data: tasks, links: links });
+        this.cdr.markForCheck();
       },
-      error: (err) => console.error('Error cargando el Gantt', err)
+      error: (err) => {
+        console.error('Error cargando el Gantt', err);
+        this.cdr.markForCheck();
+      }
     });
   }
 }
