@@ -150,3 +150,17 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
   background-color: #F9FAFB;
 }
+
+@media (max-width: 768px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .progress-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}

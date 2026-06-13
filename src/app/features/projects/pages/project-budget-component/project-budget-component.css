@@ -9,7 +9,7 @@
 .text-danger { color: #EF4444; }
 
 /* Tabla Tipo Excel */
-.table-responsive { width: 100%; overflow-x: auto; border: 1px solid #E5E7EB; border-radius: 8px; }
+.table-responsive { border: 1px solid #E5E7EB; border-radius: 8px; }
 .excel-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .excel-table th { background-color: #F9FAFB; padding: 12px; text-align: left; font-weight: 600; color: #4B5563; border-bottom: 1px solid #E5E7EB; border-right: 1px solid #E5E7EB; }
 .excel-table td { border-bottom: 1px solid #E5E7EB; border-right: 1px solid #E5E7EB; padding: 0; position: relative; }
