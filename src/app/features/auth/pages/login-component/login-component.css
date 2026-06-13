@@ -208,4 +208,35 @@ form {
   font-size: 11px;
   color: var(--color-divisor);
   line-height: 1.6;
+  padding: 0 16px;
+}
+
+@media (max-width: 768px) {
+  .login-container .circle-top-right {
+    width: 300px;
+    height: 300px;
+    top: -50px;
+    right: -50px;
+  }
+  .login-container .circle-bottom-left {
+    width: 250px;
+    height: 250px;
+    bottom: -50px;
+    left: -100px;
+  }
+  .login-card {
+    padding: 24px;
+    margin: 16px;
+    width: calc(100% - 32px);
+  }
+  .login-header .logo {
+    max-width: 120px;
+  }
+  .login-footer .footer-links {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .login-footer .divider {
+    display: none;
+  }
 }
