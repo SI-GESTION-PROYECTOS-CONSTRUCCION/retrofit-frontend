@@ -12,7 +12,7 @@ import { HasPermissionDirective } from '../../../../core/directives/has-permissi
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [RouterModule, CommonModule, ProjectCreateModalComponent, FormsModule, ConfirmModal, Skeleton, HasPermissionDirective], 
+  imports: [RouterModule, CommonModule, ProjectCreateModalComponent, FormsModule, ConfirmModal, Skeleton, HasPermissionDirective],
   templateUrl: './project-list.html',
   styleUrl: './project-list.css',
 })
@@ -22,25 +22,26 @@ export class ProjectList implements OnInit {
   projects: ProjectResponseDto[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
-  
+
   totalElements: number = 0;
   totalPages: number = 0;
   currentPage: number = 0;
-  pageSize: number = 5; 
+  pageSize: number = 5;
 
   searchTerm: string = '';
   selectedPriority: string = '';
   selectedStatus: string = '';
-  
+
   priorities: string[] = [];
   statuses: string[] = [];
   selectedProject: ProjectResponseDto | null = null;
   activeMenuId: number | null = null;
+  menuPosition = { top: '0px', left: '0px' };
 
   isDeleteModalOpen = false;
   projectToDelete: ProjectResponseDto | null = null;
-  isDeleting = false; 
-  private searchTimeout: any; 
+  isDeleting = false;
+  private searchTimeout: any;
 
   ngOnInit(): void {
     this.loadFilterOptions();
@@ -121,7 +122,7 @@ export class ProjectList implements OnInit {
   }
 
   openEditModal(project: ProjectResponseDto) {
-    this.selectedProject = project; 
+    this.selectedProject = project;
     this.isModalOpen = true;
   }
 
@@ -129,7 +130,7 @@ export class ProjectList implements OnInit {
   openDeleteModal(project: ProjectResponseDto) {
     this.projectToDelete = project;
     this.isDeleteModalOpen = true;
-    this.activeMenuId = null; 
+    this.activeMenuId = null;
   }
 
   confirmDelete() {
@@ -182,7 +183,7 @@ export class ProjectList implements OnInit {
 
   formatEnum(text: string): string {
     if (!text) return '';
-    
+
     // Diccionario de traducciones para Estados y Prioridades
     const translations: Record<string, string> = {
       // Estados
@@ -191,7 +192,7 @@ export class ProjectList implements OnInit {
       'ON_HOLD': 'Pausado',
       'COMPLETED': 'Completado',
       'CANCELLED': 'Cancelado',
-      
+
       // Prioridades
       'LOW': 'Baja',
       'MEDIUM': 'Media',
@@ -213,12 +214,22 @@ export class ProjectList implements OnInit {
     if (this.activeMenuId === projectId) {
       this.activeMenuId = null;
     } else {
-      this.activeMenuId = projectId; 
+      this.activeMenuId = projectId;
+
+      const button = event.currentTarget as HTMLElement;
+      if (button) {
+        const rect = button.getBoundingClientRect();
+        const leftPos = Math.max(8, rect.right - 150);
+        this.menuPosition = {
+          top: `${rect.bottom + 4}px`,
+          left: `${leftPos}px`
+        };
+      }
     }
   }
 
   @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event) { 
+  onDocumentClick(event: Event) {
     this.activeMenuId = null;
   }
 }

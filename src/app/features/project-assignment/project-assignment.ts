@@ -9,10 +9,11 @@ import { forkJoin } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Skeleton } from '../../shared/components/skeleton/skeleton';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-modal';
 
 @Component({
   selector: 'app-project-assignment',
-  imports: [CommonModule, Skeleton, HasPermissionDirective],
+  imports: [CommonModule, Skeleton, HasPermissionDirective, ConfirmModal],
   templateUrl: './project-assignment.html',
   styleUrl: './project-assignment.css',
 })
@@ -29,6 +30,13 @@ export class ProjectAssignmentComponent implements OnInit {
 
   isLoading = true;
 
+  // Estados del modal de liberación
+  isReleaseModalOpen = false;
+  assignmentToReleaseId: number | null = null;
+  isReleasing = false;
+  workerToReleaseName = '';
+  projectNameOfRelease = '';
+
   ngOnInit(): void {
     this.loadMatrixData();
   }
@@ -44,7 +52,8 @@ export class ProjectAssignmentComponent implements OnInit {
     }).subscribe({
       next: (res: any) => {
         this.activeProjects = res.projects.content || res.projects;
-        this.allWorkers = res.workers.content || res.workers;
+        const workersList: WorkerDto[] = res.workers.content || res.workers;
+        this.allWorkers = workersList.filter(w => w.active === true);
         this.availableWorkers = res.available;
         this.activeAssignments = res.assignments;
         
@@ -89,12 +98,32 @@ export class ProjectAssignmentComponent implements OnInit {
   }
 
   // Acción al hacer clic en una celda ocupada (Liberar)
-  onReleaseClick(assignmentId: number) {
-    if (confirm('¿Liberar a este trabajador del proyecto?')) {
-      this.assignmentService.releaseWorker(assignmentId).subscribe({
-        next: () => this.loadMatrixData(),
-        error: (err) => console.error('Error liberando', err)
-      });
-    }
+  onReleaseClick(assignmentId: number, workerName: string, projectName: string) {
+    this.assignmentToReleaseId = assignmentId;
+    this.workerToReleaseName = workerName;
+    this.projectNameOfRelease = projectName;
+    this.isReleaseModalOpen = true;
+  }
+
+  confirmRelease() {
+    if (this.assignmentToReleaseId === null) return;
+    this.isReleasing = true;
+    this.assignmentService.releaseWorker(this.assignmentToReleaseId).subscribe({
+      next: () => {
+        this.isReleasing = false;
+        this.isReleaseModalOpen = false;
+        this.assignmentToReleaseId = null;
+        this.loadMatrixData();
+      },
+      error: (err) => {
+        this.isReleasing = false;
+        console.error('Error liberando', err);
+      }
+    });
+  }
+
+  closeReleaseModal() {
+    this.isReleaseModalOpen = false;
+    this.assignmentToReleaseId = null;
   }
 }

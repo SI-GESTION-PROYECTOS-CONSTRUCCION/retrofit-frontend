@@ -586,6 +586,7 @@ body {
 }
 
 @media (max-width: 768px) {
+
   /* Cabecera de Página */
   .page-header {
     flex-direction: column;

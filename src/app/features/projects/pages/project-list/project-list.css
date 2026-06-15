@@ -1,6 +1,3 @@
-
-
-
 .progress-container {
   display: flex;
   flex-direction: column;
@@ -75,4 +72,3 @@
   color: var(--color-primario);
   background: #F3F4F6;
 }
-

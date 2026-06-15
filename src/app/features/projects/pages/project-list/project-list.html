@@ -175,7 +175,7 @@
 
                     <!-- El Menú Desplegable (Solo se muestra si su ID coincide) -->
                     @if (activeMenuId === project.id) {
-                      <ul class="dropdown-menu">
+                      <ul class="dropdown-menu" [ngStyle]="{'position': 'fixed', 'top': menuPosition.top, 'left': menuPosition.left, 'right': 'auto', 'margin': '0'}">
                         <li>
                         <button *appHasPermission="'PROJECT_UPDATE'" class="dropdown-item" (click)="openEditModal(project)">
                           <i class="fa-solid fa-pen" style="margin-right: 8px;"></i> Editar Info.

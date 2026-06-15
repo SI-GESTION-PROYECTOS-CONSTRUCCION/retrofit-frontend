@@ -148,7 +148,7 @@
                   @for (project of activeProjects; track project.id) {
                     <td class="matrix-cell">
                       @if (getAssignmentForCell(worker.id, project.id)) {
-                        <div class="assigned-badge" (click)="onReleaseClick(getAssignmentForCell(worker.id, project.id)!.id!)" title="Clic para liberar">
+                        <div class="assigned-badge" (click)="onReleaseClick(getAssignmentForCell(worker.id, project.id)!.id!, worker.name + ' ' + worker.lastName, project.code)" title="Clic para liberar">
                           <span class="badge-text">ASIGNADO</span>
                           <span class="hover-text">LIBERAR</span>
                         </div>
@@ -193,5 +193,16 @@
       </div>
 
     </div>
+  }
+
+  @if (isReleaseModalOpen) {
+    <app-confirm-modal
+      title="Liberar Trabajador"
+      [message]="'¿Estás seguro de que deseas liberar al trabajador <strong>' + workerToReleaseName + '</strong> del proyecto <strong>' + projectNameOfRelease + '</strong>?'"
+      confirmText="Liberar"
+      [isProcessing]="isReleasing"
+      (confirm)="confirmRelease()"
+      (cancel)="closeReleaseModal()">
+    </app-confirm-modal>
   }
 </div>
