@@ -238,19 +238,28 @@ export class ProjectBudgetComponent implements OnInit {
   }
 
   recalculateWBS() {
-    let counters = [0, 0, 0, 0, 0, 0, 0];
+    let counters = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Aumentado para soportar más sangrías
 
     let lastValidIndex = -1;
     for (let i = this.itemsFormArray.length - 1; i >= 0; i--) {
       const row = this.itemsFormArray.at(i);
       const desc = row.get('description')?.value || '';
-      // FORZAMOS A QUE SEA NÚMERO PARA EVITAR ERRORES MATEMÁTICOS
       const level = Number(row.get('level')?.value || 0);
 
       if (desc.trim() !== '' || level > 0) {
         lastValidIndex = i;
         break;
       }
+    }
+
+    // 1. Detectar dinámicamente si el nivel raíz empieza en 0 (Angular) o en 1 (BD)
+    let minLevel = 0;
+    if (lastValidIndex >= 0) {
+      minLevel = Math.min(
+        ...this.itemsFormArray.controls
+          .slice(0, lastValidIndex + 1)
+          .map(row => Number(row.get('level')?.value || 0))
+      );
     }
 
     for (let i = 0; i < this.itemsFormArray.length; i++) {
@@ -261,20 +270,16 @@ export class ProjectBudgetComponent implements OnInit {
         continue;
       }
 
-      // FORZAMOS A QUE SEA NÚMERO
       const level = Number(row.get('level')?.value || 0);
       counters[level]++;
 
+      // Limpiar los subniveles para que la numeración hija reinicie
       for (let j = level + 1; j < counters.length; j++) {
         counters[j] = 0;
       }
 
-      let generatedCode = counters.slice(0, level + 1).join('.');
-
-      if (level === 0) {
-
-        generatedCode = generatedCode.padStart(2);
-      }
+      // 2. Generar el código WBS cortando estrictamente desde el nivel mínimo detectado
+      let generatedCode = counters.slice(minLevel, level + 1).join('.');
 
       row.get('code')?.setValue(generatedCode, { emitEvent: false });
     }
