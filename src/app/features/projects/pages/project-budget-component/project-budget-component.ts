@@ -2,7 +2,7 @@ import { Component, Input, OnInit, inject, ChangeDetectionStrategy, ChangeDetect
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ProjectItemService } from '../../../../core/services/project-item.service';
-import { ProjectItemDto, ProjectResponseDto } from '../../../../core/models/project.model';
+import { BudgetSaveRequestDto, ProjectItemDto, ProjectResponseDto } from '../../../../core/models/project.model';
 import { ToastService } from '../../../../core/services/toast-service';
 import { ProjectService } from '../../../../core/services/project.service';
 import { ApuModalComponent } from '../../modal/apu-modal-component/apu-modal-component';
@@ -37,6 +37,9 @@ export class ProjectBudgetComponent implements OnInit {
   selectedItemData: any = null;
   expandedRows: { [key: number]: boolean } = {};
 
+  generalExpensesPercentage: number = 5.0;
+  utilityPercentage: number = 4.0;
+
   ngOnInit() {
     this.loadProjectDetails();
     this.budgetForm = this.fb.group({
@@ -57,6 +60,12 @@ export class ProjectBudgetComponent implements OnInit {
     this.projectService.getProjectById(this.projectId).subscribe({
       next: (data) => {
         this.project = data;
+        if (data.generalExpensesPercentage !== undefined && data.generalExpensesPercentage !== null) {
+          this.generalExpensesPercentage = data.generalExpensesPercentage;
+        }
+        if (data.utilityPercentage !== undefined && data.utilityPercentage !== null) {
+          this.utilityPercentage = data.utilityPercentage;
+        }
         if (this.isLocked) {
           this.itemsFormArray.controls.forEach(row => {
             row.get('unit')?.disable();
@@ -367,8 +376,14 @@ export class ProjectBudgetComponent implements OnInit {
       return;
     }
 
+    const request: BudgetSaveRequestDto = {
+      generalExpensesPercentage: this.generalExpensesPercentage,
+      utilityPercentage: this.utilityPercentage,
+      items: payload
+    };
+
     // --- 3. ENVÍO AL BACKEND ---
-    this.itemService.saveBulkItems(this.projectId, payload).subscribe({
+    this.itemService.saveBulkItems(this.projectId, request).subscribe({
       next: () => {
         this.toastService.show('Presupuesto guardado con éxito.', 'success');
         this.loadExistingItems();
@@ -434,6 +449,33 @@ export class ProjectBudgetComponent implements OnInit {
   getApuGroupTotal(apuDetails: any[], type: string): number {
     const group = this.getApuGroup(apuDetails, type);
     return group.reduce((sum, item) => sum + (item.partialPrice || 0), 0);
+  }
+
+  get directCost(): number {
+    const rows = this.itemsFormArray.getRawValue();
+    return rows
+      .filter((item: any) => item.level === 0)
+      .reduce((sum: number, item: any) => sum + (item.subtotal || 0), 0);
+  }
+
+  get generalExpenses(): number {
+    return this.directCost * (this.generalExpensesPercentage / 100);
+  }
+
+  get utility(): number {
+    return this.directCost * (this.utilityPercentage / 100);
+  }
+
+  get subtotal(): number {
+    return this.directCost + this.generalExpenses + this.utility;
+  }
+
+  get igv(): number {
+    return this.subtotal * 0.18;
+  }
+
+  get grandTotal(): number {
+    return this.subtotal + this.igv;
   }
 
 }

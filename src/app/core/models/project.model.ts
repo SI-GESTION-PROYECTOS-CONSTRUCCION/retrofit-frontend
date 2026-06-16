@@ -21,6 +21,8 @@ export interface ProjectResponseDto {
   status: string;
   priority: string;
   managerId: number;
+  generalExpensesPercentage?: number;
+  utilityPercentage?: number;
   totalBudget: number;
   currentProgress: number;
   managerFullName: string;
@@ -39,6 +41,12 @@ export interface ProjectItemDto {
   laborYield?: number;
   equipmentYield?: number;
   apuDetails?: ProjectItemResourceResponseDto[]; // Lista que vendrá del backend con los recursos
+}
+
+export interface BudgetSaveRequestDto {
+  generalExpensesPercentage: number;
+  utilityPercentage: number;
+  items: ProjectItemDto[];
 }
 
 export interface ProjectItemResourceRequestDto {

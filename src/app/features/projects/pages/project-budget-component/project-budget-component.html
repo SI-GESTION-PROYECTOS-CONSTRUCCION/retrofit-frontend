@@ -227,6 +227,41 @@
         </tbody>
       </table>
     </div>
+
+    <div class="summary-container" style="margin-top: 30px; display: flex; justify-content: flex-end;">
+      <table class="summary-table">
+        <tbody>
+          <tr class="summary-direct-cost">
+            <td class="summary-label text-right fw-bold">COSTO DIRECTO</td>
+            <td class="summary-value text-right fw-bold">{{ directCost | number:'1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td class="summary-label text-right text-primario">
+              Gastos Generales (<input type="number" [(ngModel)]="generalExpensesPercentage" [ngModelOptions]="{standalone: true}" [disabled]="isLocked" class="percentage-input" />%)
+            </td>
+            <td class="summary-value text-right text-primario">{{ generalExpenses | number:'1.2-2' }}</td>
+          </tr>
+          <tr class="summary-border-bottom">
+            <td class="summary-label text-right text-primario">
+              Utilidad (<input type="number" [(ngModel)]="utilityPercentage" [ngModelOptions]="{standalone: true}" [disabled]="isLocked" class="percentage-input" />%)
+            </td>
+            <td class="summary-value text-right text-primario">{{ utility | number:'1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td class="summary-label text-right fw-bold">TOTAL (s/.)</td>
+            <td class="summary-value text-right fw-bold">{{ subtotal | number:'1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td class="summary-label text-right text-primario" style="padding-bottom: 20px;">IGV (18%)</td>
+            <td class="summary-value text-right text-primario" style="padding-bottom: 20px;">{{ igv | number:'1.2-2' }}</td>
+          </tr>
+          <tr class="summary-grand-total">
+            <td class="summary-label text-center fw-bold" style="border-right: 2px solid var(--color-fondo);">TOTAL <span style="margin-left: 20px; font-weight: normal;">S/</span></td>
+            <td class="summary-value text-right fw-bold">{{ grandTotal | number:'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </form>
 </div>
 
