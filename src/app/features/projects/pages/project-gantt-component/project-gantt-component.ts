@@ -106,14 +106,12 @@ export class ProjectGanttComponent {
   loadGanttData(): void {
     if (!this.projectId) return;
 
-    const canvasStart = new Date(this.projectStartDate + 'T00:00:00'); 
-    canvasStart.setDate(canvasStart.getDate() - 0); 
-
-    const canvasEnd = new Date(this.projectStartDate + 'T00:00:00');
-    canvasEnd.setMonth(canvasEnd.getMonth() + 6); 
-
-    gantt.config.start_date = canvasStart;
-    gantt.config.end_date = canvasEnd;
+    // By removing the hardcoded start_date and end_date, 
+    // DHTMLX Gantt will automatically scale to fit all tasks.
+    gantt.config.start_date = undefined;
+    gantt.config.end_date = undefined;
+    // We can also ensure it fits the tasks
+    gantt.config.fit_tasks = true;
 
     this.projectService.getGanttItems(this.projectId).subscribe({
       next: (backendItems) => {
@@ -134,7 +132,7 @@ export class ProjectGanttComponent {
             code: item.code,
             text: item.name,
             progress: item.currentProgressPercentage / 100,
-            parent: item.parentId,
+            parent: item.parentId ? item.parentId : 0,
             
             type: isParent ? 'project' : 'task',
             open: true
