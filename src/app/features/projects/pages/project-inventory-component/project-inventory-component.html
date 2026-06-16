@@ -6,6 +6,14 @@
       <input type="text" placeholder="Buscar material por código o nombre...">
     </div>
     
+    <button *appHasPermission="'INVENTORY_READ'" class="btn-custom btn-accent" (click)="downloadPdf()" [disabled]="isDownloadingPdf">
+      @if (isDownloadingPdf) {
+        <i class="fa-solid fa-spinner fa-spin"></i> Generando...
+      } @else {
+        <i class="fa-solid fa-file-pdf" ></i> Generar Reporte
+      }
+    </button>
+
     <button *appHasPermission="'INVENTORY_CREATE'" class="btn btn-outline" (click)="openInboundModal()">
       <i class="fa-solid fa-arrow-turn-down"></i> Registrar Ingreso
     </button>
@@ -102,12 +110,11 @@
           
           <div class="form-group">
             <label>Material / Insumo *</label>
-            <select formControlName="resourceId">
-              <option value="">Seleccione un material...</option>
+            <ng-select formControlName="resourceId" placeholder="Seleccione un material...">
               @for (res of resources; track res.id) {
-                <option [value]="res.id">{{ res.name }} ({{ res.unit }})</option>
+                <ng-option [value]="res.id">{{ res.name }} ({{ res.unit }})</ng-option>
               }
-            </select>
+            </ng-select>
           </div>
 
           <div class="form-row">
@@ -165,22 +172,20 @@
           
           <div class="form-group">
             <label>Material / Insumo *</label>
-            <select formControlName="resourceId">
-              <option value="">Seleccione el material a despachar...</option>
+            <ng-select formControlName="resourceId" placeholder="Seleccione el material a despachar...">
               @for (res of resources; track res.id) {
-                <option [value]="res.id">{{ res.name }} ({{ res.unit }})</option>
+                <ng-option [value]="res.id">{{ res.name }} ({{ res.unit }})</ng-option>
               }
-            </select>
+            </ng-select>
           </div>
 
           <div class="form-group">
             <label>Partida de Destino (Frente de Trabajo) *</label>
-            <select formControlName="projectItemId">
-              <option value="">Seleccione la partida...</option>
+            <ng-select formControlName="projectItemId" placeholder="Seleccione la partida...">
               @for (item of projectItems; track item.id) {
-                <option [value]="item.id">{{ item.code || '' }} - {{ item.description }}</option>
+                <ng-option [value]="item.id">{{ item.code || '' }} - {{ item.description }}</ng-option>
               }
-            </select>
+            </ng-select>
           </div>
 
           <div class="form-row">

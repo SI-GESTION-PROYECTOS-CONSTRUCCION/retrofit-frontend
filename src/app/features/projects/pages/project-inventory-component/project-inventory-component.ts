@@ -7,11 +7,12 @@ import { ProjectItemService } from '../../../../core/services/project-item.servi
 import { StockSummary, TransactionReason } from '../../../../core/models/inventory.model';
 import { ToastService } from '../../../../core/services/toast-service';
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-project-inventory',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, HasPermissionDirective],
+  imports: [ReactiveFormsModule, CommonModule, HasPermissionDirective, NgSelectModule],
   templateUrl: './project-inventory-component.html',
   styleUrls: ['./project-inventory-component.css']
 })
@@ -23,6 +24,7 @@ export class ProjectInventoryComponent implements OnInit {
   private projectItemService = inject(ProjectItemService);
   private toastService = inject(ToastService);
   isLoading = false;
+  isDownloadingPdf = false;
   showInboundModal = false;
   showOutboundModal = false;
 
@@ -198,6 +200,29 @@ export class ProjectInventoryComponent implements OnInit {
       error: (err) => {
         console.error(err);
         this.toastService.show(err.error.message, 'error')
+      }
+    });
+  }
+
+  downloadPdf() {
+    this.isDownloadingPdf = true;
+    this.inventoryService.downloadInventoryReport(this.projectId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Reporte_Inventario_Proyecto_${this.projectId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.isDownloadingPdf = false;
+        this.toastService.show('Reporte generado exitosamente', 'success');
+      },
+      error: (error) => {
+        console.error('Error al descargar reporte', error);
+        this.toastService.show('Error al generar el reporte', 'error');
+        this.isDownloadingPdf = false;
       }
     });
   }

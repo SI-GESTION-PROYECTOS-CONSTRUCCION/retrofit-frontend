@@ -77,4 +77,8 @@ export class InventoryService {
     }
     return this.http.get<number>(`${this.apiUrl}/consumed-quantity`, { params });
   }
+
+  downloadInventoryReport(projectId: number): Observable<Blob> {
+    return this.http.get(`${environment.apiUrl}/projects/${projectId}/reports/inventario`, { responseType: 'blob' });
+  }
 }

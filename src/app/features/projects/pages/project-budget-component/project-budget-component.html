@@ -12,7 +12,7 @@
         <div style="display: flex; gap: 10px;">
           <button class="btn-custom btn-accent" (click)="exportToPdf()" [disabled]="isDownloadingPdf">
             <i class="fa-solid" [ngClass]="isDownloadingPdf ? 'fa-spinner fa-spin' : 'fa-file-pdf'"></i>
-            {{ isDownloadingPdf ? 'Generando...' : 'Descargar APU' }}
+            {{ isDownloadingPdf ? 'Generando...' : 'Generar Reporte' }}
           </button>
         </div>
       </div>
