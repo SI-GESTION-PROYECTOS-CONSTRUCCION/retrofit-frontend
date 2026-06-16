@@ -458,8 +458,15 @@ export class ProjectBudgetComponent implements OnInit {
 
   get directCost(): number {
     const rows = this.itemsFormArray.getRawValue();
+    const validRows = rows.filter((item: any) => item.description?.trim() !== '' || item.level > 0);
+    
+    let minLevel = 0;
+    if (validRows.length > 0) {
+      minLevel = Math.min(...validRows.map((row: any) => Number(row.level) || 0));
+    }
+
     return rows
-      .filter((item: any) => item.level === 0)
+      .filter((item: any) => item.level === minLevel)
       .reduce((sum: number, item: any) => sum + (item.subtotal || 0), 0);
   }
 
