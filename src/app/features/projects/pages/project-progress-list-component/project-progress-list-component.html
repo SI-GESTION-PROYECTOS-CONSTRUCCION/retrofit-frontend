@@ -29,6 +29,10 @@
     <div class="filter-actions">
       <button type="submit" class="btn-custom btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
       <button type="button" class="btn-custom btn-secondary" (click)="clearFilters()"><i class="fa-solid fa-eraser"></i> Limpiar</button>
+      <button type="button" class="btn-custom btn-accent" (click)="printReport()" [disabled]="isDownloadingPdf">
+        <i class="fa-solid" [ngClass]="isDownloadingPdf ? 'fa-spinner fa-spin' : 'fa-file-pdf'"></i>
+        {{ isDownloadingPdf ? 'Generando...' : 'Generar Reporte' }}
+      </button>
     </div>
   </form>
 

@@ -18,6 +18,7 @@ export class ProjectProgressListComponent implements OnInit {
 
   groupedReports: any[] = [];
   isLoading = true;
+  isDownloadingPdf = false;
   filterForm!: FormGroup;
   
   openPeriods: Set<string> = new Set();
@@ -87,5 +88,28 @@ export class ProjectProgressListComponent implements OnInit {
 
   openPhoto(url: string) {
     window.open(url, '_blank');
+  }
+
+  printReport() {
+    this.isDownloadingPdf = true;
+    const filters = this.filterForm.value;
+    this.reportService.downloadProgressReport(this.projectId, filters).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `reporte_avances_proyecto_${this.projectId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+        this.isDownloadingPdf = false;
+      },
+      error: (err) => {
+        console.error('Error descargando el reporte', err);
+        alert('Hubo un error al generar el reporte.');
+        this.isDownloadingPdf = false;
+      }
+    });
   }
 }

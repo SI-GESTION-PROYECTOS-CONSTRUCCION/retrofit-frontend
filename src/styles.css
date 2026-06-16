@@ -659,3 +659,5 @@ body {
     text-align: center;
   }
 }
+
+.btn-custom { padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s; border: none; }

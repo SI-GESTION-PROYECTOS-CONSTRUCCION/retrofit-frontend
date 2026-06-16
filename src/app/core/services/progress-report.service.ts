@@ -30,4 +30,15 @@ export class ProgressReportService {
 
     return this.http.get<GroupedProgressReportDto[]>(`${this.apiUrl}/project/${projectId}`, { params });
   }
+
+  downloadProgressReport(projectId: number, filters?: any): Observable<Blob> {
+    let params = new HttpParams();
+    
+    if (filters?.startDate) params = params.set('startDate', filters.startDate);
+    if (filters?.endDate) params = params.set('endDate', filters.endDate);
+    if (filters?.itemCode) params = params.set('itemCode', filters.itemCode);
+
+    // Call the specific report endpoint in ReportController
+    return this.http.get(`${environment.apiUrl}/projects/${projectId}/reports/avances`, { params, responseType: 'blob' });
+  }
 }

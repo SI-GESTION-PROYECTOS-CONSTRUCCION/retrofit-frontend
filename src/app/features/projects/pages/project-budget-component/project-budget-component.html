@@ -10,7 +10,7 @@
       }
       <div style="display: flex; gap: 15px; margin-top: 10px; align-items: center;">
         <div style="display: flex; gap: 10px;">
-          <button class="btn btn-outline" style="border-color: #ef4444; color: #ef4444; display: flex; align-items: center; gap: 8px;" (click)="exportToPdf()" [disabled]="isDownloadingPdf">
+          <button class="btn-custom btn-accent" (click)="exportToPdf()" [disabled]="isDownloadingPdf">
             <i class="fa-solid" [ngClass]="isDownloadingPdf ? 'fa-spinner fa-spin' : 'fa-file-pdf'"></i>
             {{ isDownloadingPdf ? 'Generando...' : 'Descargar APU' }}
           </button>
