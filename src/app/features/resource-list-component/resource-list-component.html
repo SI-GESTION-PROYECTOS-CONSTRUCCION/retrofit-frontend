@@ -125,12 +125,16 @@
             Anterior
           </button>
           
-          @for (page of pagesArray; track page) {
-            <button class="btn" 
-                    [ngClass]="page === currentPage ? 'btn-primary' : 'btn-outline'" 
-                    (click)="changePage(page)">
-              {{ page }}
-            </button>
+          @for (page of pagesArray; track $index) {
+            @if (page === '...') {
+              <span style="padding: 8px 4px; color: #6b7280; user-select: none;">...</span>
+            } @else {
+              <button class="btn" 
+                      [ngClass]="page === currentPage ? 'btn-primary' : 'btn-outline'" 
+                      (click)="changePage($any(page))">
+                {{ page }}
+              </button>
+            }
           }
           
           <button class="btn btn-outline" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">

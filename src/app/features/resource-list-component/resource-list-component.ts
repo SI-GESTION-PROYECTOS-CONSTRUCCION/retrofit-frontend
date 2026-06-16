@@ -89,8 +89,40 @@ export class ResourceListComponent implements OnInit {
     }
   }
 
-  get pagesArray(): number[] {
-    return Array(this.totalPages).fill(0).map((x, i) => i + 1);
+  get pagesArray(): (number | string)[] {
+    const total = this.totalPages;
+    const current = this.currentPage;
+    
+    if (total <= 7) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    const pages: (number | string)[] = [1];
+    
+    let start = Math.max(2, current - 1);
+    let end = Math.min(total - 1, current + 1);
+
+    if (current <= 3) {
+      end = 4;
+    }
+    if (current >= total - 2) {
+      start = total - 3;
+    }
+
+    if (start > 2) {
+      pages.push('...');
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    if (end < total - 1) {
+      pages.push('...');
+    }
+
+    pages.push(total);
+    return pages;
   }
 
   loadData() {
