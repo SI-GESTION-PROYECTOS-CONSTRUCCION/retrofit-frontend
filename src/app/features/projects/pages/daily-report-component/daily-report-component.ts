@@ -60,6 +60,12 @@ export class DailyReportComponent implements OnInit {
     this.reportForm.get('executedQuantity')?.valueChanges.subscribe(metradoHoy => {
       this.recalculateTheoretical(Number(metradoHoy) || 0);
     });
+
+    this.reportForm.get('reportDate')?.valueChanges.subscribe(date => {
+      if (this.selectedItemInfo) {
+        this.updateMaterialQuantities(date);
+      }
+    });
   }
 
 
@@ -90,7 +96,8 @@ export class DailyReportComponent implements OnInit {
 
       // Si es material, traemos la cantidad automáticamente desde el almacén
       if (isMaterial && this.selectedItemInfo?.id) {
-        this.inventoryService.getConsumedQuantity(this.selectedItemInfo.id, apu.resourceId).subscribe({
+        const reportDate = this.reportForm.get('reportDate')?.value;
+        this.inventoryService.getConsumedQuantity(Number(this.selectedItemInfo?.id), Number(apu.resourceId), reportDate).subscribe({
           next: (qty) => {
             rowGroup.get('realQuantity')?.setValue(qty || 0);
           },
@@ -98,6 +105,21 @@ export class DailyReportComponent implements OnInit {
             console.error('Error fetching consumed quantity', err);
           }
         });
+      }
+    });
+  }
+
+  updateMaterialQuantities(date: string) {
+    this.usedResourcesFormArray.controls.forEach(rowGroup => {
+      if (rowGroup.get('resourceType')?.value === 'MATERIAL') {
+         this.inventoryService.getConsumedQuantity(Number(this.selectedItemInfo?.id), Number(rowGroup.get('resourceId')?.value), date).subscribe({
+           next: (qty) => {
+             rowGroup.get('realQuantity')?.setValue(qty || 0);
+           },
+           error: (err) => {
+             console.error('Error fetching consumed quantity', err);
+           }
+         });
       }
     });
   }

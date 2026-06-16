@@ -67,10 +67,14 @@ export class InventoryService {
     return this.http.get<SupplyControl[]>(`${this.apiUrl}/supply-control`, { params });
   }
 
-  getConsumedQuantity(projectItemId: number, resourceId: number): Observable<number> {
-    const params = new HttpParams()
+  getConsumedQuantity(projectItemId: number, resourceId: number, date?: string): Observable<number> {
+    let params = new HttpParams()
       .set('projectItemId', projectItemId.toString())
       .set('resourceId', resourceId.toString());
+    
+    if (date) {
+      params = params.set('date', date);
+    }
     return this.http.get<number>(`${this.apiUrl}/consumed-quantity`, { params });
   }
 }
