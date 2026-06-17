@@ -6,13 +6,25 @@
       <p>Análisis de valor ganado y rendimiento en tiempo real.</p>
     </div>
     
-    <div class="project-selector">
-      <label for="projectSelect"><i class="fa-solid fa-building"></i> Proyecto:</label>
-      <select id="projectSelect" [(ngModel)]="selectedProjectId" (change)="onProjectChange()">
-        @for (p of projects; track p.id) {
-          <option [value]="p.id">{{ p.name }}</option>
-        }
-      </select>
+    <div class="project-selector d-flex gap-3">
+      <div>
+        <label for="projectSelect"><i class="fa-solid fa-building"></i> Proyecto:</label>
+        <select id="projectSelect" [(ngModel)]="selectedProjectId" (change)="onProjectChange()">
+          @for (p of projects; track p.id) {
+            <option [value]="p.id">{{ p.name }}</option>
+          }
+        </select>
+      </div>
+
+      <div>
+        <label for="itemSelect"><i class="fa-solid fa-list-check"></i> Partida:</label>
+        <select id="itemSelect" [(ngModel)]="selectedItemId" (change)="onItemChange()">
+          <option [ngValue]="null">Todas las partidas</option>
+          @for (item of items; track item.id) {
+            <option [ngValue]="item.id">{{ item.code }} - {{ item.description }}</option>
+          }
+        </select>
+      </div>
     </div>
   </div>
 

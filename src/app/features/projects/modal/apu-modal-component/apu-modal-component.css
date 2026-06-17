@@ -1,17 +1,31 @@
 .modal-container {
-  max-height: 90vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  margin: 0 auto; /* Previene que flexbox corte la parte superior al scrollear */
+  max-height: none !important;
 }
 
 .modal-body {
-  overflow-y: auto;
   flex: 1;
 }
 
 .modal-backdrop {
   overflow-y: auto;
   align-items: flex-start;
-  padding: 20px 0;
+  padding: 40px 0;
+}
+
+.cell-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border: 1px solid #E5E7EB;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #111827;
+  outline: none;
+}
+
+.cell-input:focus {
+  border-color: var(--color-primario);
 }

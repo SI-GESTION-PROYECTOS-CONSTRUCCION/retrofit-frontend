@@ -116,7 +116,6 @@ export class AuditLogComponent implements OnInit {
       case 'CREATE': return 'badge-create';
       case 'DELETE': return 'badge-delete';
       case 'LOGIN':  return 'badge-login';
-      case 'EXPORT': return 'badge-export';
       default:       return 'badge-login';
     }
   }

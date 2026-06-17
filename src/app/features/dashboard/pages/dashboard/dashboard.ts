@@ -5,7 +5,8 @@ import { DashboardService } from '../../../../core/services/dashboard.service';
 import { ProjectDashboardResponseDto } from '../../../../core/models/dashboard.model';
 import { ProjectService } from '../../../../core/services/project.service';
 import { FormsModule } from '@angular/forms';
-import { ProjectResponseDto } from '../../../../core/models/project.model';
+import { ProjectResponseDto, ProjectItemDto } from '../../../../core/models/project.model';
+import { ProjectItemService } from '../../../../core/services/project-item.service';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 
 Chart.register(...registerables);
@@ -21,13 +22,17 @@ export class DashboardComponent implements OnInit {
   @ViewChild('donutChart') donutChartRef!: ElementRef;
 
   private dashboardService = inject(DashboardService);
-  private projectService = inject(ProjectService)
+  private projectService = inject(ProjectService);
+  private projectItemService = inject(ProjectItemService);
   
   data: ProjectDashboardResponseDto | null = null;
   isLoading = true;
 
   projects: ProjectResponseDto[] = [];
   selectedProjectId: number | null = null;
+  
+  items: ProjectItemDto[] = [];
+  selectedItemId: number | null = null;
   
   // Instancias de los gráficos para destruirlos si cambiamos de proyecto
   sCurveChart: any;
@@ -44,6 +49,7 @@ export class DashboardComponent implements OnInit {
         
         if (this.projects && this.projects.length > 0) {
           this.selectedProjectId = this.projects[0].id;
+          this.loadItems(this.selectedProjectId!);
           this.loadDashboard(this.selectedProjectId!);
         } else {
           this.isLoading = false;
@@ -59,13 +65,33 @@ export class DashboardComponent implements OnInit {
   // Evento cuando el gerente cambia de proyecto en el dropdown
   onProjectChange() {
     if (this.selectedProjectId) {
-      this.loadDashboard(Number(this.selectedProjectId));
+      this.selectedItemId = null; // Reiniciar partida
+      this.loadItems(Number(this.selectedProjectId));
+      this.loadDashboard(Number(this.selectedProjectId), this.selectedItemId);
     }
   }
 
-  loadDashboard(projectId: number) {
+  loadItems(projectId: number) {
+    this.projectItemService.getItems(projectId).subscribe({
+      next: (res) => {
+        this.items = res;
+      },
+      error: (err) => {
+        console.error('Error cargando partidas', err);
+      }
+    });
+  }
+
+  onItemChange() {
+    if (this.selectedProjectId) {
+      // El selectedItemId puede ser null ("Todas las partidas") o un ID específico
+      this.loadDashboard(Number(this.selectedProjectId), this.selectedItemId);
+    }
+  }
+
+  loadDashboard(projectId: number, itemId?: number | null) {
     this.isLoading = true;
-    this.dashboardService.getProjectDashboard(projectId).subscribe({
+    this.dashboardService.getProjectDashboard(projectId, itemId).subscribe({
       next: (res) => {
         this.data = res;
         this.isLoading = false;

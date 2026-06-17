@@ -71,7 +71,6 @@ button { border-radius: 6px; padding: 8px 16px; font-weight: 600; cursor: pointe
 .badge-create { background-color: #dcfce3; color: #16a34a; }
 .badge-delete { background-color: #fee2e2; color: #dc2626; }
 .badge-login { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
-.badge-export { background-color: #e0e7ff; color: #0284c7; }
 
 .log-desc { display: block; font-weight: 500; color: #0f172a; }
 .log-id { font-size: 0.75rem; }
