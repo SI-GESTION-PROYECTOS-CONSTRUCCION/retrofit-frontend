@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { ProjectDashboardResponseDto } from '../models/dashboard.model';
@@ -11,7 +11,11 @@ export class DashboardService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/dashboard`
   
-  getProjectDashboard(projectId: number): Observable<ProjectDashboardResponseDto> {
-    return this.http.get<ProjectDashboardResponseDto>(`${this.apiUrl}/project/${projectId}`);
+  getProjectDashboard(projectId: number, itemId?: number | null): Observable<ProjectDashboardResponseDto> {
+    let params = new HttpParams();
+    if (itemId) {
+      params = params.set('itemId', itemId.toString());
+    }
+    return this.http.get<ProjectDashboardResponseDto>(`${this.apiUrl}/project/${projectId}`, { params });
   }
 }
