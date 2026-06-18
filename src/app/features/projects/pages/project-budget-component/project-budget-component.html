@@ -5,7 +5,7 @@
       @if (isLocked) {
         <div class="lock-warning">
           <i class="fa-solid fa-lock"></i>
-          <span><b>Presupuesto Bloqueado:</b> La obra tiene un {{ project?.currentProgress }}% de avance. No se permiten ediciones.</span>
+          <span><b>Presupuesto Bloqueado:</b> La obra tiene un {{ project?.currentProgress | number:'1.2-2' }}% de avance. No se permiten ediciones.</span>
         </div>
       }@else {
         <p class="section-subtitle">
