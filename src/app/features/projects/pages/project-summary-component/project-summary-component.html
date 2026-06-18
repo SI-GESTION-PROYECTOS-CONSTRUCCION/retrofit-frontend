@@ -27,7 +27,7 @@
 
           <div class="progress-card">
             <span class="pc-label">AVANCE FÍSICO</span>
-            <h2 class="pc-value">{{ project.currentProgress }}%</h2>
+            <h2 class="pc-value">{{ project.currentProgress | number:'1.2-2'}}%</h2>
             <div class="progress-track" style="height: 8px; margin-top: 12px; background-color: #E5E7EB;">
               <div class="progress-fill" style="background-color: #111827;" [style.width.%]="project.currentProgress"></div>
             </div>

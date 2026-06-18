@@ -142,7 +142,7 @@
                 
                 <td>
                   <div class="progress-container">
-                    <span class="progress-percent">{{ project.currentProgress }}%</span>
+                    <span class="progress-percent">{{ project.currentProgress | number:'1.2-2'}}%</span>
                     <div class="progress-track">
                       <div class="progress-fill" [style.width.%]="project.currentProgress"></div>
                     </div>
