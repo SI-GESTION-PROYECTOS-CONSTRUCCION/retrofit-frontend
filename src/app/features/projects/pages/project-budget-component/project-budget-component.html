@@ -7,6 +7,11 @@
           <i class="fa-solid fa-lock"></i>
           <span><b>Presupuesto Bloqueado:</b> La obra tiene un {{ project?.currentProgress }}% de avance. No se permiten ediciones.</span>
         </div>
+      }@else {
+        <p class="section-subtitle">
+          <i class="fa-solid fa-keyboard"></i> 
+          Use <b>Tab</b> para sangría, <b>Shift + Tab</b> para quitarla, y <b>Enter</b> para bajar.
+        </p>
       }
       <div style="display: flex; gap: 15px; margin-top: 10px; align-items: center;">
         <div style="display: flex; gap: 10px;">
@@ -38,12 +43,17 @@
             <th width="50px"></th> </tr>
         </thead>
         <tbody formArrayName="items">
-          @for (row of itemsFormArray.controls; track row.get('id')?.value || $index; let idx = $index) {
+          @for (row of itemsFormArray.controls; track row; let idx = $index) {
             
-            <tr [formGroupName]="idx" [ngClass]="{'is-parent-row': isParent(idx)}">
+            <tr [formGroupName]="idx" [ngClass]="{'is-parent-row': isParent(idx)}" class="budget-row">
               
-              <td>
+              <td style="position: static;">
                 <input type="text" formControlName="code" class="cell-input text-center fw-bold text-muted" readonly>
+                @if (!isLocked) {
+                  <button *appHasPermission="'PROJECT_UPDATE'" class="insert-row-btn" (click)="insertRow(idx)" title="Insertar fila debajo">
+                    <i class="fa-solid fa-plus"></i>
+                  </button>
+                }
               </td>
               
               <td class="description-cell">

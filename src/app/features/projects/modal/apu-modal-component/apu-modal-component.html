@@ -124,9 +124,14 @@
 
     </div>
 
-    <div class="modal-footer">
+    <div class="modal-footer" style="display: flex; align-items: center; justify-content: flex-end;">
+      @if (!isYieldValid()) {
+        <div style="color: #EF4444; font-size: 13px; font-weight: 500; margin-right: auto; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-triangle-exclamation"></i> Ingrese el rendimiento para poder guardar.
+        </div>
+      }
       <button type="button" class="btn btn-cancel" (click)="onClose.emit()">Cancelar</button>
-      <button type="button" class="btn btn-submit" (click)="saveApu()" [disabled]="isLoading">
+      <button type="button" class="btn btn-submit" (click)="saveApu()" [disabled]="isLoading || !isYieldValid()">
         <i class="fa-solid" [ngClass]="isLoading ? 'fa-spinner fa-spin' : 'fa-floppy-disk'"></i> Guardar APU
       </button>
     </div>

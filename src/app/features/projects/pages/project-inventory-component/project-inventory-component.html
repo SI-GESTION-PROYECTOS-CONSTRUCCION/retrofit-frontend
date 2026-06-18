@@ -182,7 +182,7 @@
           <div class="form-group">
             <label>Partida de Destino (Frente de Trabajo) *</label>
             <ng-select formControlName="projectItemId" placeholder="Seleccione la partida...">
-              @for (item of projectItems; track item.id) {
+              @for (item of filteredProjectItems; track item.id) {
                 <ng-option [value]="item.id">{{ item.code || '' }} - {{ item.description }}</ng-option>
               }
             </ng-select>

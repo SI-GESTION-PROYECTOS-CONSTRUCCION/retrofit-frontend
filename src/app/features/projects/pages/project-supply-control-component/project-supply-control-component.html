@@ -7,6 +7,25 @@
     </button>
   </div>
 
+  <div class="filter-container">
+    <div class="filter-group">
+      <input type="text" class="form-control" placeholder="Buscar por insumo..." [(ngModel)]="filterName" (keyup.enter)="loadSupplyControl()">
+    </div>
+    <div class="filter-group">
+      <select class="form-select" [(ngModel)]="filterStatus" (change)="loadSupplyControl()">
+        <option value="">Todos los estados</option>
+        <option value="OK">COMPLETO</option>
+        <option value="PENDING">PENDIENTE</option>
+        <option value="EXCESS">EXCEDIDO</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <button class="btn btn-secondary" (click)="loadSupplyControl()">
+        <i class="fas fa-search"></i> Buscar
+      </button>
+    </div>
+  </div>
+
   @if (isLoading) {
     <app-skeleton width="100%" height="300px" borderRadius="12px"></app-skeleton>
   } @else if (errorMessage) {

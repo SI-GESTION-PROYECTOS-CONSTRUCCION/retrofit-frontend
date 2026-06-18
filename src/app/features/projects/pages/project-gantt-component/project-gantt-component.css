@@ -51,6 +51,9 @@
   color: #FFFFFF !important;
   font-weight: 500;
 }
+.mi-barra-hija .gantt_task_progress {
+  background-color: rgba(0, 0, 0, 0.4) !important; /* Color más oscuro para que resalte el progreso */
+}
 
 /* 4. BARRAS PADRE (CONTENEDORES / GRAPAS) */
 .mi-barra-padre {

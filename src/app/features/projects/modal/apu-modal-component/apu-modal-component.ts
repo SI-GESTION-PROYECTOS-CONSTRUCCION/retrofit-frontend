@@ -136,4 +136,16 @@ export class ApuModalComponent {
       }
     });
   }
+
+  isYieldValid(): boolean {
+    const hasLabor = this.apuItems.some(i => i.resourceType === 'LABOR');
+    const hasEquipment = this.apuItems.some(i => i.resourceType === 'EQUIPMENT');
+    const laborY = Number(this.itemData.laborYield) || 0;
+    const equipY = Number(this.itemData.equipmentYield) || 0;
+
+    if (hasLabor && laborY <= 0) return false;
+    if (hasEquipment && equipY <= 0) return false;
+    
+    return true;
+  }
 }

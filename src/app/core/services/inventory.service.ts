@@ -62,8 +62,14 @@ export class InventoryService {
     return this.http.get<any[]>(`${this.apiUrl}/planned-materials`, { params });
   }
 
-  getSupplyControl(projectId: number): Observable<SupplyControl[]> {
-    const params = new HttpParams().set('projectId', projectId.toString());
+  getSupplyControl(projectId: number, status?: string, resourceName?: string): Observable<SupplyControl[]> {
+    let params = new HttpParams().set('projectId', projectId.toString());
+    if (status) {
+      params = params.set('status', status);
+    }
+    if (resourceName) {
+      params = params.set('resourceName', resourceName);
+    }
     return this.http.get<SupplyControl[]>(`${this.apiUrl}/supply-control`, { params });
   }
 

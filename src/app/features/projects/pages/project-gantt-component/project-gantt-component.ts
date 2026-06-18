@@ -31,7 +31,18 @@ export class ProjectGanttComponent {
       {name: "code", label: "Item", width: 80, resize: true}, 
       {name: "text", label: "Partida", width: 200, tree: true, resize: true}, 
       {name: "start_date", label: "Inicio", align: "center", width: 120, resize: true},
-      {name: "duration", label: "Días", align: "center", width: 60, resize: true}
+      {name: "duration", label: "Días", align: "center", width: 60, resize: true},
+      {
+        name: "progress", 
+        label: "Avance", 
+        align: "center", 
+        width: 70, 
+        resize: true,
+        template: function(item: any) {
+          if (!item.progress) return "0%";
+          return Math.round(item.progress * 100) + "%";
+        }
+      }
     ];
 
     gantt.attachEvent("onAfterTaskDrag", (id: string | number, mode: string, e: Event) => {

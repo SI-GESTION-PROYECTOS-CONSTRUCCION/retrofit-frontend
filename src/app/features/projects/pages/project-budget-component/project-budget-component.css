@@ -169,3 +169,41 @@
 .summary-grand-total td {
   padding: 12px 16px;
 }
+
+/* Hover effect para el botón de inserción de fila en la línea horizontal */
+.budget-row {
+  position: relative;
+}
+
+.budget-row:hover .insert-row-btn {
+  opacity: 1;
+  visibility: visible;
+}
+
+.insert-row-btn {
+  position: absolute;
+  bottom: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-primario, #0097A7);
+  color: white;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.insert-row-btn:hover {
+  transform: translateX(-50%) scale(1.15);
+  background: var(--color-secundario, #007c8a);
+}

@@ -34,6 +34,7 @@ export class ProjectInventoryComponent implements OnInit {
 
   resources: any[] = []; 
   projectItems: any[] = []; 
+  filteredProjectItems: any[] = [];
 
   inventoryData: StockSummary[] = [];
 
@@ -86,11 +87,25 @@ export class ProjectInventoryComponent implements OnInit {
 
     this.outboundForm = this.fb.group({
       resourceId: ['', Validators.required],
-      projectItemId: ['', Validators.required],
+      projectItemId: [{value: '', disabled: true}, Validators.required],
       reason: [TransactionReason.CONSUMPTION, Validators.required],
       quantity: [null, [Validators.required, Validators.min(0.01)]],
       referenceDocument: [''],
       observations: ['']
+    });
+
+    this.outboundForm.get('resourceId')?.valueChanges.subscribe((resourceId) => {
+      const projectItemControl = this.outboundForm.get('projectItemId');
+      if (resourceId) {
+        this.filteredProjectItems = this.projectItems.filter(item => 
+          item.apuDetails && item.apuDetails.some((apu: any) => apu.resourceId === resourceId)
+        );
+        projectItemControl?.enable();
+      } else {
+        this.filteredProjectItems = [];
+        projectItemControl?.disable();
+      }
+      projectItemControl?.setValue('');
     });
   }
 

@@ -178,9 +178,50 @@ export class ProjectBudgetComponent implements OnInit {
 
   removeRow(index: number) {
     this.itemsFormArray.removeAt(index);
-    delete this.expandedRows[index];
+    
+    // Al eliminar, los índices de las filas debajo se desplazan -1.
+    // Necesitamos ajustar expandedRows para mantener la consistencia.
+    const newExpandedRows: { [key: number]: boolean } = {};
+    for (const key of Object.keys(this.expandedRows)) {
+      const numKey = Number(key);
+      if (numKey < index) {
+        newExpandedRows[numKey] = this.expandedRows[numKey];
+      } else if (numKey > index) {
+        newExpandedRows[numKey - 1] = this.expandedRows[numKey];
+      }
+    }
+    this.expandedRows = newExpandedRows;
+
     this.recalculateWBS();
     this.ensureEmptyRows();
+  }
+
+  insertRow(index: number) {
+    this.itemsFormArray.insert(index + 1, this.crearFila());
+
+    // Al insertar, los índices de las filas debajo se desplazan +1.
+    const newExpandedRows: { [key: number]: boolean } = {};
+    for (const key of Object.keys(this.expandedRows)) {
+      const numKey = Number(key);
+      if (numKey <= index) {
+        newExpandedRows[numKey] = this.expandedRows[numKey];
+      } else {
+        newExpandedRows[numKey + 1] = this.expandedRows[numKey];
+      }
+    }
+    this.expandedRows = newExpandedRows;
+
+    // Heredar la misma sangría de la fila desde donde se inserta
+    const prevRowLevel = this.itemsFormArray.at(index).get('level')?.value || 0;
+    this.itemsFormArray.at(index + 1).get('level')?.setValue(prevRowLevel);
+
+    this.recalculateWBS();
+    
+    // Foco en el nuevo input creado de manera asíncrona para que se renderice primero
+    setTimeout(() => {
+      const nextInput = document.getElementById(`desc-${index + 1}`);
+      if (nextInput) nextInput.focus();
+    }, 50);
   }
 
   ensureEmptyRows() {
