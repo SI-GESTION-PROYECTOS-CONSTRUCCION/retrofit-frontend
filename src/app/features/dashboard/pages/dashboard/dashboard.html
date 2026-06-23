@@ -1,17 +1,17 @@
 <div class="dashboard-container">
-  
+
   <div class="header d-flex justify-content-between align-items-center">
     <div>
       <h2>Dashboard Gerencial</h2>
       <p>Análisis de valor ganado y rendimiento en tiempo real.</p>
     </div>
-    
+
     <div class="project-selector d-flex gap-3">
       <div>
         <label for="projectSelect"><i class="fa-solid fa-building"></i> Proyecto:</label>
         <select id="projectSelect" [(ngModel)]="selectedProjectId" (change)="onProjectChange()">
           @for (p of projects; track p.id) {
-            <option [value]="p.id">{{ p.name }}</option>
+          <option [value]="p.id">{{ p.name }}</option>
           }
         </select>
       </div>
@@ -21,7 +21,7 @@
         <select id="itemSelect" [(ngModel)]="selectedItemId" (change)="onItemChange()">
           <option [ngValue]="null">Todas las partidas</option>
           @for (item of items; track item.id) {
-            <option [ngValue]="item.id">{{ item.code }} - {{ item.description }}</option>
+          <option [ngValue]="item.id">{{ item.code }} - {{ item.description }}</option>
           }
         </select>
       </div>
@@ -29,176 +29,235 @@
   </div>
 
   @if (isLoading) {
-    
-    <div class="kpi-grid">
-      @for (i of [1, 2, 3, 4, 5]; track i) {
-        <div class="kpi-card">
-          <div class="kpi-header">
-            <app-skeleton width="60%" height="16px" marginBottom="0"></app-skeleton>
-            <app-skeleton width="16px" height="16px" borderRadius="50%" marginBottom="0"></app-skeleton>
-          </div>
-          <div style="margin-top: 16px;">
-            <app-skeleton width="80%" height="32px" marginBottom="0"></app-skeleton>
-          </div>
-        </div>
-      }
-    </div>
 
-    <div class="charts-grid">
-      <div class="chart-card s-curve-card">
-        <app-skeleton width="40%" height="24px" marginBottom="20px"></app-skeleton>
-        <div class="canvas-container">
-          <app-skeleton width="100%" height="300px" borderRadius="8px" marginBottom="0"></app-skeleton>
-        </div>
+  <div class="kpi-grid">
+    @for (i of [1, 2, 3, 4, 5]; track i) {
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <app-skeleton width="60%" height="16px" marginBottom="0"></app-skeleton>
+        <app-skeleton width="16px" height="16px" borderRadius="50%" marginBottom="0"></app-skeleton>
       </div>
-      
-      <div class="chart-card donut-card">
-        <app-skeleton width="60%" height="24px" marginBottom="20px"></app-skeleton>
-        <div class="canvas-container" style="display: flex; justify-content: center; align-items: center; min-height: 300px;">
-          <app-skeleton width="240px" height="240px" borderRadius="50%" marginBottom="0"></app-skeleton>
-        </div>
+      <div style="margin-top: 16px;">
+        <app-skeleton width="80%" height="32px" marginBottom="0"></app-skeleton>
+      </div>
+    </div>
+    }
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card s-curve-card">
+      <app-skeleton width="40%" height="24px" marginBottom="20px"></app-skeleton>
+      <div class="canvas-container">
+        <app-skeleton width="100%" height="300px" borderRadius="8px" marginBottom="0"></app-skeleton>
       </div>
     </div>
 
-    <div class="alerts-section">
-      <app-skeleton width="300px" height="28px" marginBottom="20px"></app-skeleton>
-      
-      <table class="styled-table">
-        <thead>
-          <tr>
-            <th><app-skeleton width="60px" height="14px" marginBottom="0"></app-skeleton></th>
-            <th><app-skeleton width="150px" height="14px" marginBottom="0"></app-skeleton></th>
-            <th><app-skeleton width="100px" height="14px" marginBottom="0"></app-skeleton></th>
-            <th><app-skeleton width="100px" height="14px" marginBottom="0"></app-skeleton></th>
-            <th><app-skeleton width="100px" height="14px" marginBottom="0"></app-skeleton></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (i of [1, 2, 3]; track i) {
-            <tr>
-              <td><app-skeleton width="60px" height="14px" marginBottom="0"></app-skeleton></td>
-              <td><app-skeleton width="80%" height="14px" marginBottom="0"></app-skeleton></td>
-              <td><app-skeleton width="90px" height="14px" marginBottom="0"></app-skeleton></td>
-              <td><app-skeleton width="90px" height="14px" marginBottom="0"></app-skeleton></td>
-              <td><app-skeleton width="90px" height="14px" marginBottom="0"></app-skeleton></td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <div class="chart-card donut-card">
+      <app-skeleton width="60%" height="24px" marginBottom="20px"></app-skeleton>
+      <div class="canvas-container"
+        style="display: flex; justify-content: center; align-items: center; min-height: 300px;">
+        <app-skeleton width="240px" height="240px" borderRadius="50%" marginBottom="0"></app-skeleton>
+      </div>
     </div>
+  </div>
+
+  <div class="alerts-section">
+    <app-skeleton width="300px" height="28px" marginBottom="20px"></app-skeleton>
+
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th><app-skeleton width="60px" height="14px" marginBottom="0"></app-skeleton></th>
+          <th><app-skeleton width="150px" height="14px" marginBottom="0"></app-skeleton></th>
+          <th><app-skeleton width="100px" height="14px" marginBottom="0"></app-skeleton></th>
+          <th><app-skeleton width="100px" height="14px" marginBottom="0"></app-skeleton></th>
+          <th><app-skeleton width="100px" height="14px" marginBottom="0"></app-skeleton></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (i of [1, 2, 3]; track i) {
+        <tr>
+          <td><app-skeleton width="60px" height="14px" marginBottom="0"></app-skeleton></td>
+          <td><app-skeleton width="80%" height="14px" marginBottom="0"></app-skeleton></td>
+          <td><app-skeleton width="90px" height="14px" marginBottom="0"></app-skeleton></td>
+          <td><app-skeleton width="90px" height="14px" marginBottom="0"></app-skeleton></td>
+          <td><app-skeleton width="90px" height="14px" marginBottom="0"></app-skeleton></td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 
   } @else if (data) {
-    
-    <div class="kpi-grid">
-      
-      <div class="kpi-card">
-        <div class="kpi-header">
-          <span class="kpi-title">Presupuesto (PV)</span>
-          <div class="tooltip-container">
-            <i class="fa-solid fa-circle-info text-gray"></i>
-            <span class="tooltip-text"><b>Planned Value (PV):</b> Es el presupuesto meta o total autorizado para la obra (BAC) según el APU.</span>
-          </div>
-        </div>
-        <span class="kpi-value text-blue">S/ {{ data.plannedValue | number:'1.2-2' }}</span>
-      </div>
 
-      <div class="kpi-card">
-        <div class="kpi-header">
-          <span class="kpi-title">Valor Ganado (EV)</span>
-          <div class="tooltip-container">
-            <i class="fa-solid fa-circle-info text-gray"></i>
-            <span class="tooltip-text"><b>Earned Value (EV):</b> Cuánto dinero se "ganó" o justificó en base al avance físico de metrados en obra.</span>
-          </div>
-        </div>
-        <span class="kpi-value text-green">S/ {{ data.earnedValue | number:'1.2-2' }}</span>
-      </div>
+  <div class="kpi-grid">
 
-      <div class="kpi-card">
-        <div class="kpi-header">
-          <span class="kpi-title">Costo Real (AC)</span>
-          <div class="tooltip-container">
-            <i class="fa-solid fa-circle-info text-gray"></i>
-            <span class="tooltip-text"><b>Actual Cost (AC):</b> La suma total del costo de los recursos (MO, Materiales y Equipos) realmente consumidos y reportados.</span>
-          </div>
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-title">Presupuesto (PV)</span>
+        <div class="tooltip-container">
+          <i class="fa-solid fa-circle-info text-gray"></i>
+          <span class="tooltip-text"><b>Planned Value (PV):</b> Es el presupuesto meta o total autorizado para la obra
+            (BAC) según el APU.</span>
         </div>
-        <span class="kpi-value text-red">S/ {{ data.actualCost | number:'1.2-2' }}</span>
       </div>
-
-      <div class="kpi-card">
-        <div class="kpi-header">
-          <span class="kpi-title">Desviación (CV)</span>
-          <div class="tooltip-container">
-            <i class="fa-solid fa-circle-info text-gray"></i>
-            <span class="tooltip-text"><b>Cost Variance (CV = EV - AC):</b> Indica en dinero si estás ahorrando (positivo) o perdiendo (negativo) respecto al avance.</span>
-          </div>
-        </div>
-        <span class="kpi-value" [class.text-red]="data.costVariance < 0" [class.text-green]="data.costVariance >= 0">
-          S/ {{ data.costVariance | number:'1.2-2' }}
-        </span>
-      </div>
-
-      <div class="kpi-card">
-        <div class="kpi-header">
-          <span class="kpi-title">Índice Desempeño (CPI)</span>
-          <div class="tooltip-container">
-            <i class="fa-solid fa-circle-info text-gray"></i>
-            <span class="tooltip-text"><b>Cost Performance Index (CPI = EV / AC):</b> Mide la eficiencia. Si es menor a 1, la obra está siendo ineficiente financieramente.</span>
-          </div>
-        </div>
-        <span class="kpi-value" [class.text-red]="data.cpi < 1" [class.text-green]="data.cpi >= 1">
-          {{ data.cpi | number:'1.2-2' }}
-        </span>
-      </div>
-
+      <span class="kpi-value text-blue">S/ {{ data.plannedValue | number:'1.2-2' }}</span>
     </div>
 
-    <div class="charts-grid">
-      <div class="chart-card s-curve-card">
-        <h3>Evolución de Costos (Curva S)</h3>
-        <div class="canvas-container">
-          <canvas #sCurveChart></canvas>
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-title">Valor Ganado (EV)</span>
+        <div class="tooltip-container">
+          <i class="fa-solid fa-circle-info text-gray"></i>
+          <span class="tooltip-text"><b>Earned Value (EV):</b> Cuánto dinero se "ganó" o justificó en base al avance
+            físico de metrados en obra.</span>
         </div>
       </div>
-      
-      <div class="chart-card donut-card">
-        <h3>Gasto Real por Recurso</h3>
-        <div class="canvas-container">
-          <canvas #donutChart></canvas>
+      <span class="kpi-value text-green">S/ {{ data.earnedValue | number:'1.2-2' }}</span>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-title">Costo Real (AC)</span>
+        <div class="tooltip-container">
+          <i class="fa-solid fa-circle-info text-gray"></i>
+          <span class="tooltip-text"><b>Actual Cost (AC):</b> La suma total del costo de los recursos (MO, Materiales y
+            Equipos) realmente consumidos y reportados.</span>
         </div>
+      </div>
+      <span class="kpi-value text-red">S/ {{ data.actualCost | number:'1.2-2' }}</span>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-title">Desviación (CV)</span>
+        <div class="tooltip-container">
+          <i class="fa-solid fa-circle-info text-gray"></i>
+          <span class="tooltip-text"><b>Cost Variance (CV = EV - AC):</b> Indica en dinero si estás ahorrando (positivo)
+            o perdiendo (negativo) respecto al avance.</span>
+        </div>
+      </div>
+      <span class="kpi-value" [class.text-red]="data.costVariance < 0" [class.text-green]="data.costVariance >= 0">
+        S/ {{ data.costVariance | number:'1.2-2' }}
+      </span>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-header">
+        <span class="kpi-title">Índice Desempeño (CPI)</span>
+        <div class="tooltip-container">
+          <i class="fa-solid fa-circle-info text-gray"></i>
+          <span class="tooltip-text"><b>Cost Performance Index (CPI = EV / AC):</b> Mide la eficiencia. Si es menor a 1,
+            la obra está siendo ineficiente financieramente.</span>
+        </div>
+      </div>
+      <span class="kpi-value" [class.text-red]="data.cpi < 1" [class.text-green]="data.cpi >= 1">
+        {{ data.cpi | number:'1.2-2' }}
+      </span>
+    </div>
+
+  </div>
+
+  <div class="progress-section chart-card">
+    <div class="progress-header">
+      <h3 class="progress-title">Resumen de Avances Físicos</h3>
+      <div class="progress-stats">
+        <span class="stat-badge">
+          <i class="fa-solid fa-bullseye text-blue"></i> Planificado: {{ data.avanceTotalPlanificado | number:'1.2-2' }}
+          {{ data.itemUnit }}
+        </span>
+        <span class="stat-badge">
+          <i class="fa-solid fa-person-digging text-green"></i> Ejecutado: {{ data.avanceTotalEjecutado | number:'1.2-2'
+          }} {{ data.itemUnit }}
+        </span>
       </div>
     </div>
 
-    <div class="alerts-section">
-      <h3><i class="fa-solid fa-triangle-exclamation text-red"></i> Partidas Críticas (Sobrecosto)</h3>
-      
-      @if (data.criticalItems.length === 0) {
-        <div class="alert-success">
-          <i class="fa-solid fa-check-circle"></i> Todo en orden. No hay partidas con sobrecosto.
+    <div class="progress-bar-container">
+      <div class="progress-bg">
+        <div class="progress-fill" [style.width.%]="data.porcentajeAvance > 100 ? 100 : data.porcentajeAvance"
+          [class.over-100]="data.porcentajeAvance > 100">
+          <span class="progress-text">{{ data.porcentajeAvance | number:'1.1-1' }}% Completado</span>
         </div>
-      } @else {
-        <table class="styled-table">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Partida</th>
-              <th>Valor Ganado (EV)</th>
-              <th>Costo Real (AC)</th>
-              <th>Pérdida</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (item of data.criticalItems; track item.itemId) {
-              <tr>
-                <td>{{ item.itemCode }}</td>
-                <td>{{ item.description }}</td>
-                <td>S/ {{ item.earnedValue | number:'1.2-2' }}</td>
-                <td class="text-red">S/ {{ item.actualCost | number:'1.2-2' }}</td>
-                <td class="text-red font-bold">- S/ {{ item.lossAmount | number:'1.2-2' }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ULTIMOS AVANCES -->
+  <div class="alerts-section">
+    <h3><i class="fa-solid fa-clock-rotate-left text-blue"></i> Últimos Avances Reportados</h3>
+
+    @if (!data.recentProgresses || data.recentProgresses.length === 0) {
+    <div class="alert-success">
+      <i class="fa-solid fa-info-circle"></i> No hay avances registrados para mostrar.
+    </div>
+    } @else {
+    <div class="recent-list">
+      @for (prog of data.recentProgresses; track prog.reportId) {
+      <div class="recent-card">
+        <div class="recent-card-info">
+          <span class="recent-date"><i class="fa-regular fa-calendar"></i> {{ prog.date }}</span>
+          <span class="recent-item"><b>{{ prog.itemCode }}</b> - {{ prog.itemDescription }}</span>
+          <span class="recent-qty text-green font-bold"><i class="fa-solid fa-arrow-trend-up"></i> +{{
+            prog.executedQuantity }} {{ prog.unit }}</span>
+        </div>
+        <button class="btn-view-report" [routerLink]="['/portafolio/proyecto', data.projectCode]" [queryParams]="{ tab: 'AVANCES' }">
+          Ver avance <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
       }
     </div>
+    }
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card s-curve-card">
+      <h3>Evolución de Costos (Curva S)</h3>
+      <div class="canvas-container">
+        <canvas #sCurveChart></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card donut-card">
+      <h3>Gasto Real por Recurso</h3>
+      <div class="canvas-container">
+        <canvas #donutChart></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="alerts-section">
+    <h3><i class="fa-solid fa-triangle-exclamation text-red"></i> Partidas Críticas (Sobrecosto)</h3>
+
+    @if (data.criticalItems.length === 0) {
+    <div class="alert-success">
+      <i class="fa-solid fa-check-circle"></i> Todo en orden. No hay partidas con sobrecosto.
+    </div>
+    } @else {
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Partida</th>
+          <th>Valor Ganado (EV)</th>
+          <th>Costo Real (AC)</th>
+          <th>Pérdida</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of data.criticalItems; track item.itemId) {
+        <tr>
+          <td>{{ item.itemCode }}</td>
+          <td>{{ item.description }}</td>
+          <td>S/ {{ item.earnedValue | number:'1.2-2' }}</td>
+          <td class="text-red">S/ {{ item.actualCost | number:'1.2-2' }}</td>
+          <td class="text-red font-bold">- S/ {{ item.lossAmount | number:'1.2-2' }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+    }
+  </div>
+
   }
 </div>

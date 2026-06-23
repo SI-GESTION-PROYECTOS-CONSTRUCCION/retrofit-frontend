@@ -29,6 +29,11 @@ export class ProjectDetailComponent implements OnInit {
   activeTab = 'RESUMEN'; // Controla las pestañas
 
   ngOnInit(): void {
+    const queryTab = this.route.snapshot.queryParamMap.get('tab');
+    if (queryTab) {
+      this.activeTab = queryTab;
+    }
+    
     // Buena práctica: Usar switchMap para reaccionar a cambios en la URL de forma segura
     this.route.paramMap.pipe(
       switchMap(params => {

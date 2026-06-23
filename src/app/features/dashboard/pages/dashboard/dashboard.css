@@ -62,11 +62,86 @@
   width: 100%;
 }
 
+/* --- BARRA DE PROGRESO --- */
+.progress-section {
+  margin-bottom: 24px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.progress-title {
+  margin: 0;
+  font-size: 1.17em;
+}
+
+.progress-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.progress-stats .stat-badge {
+  font-weight: 600;
+  font-size: 0.85rem;
+  background-color: #f8fafc;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #475569;
+}
+
+.progress-bar-container {
+  padding-bottom: 4px;
+}
+
+.progress-bg {
+  background-color: #e2e8f0;
+  border-radius: 20px;
+  height: 24px;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  background-color: #10b981; /* Verde esmeralda por defecto */
+  height: 100%;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  transition: width 0.5s ease-in-out;
+  min-width: fit-content; /* Para que el texto no se aplaste si es 0% */
+}
+
+.progress-fill.over-100 {
+  background-color: #3b82f6; /* Azul si sobrepasa el planificado */
+}
+
+.progress-text {
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
 .alerts-section {
   background: white;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
 }
 
 .styled-table {
@@ -248,3 +323,72 @@
     height: 250px;
     }
 }
+
+/* --- ULTIMOS AVANCES --- */
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.recent-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  transition: transform 0.2s, box-shadow 0.2s;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.recent-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border-color: #cbd5e1;
+}
+
+.recent-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.recent-date {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.recent-item {
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+.recent-qty {
+  font-size: 0.9rem;
+}
+
+.btn-view-report {
+  background-color: #f1f5f9;
+  color: #3b82f6;
+  border: 1px solid #e2e8f0;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-view-report:hover {
+  background-color: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}

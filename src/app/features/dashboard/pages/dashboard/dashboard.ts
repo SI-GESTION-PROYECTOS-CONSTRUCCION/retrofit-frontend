@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { DashboardService } from '../../../../core/services/dashboard.service';
@@ -13,7 +14,7 @@ Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, FormsModule, Skeleton],
+  imports: [CommonModule, FormsModule, Skeleton, RouterModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })

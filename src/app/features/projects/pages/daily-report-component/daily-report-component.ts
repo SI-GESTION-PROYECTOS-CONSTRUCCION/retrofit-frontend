@@ -45,11 +45,11 @@ export class DailyReportComponent implements OnInit {
       reportDate: [today, Validators.required],
       executedQuantity: ['', [Validators.required, Validators.min(0.01)]],
       observations: [''],
-      usedResources: this.fb.array([]) 
+      usedResources: this.fb.array([])
     });
 
     this.loadProjectItems();
-    this.loadProjectDetails(); 
+    this.loadProjectDetails();
 
     this.reportForm.get('projectItemId')?.valueChanges.subscribe(id => {
       this.selectedItemInfo = this.executableItems.find(i => i.id === Number(id)) || null;
@@ -75,7 +75,7 @@ export class DailyReportComponent implements OnInit {
 
   buildResourcesForm() {
     this.usedResourcesFormArray.clear();
-    
+
     if (!this.selectedItemInfo || !this.selectedItemInfo.apuDetails) return;
 
     this.selectedItemInfo.apuDetails.forEach(apu => {
@@ -85,9 +85,9 @@ export class DailyReportComponent implements OnInit {
         resourceName: [apu.resourceName],
         resourceType: [apu.resourceType],
         resourceUnit: [apu.resourceUnit],
-        
-        unitCoefficient: [apu.quantity], 
-        
+
+        unitCoefficient: [apu.quantity],
+
         theoreticalQuantity: [{ value: 0, disabled: true }], // Solo lectura
         realQuantity: [{ value: 0, disabled: isMaterial }, [Validators.required, Validators.min(0)]] // El ingeniero digita esto si no es material
       });
@@ -112,14 +112,14 @@ export class DailyReportComponent implements OnInit {
   updateMaterialQuantities(date: string) {
     this.usedResourcesFormArray.controls.forEach(rowGroup => {
       if (rowGroup.get('resourceType')?.value === 'MATERIAL') {
-         this.inventoryService.getConsumedQuantity(Number(this.selectedItemInfo?.id), Number(rowGroup.get('resourceId')?.value), date).subscribe({
-           next: (qty) => {
-             rowGroup.get('realQuantity')?.setValue(qty || 0);
-           },
-           error: (err) => {
-             console.error('Error fetching consumed quantity', err);
-           }
-         });
+        this.inventoryService.getConsumedQuantity(Number(this.selectedItemInfo?.id), Number(rowGroup.get('resourceId')?.value), date).subscribe({
+          next: (qty) => {
+            rowGroup.get('realQuantity')?.setValue(qty || 0);
+          },
+          error: (err) => {
+            console.error('Error fetching consumed quantity', err);
+          }
+        });
       }
     });
   }
@@ -128,12 +128,12 @@ export class DailyReportComponent implements OnInit {
     this.usedResourcesFormArray.controls.forEach(row => {
       const coeff = row.get('unitCoefficient')?.value || 0;
       const theoretical = Number((coeff * metradoHoy).toFixed(2));
-      
+
       row.get('theoreticalQuantity')?.setValue(theoretical);
-      
+
       // Solo copiamos el teórico al real si NO es material (los materiales vienen de almacén)
       if (row.get('resourceType')?.value !== 'MATERIAL') {
-        row.get('realQuantity')?.setValue(theoretical); 
+        row.get('realQuantity')?.setValue(theoretical);
       }
     });
   }
