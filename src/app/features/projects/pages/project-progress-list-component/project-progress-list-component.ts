@@ -25,6 +25,8 @@ export class ProjectProgressListComponent implements OnInit {
   
   openedResources: { [reportId: number]: boolean } = {};
 
+  selectedPhotoUrl: string | null = null;
+
   ngOnInit() {
     this.filterForm = this.fb.group({
       startDate: [''],
@@ -87,7 +89,11 @@ export class ProjectProgressListComponent implements OnInit {
   }
 
   openPhoto(url: string) {
-    window.open(url, '_blank');
+    this.selectedPhotoUrl = url;
+  }
+
+  closePhoto() {
+    this.selectedPhotoUrl = null;
   }
 
   printReport() {

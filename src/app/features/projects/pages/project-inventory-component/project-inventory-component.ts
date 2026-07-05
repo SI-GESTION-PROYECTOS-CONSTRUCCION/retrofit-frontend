@@ -41,6 +41,7 @@ export class ProjectInventoryComponent implements OnInit {
   showKardexModal = false;
   kardexData: any[] = [];
   selectedResourceName = '';
+  searchTerm = '';
 
   currentPage = 1;
   itemsPerPage = 10;
@@ -61,6 +62,12 @@ export class ProjectInventoryComponent implements OnInit {
       this.currentPage++;
       this.loadInventory();
     }
+  }
+
+  onSearchChange(event: any): void {
+    this.searchTerm = event.target.value;
+    this.currentPage = 1;
+    this.loadInventory();
   }
 
   previousPage(): void {
@@ -111,7 +118,7 @@ export class ProjectInventoryComponent implements OnInit {
 
   loadInventory(): void {
     this.isLoading = true;
-    this.inventoryService.getProjectStockSummary(this.projectId, this.currentPage - 1, this.itemsPerPage).subscribe({
+    this.inventoryService.getProjectStockSummary(this.projectId, this.searchTerm, this.currentPage - 1, this.itemsPerPage).subscribe({
       next: (pageData: any) => {
         if (Array.isArray(pageData)) {
           this.inventoryData = pageData;

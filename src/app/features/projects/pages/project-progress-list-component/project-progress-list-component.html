@@ -250,8 +250,8 @@
                       @if (report.photoUrls && report.photoUrls.length > 0) {
                         <div class="report-photos">
                           @for (photo of report.photoUrls; track photo) {
-                            <div class="photo-wrapper">
-                              <img [src]="photo" alt="Evidencia de obra" (click)="openPhoto(photo)">
+                            <div class="photo-wrapper" (click)="openPhoto(photo)">
+                              <img [src]="photo" alt="Evidencia de obra">
                               <div class="photo-overlay"><i class="fa-solid fa-expand"></i></div>
                             </div>
                           }
@@ -270,3 +270,12 @@
 
   }
 </div>
+
+@if (selectedPhotoUrl) {
+  <div class="fullscreen-lightbox" (click)="closePhoto()">
+    <button class="btn-close-lightbox" (click)="closePhoto()">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <img [src]="selectedPhotoUrl" alt="Evidencia de obra expandida" (click)="$event.stopPropagation()">
+  </div>
+}

@@ -56,7 +56,7 @@ export class RoleListComponent {
   initForm() {
     this.roleForm = this.fb.group({
       name: ['', Validators.required],
-      description: ['']
+      description: ['', Validators.required]
     });
   }
 
@@ -178,6 +178,11 @@ export class RoleListComponent {
 
   saveRole() {
     if (this.roleForm.invalid) return;
+    
+    if (this.selectedPermissionIds.size === 0) {
+      this.toastService.show('Debe seleccionar al menos un permiso en la matriz de accesos.', 'error');
+      return;
+    }
 
     // Empaquetamos la data como la espera el backend
     const dataToSend = {

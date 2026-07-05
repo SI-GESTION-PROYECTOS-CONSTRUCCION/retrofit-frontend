@@ -49,11 +49,15 @@ export class InventoryService {
     return this.http.get<InventoryTransactionResponse[]>(`${this.apiUrl}/kardex`, { params });
   }
 
-  getProjectStockSummary(projectId: number, page: number = 0, size: number = 10): Observable<Page<StockSummary>> {
-    const params = new HttpParams()
+  getProjectStockSummary(projectId: number, search: string = '', page: number = 0, size: number = 10): Observable<Page<StockSummary>> {
+    let params = new HttpParams()
       .set('projectId', projectId.toString())
       .set('page', page.toString())
       .set('size', size.toString());
+
+    if (search && search.trim() !== '') {
+      params = params.set('search', search.trim());
+    }
     return this.http.get<Page<StockSummary>>(`${this.apiUrl}/summary`, { params });
   }
 

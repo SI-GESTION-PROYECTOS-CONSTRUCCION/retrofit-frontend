@@ -1,5 +1,5 @@
 <div class="audit-container">
-  
+
   <!-- Header Section -->
   <header class="audit-header">
     <div class="header-titles">
@@ -11,25 +11,25 @@
   <!-- Stats Section (Mocks for layout) -->
   <section class="stats-row">
     @if (isLoadingStats) {
-      @for (item of [1,2,3]; track item) {
-        <div class="stat-card" style="display: flex; flex-direction: column; gap: 10px; padding: 1.5rem;">
-          <app-skeleton width="120px" height="12px" marginBottom="0"></app-skeleton>
-          <app-skeleton width="80px" height="32px" marginBottom="0"></app-skeleton>
-        </div>
-      }
+    @for (item of [1,2,3]; track item) {
+    <div class="stat-card" style="display: flex; flex-direction: column; gap: 10px; padding: 1.5rem;">
+      <app-skeleton width="120px" height="12px" marginBottom="0"></app-skeleton>
+      <app-skeleton width="80px" height="32px" marginBottom="0"></app-skeleton>
+    </div>
+    }
     } @else {
-      <div class="stat-card">
-        <span class="stat-label">EVENTOS HOY</span>
-        <span class="stat-value">{{ stats.todayEvents }}</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">MODIFICACIONES</span>
-        <span class="stat-value text-muted">{{ stats.modifications }}</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-label">ALERTAS SISTEMA</span>
-        <span class="stat-value text-danger">{{ stats.alerts }}</span>
-      </div>
+    <div class="stat-card">
+      <span class="stat-label">EVENTOS HOY</span>
+      <span class="stat-value">{{ stats.todayEvents }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">MODIFICACIONES</span>
+      <span class="stat-value text-muted">{{ stats.modifications }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">ALERTAS SISTEMA</span>
+      <span class="stat-value text-danger">{{ stats.alerts }}</span>
+    </div>
     }
   </section>
 
@@ -39,10 +39,10 @@
       <label>BÚSQUEDA RÁPIDA</label>
       <div class="input-icon">
         <i class="fa-solid fa-search"></i>
-        <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()" placeholder="Buscar por usuario, ID o descripción...">
+        <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()" placeholder="Buscar por Usuario">
       </div>
     </div>
-    
+
     <div class="filter-group">
       <label>MÓDULO</label>
       <select [(ngModel)]="selectedModule" (change)="applyFilters()">
@@ -59,7 +59,7 @@
         <option value="Inventario">Inventario</option>
       </select>
     </div>
-    
+
     <div class="filter-group">
       <label>ACCIÓN</label>
       <select [(ngModel)]="selectedAction" (change)="applyFilters()">
@@ -67,15 +67,14 @@
         <option value="CREATE">CREATE</option>
         <option value="UPDATE">UPDATE</option>
         <option value="DELETE">DELETE</option>
-        <option value="LOGIN">LOGIN</option>
       </select>
     </div>
-    
+
     <div class="filter-group">
       <label>FECHA</label>
       <input type="date" [(ngModel)]="selectedDate" (change)="applyFilters()">
     </div>
-    
+
     <div class="filter-group button-group">
       <button class="btn-secondary" (click)="applyFilters()">FILTRAR</button>
     </div>
@@ -83,7 +82,7 @@
 
   <!-- Main Content Grid: Table + Details -->
   <section class="content-grid">
-    
+
     <!-- Left Column: Table -->
     <div class="table-wrapper">
       <table class="styled-table">
@@ -98,59 +97,57 @@
         </thead>
         <tbody>
           @if (isLoading) {
-            @for (item of [1,2,3,4,5,6,7,8,9,10]; track item) {
-              <tr>
-                <td><app-skeleton width="150px" height="16px" marginBottom="0"></app-skeleton></td>
-                <td>
-                  <div class="user-cell">
-                    <app-skeleton width="32px" height="32px" borderRadius="50%" marginBottom="0"></app-skeleton>
-                    <div class="user-info" style="display: flex; flex-direction: column; gap: 4px; margin-left: 10px;">
-                      <app-skeleton width="100px" height="14px" marginBottom="0"></app-skeleton>
-                      <app-skeleton width="80px" height="12px" marginBottom="0"></app-skeleton>
-                    </div>
-                  </div>
-                </td>
-                <td><app-skeleton width="80px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton></td>
-                <td><app-skeleton width="100px" height="16px" marginBottom="0"></app-skeleton></td>
-                <td style="display: flex; flex-direction: column; gap: 4px;">
-                  <app-skeleton width="200px" height="16px" marginBottom="0"></app-skeleton>
-                  <app-skeleton width="60px" height="12px" marginBottom="0"></app-skeleton>
-                </td>
-              </tr>
-            }
+          @for (item of [1,2,3,4,5,6,7,8,9,10]; track item) {
+          <tr>
+            <td><app-skeleton width="150px" height="16px" marginBottom="0"></app-skeleton></td>
+            <td>
+              <div class="user-cell">
+                <app-skeleton width="32px" height="32px" borderRadius="50%" marginBottom="0"></app-skeleton>
+                <div class="user-info" style="display: flex; flex-direction: column; gap: 4px; margin-left: 10px;">
+                  <app-skeleton width="100px" height="14px" marginBottom="0"></app-skeleton>
+                  <app-skeleton width="80px" height="12px" marginBottom="0"></app-skeleton>
+                </div>
+              </div>
+            </td>
+            <td><app-skeleton width="80px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton></td>
+            <td><app-skeleton width="100px" height="16px" marginBottom="0"></app-skeleton></td>
+            <td style="display: flex; flex-direction: column; gap: 4px;">
+              <app-skeleton width="200px" height="16px" marginBottom="0"></app-skeleton>
+              <app-skeleton width="60px" height="12px" marginBottom="0"></app-skeleton>
+            </td>
+          </tr>
+          }
           } @else {
-            @if (logs.length === 0) {
-              <tr>
-                <td colspan="5" style="text-align: center; padding: 2rem;">No se encontraron registros</td>
-              </tr>
-            } @else {
-              @for (log of logs; track log.logId) {
-                <tr 
-                (click)="selectLog(log)"
-                [class.active-row]="selectedLog?.logId === log.logId"
-                [class.alert-row]="isAlert(log)">
-                  <td class="text-muted">{{ log.timestamp | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-                  <td>
-                    <div class="user-cell">
-                      <!-- Un avatar por defecto o icono -->
-                      <div class="avatar"><i class="fa-solid fa-user"></i></div>
-                      <div class="user-info">
-                        <span class="user-name">{{ log.userName }}</span>
-                        <span class="user-role">{{ log.userRole }}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="badge" [ngClass]="getBadgeClass(log.action)">{{ log.action }}</span>
-                  </td>
-                  <td class="text-muted">{{ log.module }}</td>
-                  <td>
-                    <span class="log-desc">{{ log.description }}</span>
-                    <span class="log-id text-muted">{{ log.logId }}</span>
-                  </td>
-                </tr>
-              }
-            }
+          @if (logs.length === 0) {
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 2rem;">No se encontraron registros</td>
+          </tr>
+          } @else {
+          @for (log of logs; track log.logId) {
+          <tr (click)="selectLog(log)" [class.active-row]="selectedLog?.logId === log.logId"
+            [class.alert-row]="isAlert(log)">
+            <td class="text-muted">{{ log.timestamp | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+            <td>
+              <div class="user-cell">
+                <!-- Un avatar por defecto o icono -->
+                <div class="avatar"><i class="fa-solid fa-user"></i></div>
+                <div class="user-info">
+                  <span class="user-name">{{ log.userName }}</span>
+                  <span class="user-role">{{ log.userRole }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="getBadgeClass(log.action)">{{ log.action }}</span>
+            </td>
+            <td class="text-muted">{{ log.module }}</td>
+            <td>
+              <span class="log-desc">{{ log.description }}</span>
+              <span class="log-id text-muted">{{ log.logId }}</span>
+            </td>
+          </tr>
+          }
+          }
           }
         </tbody>
       </table>
@@ -169,53 +166,54 @@
         <i class="fa-solid fa-circle-info"></i>
         <div>
           <strong>Política de Inmutabilidad</strong>
-          <p>Los registros de auditoría no pueden ser editados ni eliminados por ningún usuario. Esta base de datos está protegida para auditorías externas.</p>
+          <p>Los registros de auditoría no pueden ser editados ni eliminados por ningún usuario. Esta base de datos está
+            protegida para auditorías externas.</p>
         </div>
       </div>
     </div>
 
     <!-- Right Column: Details Panel -->
     @if (selectedLog) {
-      <aside class="details-panel">
-        <div class="details-header">
-          <h3>Detalle del Evento</h3>
-          <span class="text-muted">{{ selectedLog.logId }}</span>
-        </div>
+    <aside class="details-panel">
+      <div class="details-header">
+        <h3>Detalle del Evento</h3>
+        <span class="text-muted">{{ selectedLog.logId }}</span>
+      </div>
 
-        <div class="details-body">
-          <h4>INFORMACIÓN DE SISTEMA</h4>
-          <div class="info-grid">
-            <div class="info-item">
-              <label>Dirección IP</label>
-              <div class="info-box">{{ selectedLog.ipAddress }}</div>
-            </div>
-            <div class="info-item">
-              <label>Timestamp</label>
-              <div class="info-box">{{ selectedLog.timestamp | date:'HH:mm:ss' }}</div>
-            </div>
+      <div class="details-body">
+        <h4>INFORMACIÓN DE SISTEMA</h4>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>Dirección IP</label>
+            <div class="info-box">{{ selectedLog.ipAddress }}</div>
           </div>
-          <div class="info-item mt-3">
-            <label>Agente de Usuario</label>
-            <div class="info-box">{{ selectedLog.userAgent }}</div>
-          </div>
-
-          <h4 class="mt-4">CAMBIOS EN EL PAYLOAD</h4>
-          
-          <ng-container *ngIf="selectedLog.oldData && selectedLog.oldData !== 'null'">
-            <div class="payload-section old-data">
-              <span class="payload-title"><i class="fa-solid fa-circle text-danger"></i> ESTADO ANTERIOR</span>
-              <pre>{{ selectedLog.oldData | json }}</pre>
-            </div>
-
-            <div class="payload-divider"><i class="fa-solid fa-arrow-right-arrow-left fa-rotate-90"></i></div>
-          </ng-container>
-
-          <div class="payload-section new-data">
-            <span class="payload-title"><i class="fa-solid fa-circle text-success"></i> NUEVO ESTADO</span>
-            <pre>{{ selectedLog.newData | json }}</pre>
+          <div class="info-item">
+            <label>Timestamp</label>
+            <div class="info-box">{{ selectedLog.timestamp | date:'HH:mm:ss' }}</div>
           </div>
         </div>
-      </aside>
+        <div class="info-item mt-3">
+          <label>Agente de Usuario</label>
+          <div class="info-box">{{ selectedLog.userAgent }}</div>
+        </div>
+
+        <h4 class="mt-4">CAMBIOS EN EL PAYLOAD</h4>
+
+        <ng-container *ngIf="selectedLog.oldData && selectedLog.oldData !== 'null'">
+          <div class="payload-section old-data">
+            <span class="payload-title"><i class="fa-solid fa-circle text-danger"></i> ESTADO ANTERIOR</span>
+            <pre>{{ selectedLog.oldData | json }}</pre>
+          </div>
+
+          <div class="payload-divider"><i class="fa-solid fa-arrow-right-arrow-left fa-rotate-90"></i></div>
+        </ng-container>
+
+        <div class="payload-section new-data">
+          <span class="payload-title"><i class="fa-solid fa-circle text-success"></i> NUEVO ESTADO</span>
+          <pre>{{ selectedLog.newData | json }}</pre>
+        </div>
+      </div>
+    </aside>
     }
   </section>
 </div>

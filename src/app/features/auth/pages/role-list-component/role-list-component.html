@@ -107,6 +107,9 @@
             <div class="form-group">
               <label>Descripción del perfil</label>
               <input type="text" formControlName="description" placeholder="Ej: Solo visualiza proyectos y recursos">
+              @if (roleForm.get('description')?.invalid && roleForm.get('description')?.touched) {
+                <span class="error-text">Obligatorio</span>
+              }
             </div>
           </div>
 
@@ -151,7 +154,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-cancel" (click)="closeModal()">Cancelar</button>
-          <button type="submit" class="btn btn-submit" [disabled]="roleForm.invalid">
+          <button type="submit" class="btn btn-submit" [disabled]="roleForm.invalid || selectedPermissionIds.size === 0">
             <i class="fa-solid fa-floppy-disk"></i> Guardar Matriz
           </button>
         </div>

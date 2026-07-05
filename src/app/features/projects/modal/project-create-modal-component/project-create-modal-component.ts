@@ -60,7 +60,7 @@ export class ProjectCreateModalComponent implements OnInit {
   }
 
   loadManagers() {
-    this.userService.getUsers(0, 10, '','ALL').subscribe({
+    this.userService.getUsers(0, 10, '','ALL', 'true').subscribe({
       next: (response) => {
 
         this.managers = response.content;

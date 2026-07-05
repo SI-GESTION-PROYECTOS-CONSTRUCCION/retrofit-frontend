@@ -1,16 +1,22 @@
 <div class="page-container">
-  
+
   <div class="filters-toolbar" style="margin-bottom: 20px;">
     <div class="search-box">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-divisor);"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      <input type="text" placeholder="Buscar material por código o nombre...">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--color-divisor);">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" placeholder="Buscar material nombre" (input)="onSearchChange($event)">
     </div>
-    
-    <button *appHasPermission="'INVENTORY_READ'" class="btn-custom btn-accent" (click)="downloadPdf()" [disabled]="isDownloadingPdf">
+
+    <button *appHasPermission="'INVENTORY_READ'" class="btn-custom btn-accent" (click)="downloadPdf()"
+      [disabled]="isDownloadingPdf">
       @if (isDownloadingPdf) {
-        <i class="fa-solid fa-spinner fa-spin"></i> Generando...
+      <i class="fa-solid fa-spinner fa-spin"></i> Generando...
       } @else {
-        <i class="fa-solid fa-file-pdf" ></i> Generar Reporte
+      <i class="fa-solid fa-file-pdf"></i> Generar Reporte
       }
     </button>
 
@@ -24,209 +30,225 @@
 
   <div class="table-card-container card">
     <div class="table-responsive">
-    <table class="retrofit-table">
-      <thead>
-        <tr>
-          <th>Material / Recurso</th>
-          <th>Und.</th>
-          <th>Stock Físico Actual</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @if (isLoading) {
+      <table class="retrofit-table">
+        <thead>
           <tr>
-            <td><div class="skeleton" style="height: 20px; width: 200px;"></div></td>
-            <td><div class="skeleton" style="height: 20px; width: 40px;"></div></td>
-            <td><div class="skeleton" style="height: 20px; width: 80px;"></div></td>
-            <td><div class="skeleton" style="height: 24px; width: 80px; border-radius: 9999px;"></div></td>
-            <td><div class="skeleton" style="height: 20px; width: 30px;"></div></td>
+            <th>Material / Recurso</th>
+            <th>Und.</th>
+            <th>Stock Físico Actual</th>
+            <th>Estado</th>
+            <th>Acciones</th>
           </tr>
-        } @else if (!inventoryData || inventoryData.length === 0) {
+        </thead>
+        <tbody>
+          @if (isLoading) {
+          <tr>
+            <td>
+              <div class="skeleton" style="height: 20px; width: 200px;"></div>
+            </td>
+            <td>
+              <div class="skeleton" style="height: 20px; width: 40px;"></div>
+            </td>
+            <td>
+              <div class="skeleton" style="height: 20px; width: 80px;"></div>
+            </td>
+            <td>
+              <div class="skeleton" style="height: 24px; width: 80px; border-radius: 9999px;"></div>
+            </td>
+            <td>
+              <div class="skeleton" style="height: 20px; width: 30px;"></div>
+            </td>
+          </tr>
+          } @else if (!inventoryData || inventoryData.length === 0) {
           <tr>
             <td colspan="6" class="text-center py-5">
-              <div class="empty-state-message" style="display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; padding: 20px;">
+              <div class="empty-state-message"
+                style="display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; padding: 20px;">
                 <i class="fa-solid fa-box-open" style="font-size: 32px; margin-bottom: 12px; color: #cbd5e1;"></i>
                 <span style="font-weight: 500; font-size: 15px;">No hay materiales registrados en almacén</span>
                 <span style="font-size: 13px; margin-top: 4px;">Los ingresos que registres aparecerán aquí</span>
               </div>
             </td>
           </tr>
-        } @else {
+          } @else {
           @for (item of inventoryData; track item.resourceId) {
-            <tr>
-              <td class="col-name">{{ item.resourceName }}</td>
-              <td>{{ item.resourceUnit }}</td>
-              <td style="font-weight: 600; color: #111827;">{{ item.currentStock | number:'1.2-2' }}</td>
-              <td>
-                @if (item.currentStock > 10) {
-                  <span class="badge badge-success">Óptimo</span>
-                } @else {
-                  <span class="badge badge-danger">Crítico</span>
-                }
-              </td>
-              <td style="text-align: right;">
-                <button *appHasPermission="'INVENTORY_CREATE'" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" (click)="openOutboundModal(item.resourceId)">
-                  Despachar
-                </button>
+          <tr>
+            <td class="col-name">{{ item.resourceName }}</td>
+            <td>{{ item.resourceUnit }}</td>
+            <td style="font-weight: 600; color: #111827;">{{ item.currentStock | number:'1.2-2' }}</td>
+            <td>
+              @if (item.currentStock > 10) {
+              <span class="badge badge-success">Óptimo</span>
+              } @else {
+              <span class="badge badge-danger">Crítico</span>
+              }
+            </td>
+            <td style="text-align: right;">
+              <button *appHasPermission="'INVENTORY_CREATE'" class="btn btn-outline"
+                style="padding: 6px 12px; font-size: 12px;" (click)="openOutboundModal(item.resourceId)">
+                Despachar
+              </button>
 
-                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; border-color: transparent;" (click)="openKardexModal(item.resourceId, item.resourceName)">
-                  <i class="fa fa-history" title="Ver Historial"></i> Historial
-                </button>
-              </td>
-            </tr>
+              <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; border-color: transparent;"
+                (click)="openKardexModal(item.resourceId, item.resourceName)">
+                <i class="fa fa-history" title="Ver Historial"></i> Historial
+              </button>
+            </td>
+          </tr>
           }
-        }
-      </tbody>
-    </table>
+          }
+        </tbody>
+      </table>
     </div>
-    
+
     <div class="pagination-footer">
       <span>Mostrando {{ startIndex }} a {{ endIndex }} de {{ totalElements }} materiales</span>
       <div class="pagination-controls">
         <button class="btn-outline" [disabled]="currentPage === 1" (click)="previousPage()">Anterior</button>
-        <button class="btn-outline" [disabled]="currentPage === totalPages || totalPages === 0" (click)="nextPage()">Siguiente</button>
+        <button class="btn-outline" [disabled]="currentPage === totalPages || totalPages === 0"
+          (click)="nextPage()">Siguiente</button>
       </div>
     </div>
   </div>
 </div>
 
 @if (showInboundModal) {
-  <div class="modal-backdrop" (click)="closeModals()">
-    <div class="modal-container" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <button class="btn-close" (click)="closeModals()">✕</button>
-        <div class="header-content">
-          <div class="header-title">
-            <h2>Registrar Ingreso de Material</h2>
-          </div>
-          <p class="header-subtitle">Añade stock físico al almacén de la obra.</p>
+<div class="modal-backdrop" (click)="closeModals()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <button class="btn-close" (click)="closeModals()">✕</button>
+      <div class="header-content">
+        <div class="header-title">
+          <h2>Registrar Ingreso de Material</h2>
         </div>
-      </div>
-      
-      <div class="modal-body">
-        <form [formGroup]="inboundForm" class="form-group" style="gap: 20px;">
-          
-          <div class="form-group">
-            <label>Material / Insumo *</label>
-            <ng-select formControlName="resourceId" placeholder="Seleccione un material...">
-              @for (res of resources; track res.id) {
-                <ng-option [value]="res.id">{{ res.name }} ({{ res.unit }})</ng-option>
-              }
-            </ng-select>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Cantidad a Ingresar *</label>
-              <input type="number" formControlName="quantity" placeholder="0.00">
-            </div>
-            <div class="form-group">
-              <label>Motivo *</label>
-              <select formControlName="reason">
-                <option value="PURCHASE">Compra a Proveedor</option>
-                <option value="INITIAL_BALANCE">Inventario Inicial</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>N° Guía de Remisión / Factura</label>
-            <input type="text" formControlName="referenceDocument" placeholder="Ej: GR-001-4567">
-          </div>
-        </form>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-cancel" (click)="closeModals()">Cancelar</button>
-        <button class="btn btn-submit" [disabled]="inboundForm.invalid" (click)="submitInbound()">Guardar Ingreso</button>
+        <p class="header-subtitle">Añade stock físico al almacén de la obra.</p>
       </div>
     </div>
+
+    <div class="modal-body">
+      <form [formGroup]="inboundForm" class="form-group" style="gap: 20px;">
+
+        <div class="form-group">
+          <label>Material / Insumo *</label>
+          <ng-select formControlName="resourceId" placeholder="Seleccione un material...">
+            @for (res of resources; track res.id) {
+            <ng-option [value]="res.id">{{ res.name }} ({{ res.unit }})</ng-option>
+            }
+          </ng-select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cantidad a Ingresar *</label>
+            <input type="number" formControlName="quantity" placeholder="0.00">
+          </div>
+          <div class="form-group">
+            <label>Motivo *</label>
+            <select formControlName="reason">
+              <option value="PURCHASE">Compra a Proveedor</option>
+              <option value="INITIAL_BALANCE">Inventario Inicial</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>N° Guía de Remisión / Factura</label>
+          <input type="text" formControlName="referenceDocument" placeholder="Ej: GR-001-4567">
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-cancel" (click)="closeModals()">Cancelar</button>
+      <button class="btn btn-submit" [disabled]="inboundForm.invalid" (click)="submitInbound()">Guardar Ingreso</button>
+    </div>
   </div>
+</div>
 }
 
 @if (showOutboundModal) {
-  <div class="modal-backdrop" (click)="closeModals()">
-    <div class="modal-container" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <button class="btn-close" (click)="closeModals()">✕</button>
-        <div class="header-content">
-          <div class="header-title">
-            <h2>Registrar Salida a Producción</h2>
-          </div>
-          <p class="header-subtitle">Descuenta material del almacén y asígnalo a una partida.</p>
+<div class="modal-backdrop" (click)="closeModals()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <button class="btn-close" (click)="closeModals()">✕</button>
+      <div class="header-content">
+        <div class="header-title">
+          <h2>Registrar Salida a Producción</h2>
         </div>
-      </div>
-      
-      <div class="modal-body">
-        
-        <div class="info-alert">
-          <div class="alert-text">
-            <h4>Registro Obligatorio</h4>
-            <p>Toda salida debe estar enlazada a una partida ejecutada para calcular el costo real en el Avance Diario.</p>
-          </div>
-        </div>
-
-        <form [formGroup]="outboundForm" class="form-group" style="gap: 20px;">
-          
-          <div class="form-group">
-            <label>Material / Insumo *</label>
-            <ng-select formControlName="resourceId" placeholder="Seleccione el material a despachar...">
-              @for (res of resources; track res.id) {
-                <ng-option [value]="res.id">{{ res.name }} ({{ res.unit }})</ng-option>
-              }
-            </ng-select>
-          </div>
-
-          <div class="form-group">
-            <label>Partida de Destino (Frente de Trabajo) *</label>
-            <ng-select formControlName="projectItemId" placeholder="Seleccione la partida...">
-              @for (item of filteredProjectItems; track item.id) {
-                <ng-option [value]="item.id">{{ item.code || '' }} - {{ item.description }}</ng-option>
-              }
-            </ng-select>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Cantidad a Despachar *</label>
-              <input type="number" formControlName="quantity" placeholder="0.00">
-            </div>
-            <div class="form-group">
-              <label>Motivo *</label>
-              <select formControlName="reason">
-                <option value="CONSUMPTION">Consumo en Obra</option>
-                <option value="LOSS">Pérdida / Merma</option>
-              </select>
-            </div>
-          </div>
-        </form>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-cancel" (click)="closeModals()">Cancelar</button>
-        <button class="btn btn-submit" [disabled]="outboundForm.invalid" (click)="submitOutbound()">Registrar Salida</button>
+        <p class="header-subtitle">Descuenta material del almacén y asígnalo a una partida.</p>
       </div>
     </div>
+
+    <div class="modal-body">
+
+      <div class="info-alert">
+        <div class="alert-text">
+          <h4>Registro Obligatorio</h4>
+          <p>Toda salida debe estar enlazada a una partida ejecutada para calcular el costo real en el Avance Diario.
+          </p>
+        </div>
+      </div>
+
+      <form [formGroup]="outboundForm" class="form-group" style="gap: 20px;">
+
+        <div class="form-group">
+          <label>Material / Insumo *</label>
+          <ng-select formControlName="resourceId" placeholder="Seleccione el material a despachar...">
+            @for (res of resources; track res.id) {
+            <ng-option [value]="res.id">{{ res.name }} ({{ res.unit }})</ng-option>
+            }
+          </ng-select>
+        </div>
+
+        <div class="form-group">
+          <label>Partida de Destino (Frente de Trabajo) *</label>
+          <ng-select formControlName="projectItemId" placeholder="Seleccione la partida...">
+            @for (item of filteredProjectItems; track item.id) {
+            <ng-option [value]="item.id">{{ item.code || '' }} - {{ item.description }}</ng-option>
+            }
+          </ng-select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cantidad a Despachar *</label>
+            <input type="number" formControlName="quantity" placeholder="0.00">
+          </div>
+          <div class="form-group">
+            <label>Motivo *</label>
+            <select formControlName="reason">
+              <option value="CONSUMPTION">Consumo en Obra</option>
+              <option value="LOSS">Pérdida / Merma</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-cancel" (click)="closeModals()">Cancelar</button>
+      <button class="btn btn-submit" [disabled]="outboundForm.invalid" (click)="submitOutbound()">Registrar
+        Salida</button>
+    </div>
   </div>
+</div>
 }
 
 @if (showKardexModal) {
-  <div class="modal-backdrop" (click)="closeModals()">
-    <div class="modal-container" style="max-width: 800px;" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <button class="btn-close" (click)="closeModals()">✕</button>
-        <div class="header-content">
-          <div class="header-title">
-            <h2>Kardex: {{ selectedResourceName }}</h2>
-          </div>
-          <p class="header-subtitle">Historial de movimientos físicos en almacén.</p>
+<div class="modal-backdrop" (click)="closeModals()">
+  <div class="modal-container" style="max-width: 800px;" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <button class="btn-close" (click)="closeModals()">✕</button>
+      <div class="header-content">
+        <div class="header-title">
+          <h2>Kardex: {{ selectedResourceName }}</h2>
         </div>
+        <p class="header-subtitle">Historial de movimientos físicos en almacén.</p>
       </div>
-      
-      <div class="modal-body" style="padding: 0; max-height: 500px; overflow-y: auto;">
-        <div class="table-responsive">
+    </div>
+
+    <div class="modal-body" style="padding: 0; max-height: 500px; overflow-y: auto;">
+      <div class="table-responsive">
         <table class="retrofit-table">
           <thead>
             <tr>
@@ -240,36 +262,38 @@
           </thead>
           <tbody>
             @for (mov of kardexData; track mov.id) {
-              <tr>
-                <td>{{ mov.transactionDate | date:'dd/MM/yyyy HH:mm' }}</td>
-                <td>
-                  @if (mov.transactionType === 'INBOUND') {
-                    <span class="badge badge-info">+ Entrada</span>
-                  } @else {
-                    <span class="badge badge-secondary">- Salida</span>
-                  }
-                </td>
-                <td style="font-size: 12px;">{{ mov.reason }}</td>
-                <td style="font-weight: 600;" [ngStyle]="{'color': mov.transactionType === 'INBOUND' ? '#10B981' : '#EF4444'}">
-                  {{ mov.transactionType === 'INBOUND' ? '+' : '-' }}{{ mov.quantity | number:'1.2-2' }}
-                </td>
-                <td style="font-size: 12px;">{{ mov.projectItemCode ? mov.projectItemCode + ' - ' + mov.projectItemDescription : '--' }}</td>
-                <td style="font-size: 12px;">{{ mov.createdBy }}</td>
-              </tr>
+            <tr>
+              <td>{{ mov.transactionDate | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                @if (mov.transactionType === 'INBOUND') {
+                <span class="badge badge-info">+ Entrada</span>
+                } @else {
+                <span class="badge badge-secondary">- Salida</span>
+                }
+              </td>
+              <td style="font-size: 12px;">{{ mov.reason }}</td>
+              <td style="font-weight: 600;"
+                [ngStyle]="{'color': mov.transactionType === 'INBOUND' ? '#10B981' : '#EF4444'}">
+                {{ mov.transactionType === 'INBOUND' ? '+' : '-' }}{{ mov.quantity | number:'1.2-2' }}
+              </td>
+              <td style="font-size: 12px;">{{ mov.projectItemCode ? mov.projectItemCode + ' - ' +
+                mov.projectItemDescription : '--' }}</td>
+              <td style="font-size: 12px;">{{ mov.createdBy }}</td>
+            </tr>
             }
             @if (kardexData.length === 0) {
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">No hay movimientos registrados.</td>
-              </tr>
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px;">No hay movimientos registrados.</td>
+            </tr>
             }
           </tbody>
         </table>
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-cancel" (click)="closeModals()">Cerrar</button>
       </div>
     </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-cancel" (click)="closeModals()">Cerrar</button>
+    </div>
   </div>
+</div>
 }
