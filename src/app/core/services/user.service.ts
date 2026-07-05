@@ -12,13 +12,14 @@ export class UserService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/users`;
 
-  getUsers(page: number = 0, size: number = 10, search?: string, roleName: string = 'ALL'): Observable<Page<UserDto>> {
+  getUsers(page: number = 0, size: number = 10, search?: string, roleName: string = 'ALL', active: string = ''): Observable<Page<UserDto>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
       .set('roleName', roleName);
     
     if (search) params = params.set('search', search);
+    if (active !== '') params = params.set('active', active);
       
     return this.http.get<Page<UserDto>>(this.apiUrl, { params });
   }

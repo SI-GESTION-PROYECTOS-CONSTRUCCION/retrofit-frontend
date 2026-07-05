@@ -25,8 +25,8 @@ export class WorkerFormModalComponent implements OnInit {
 
   constructor() {
     this.workerForm = this.fb.group({
-      name: ['', Validators.required],
-      lastName: ['', Validators.required],
+      name: ['', [Validators.required, Validators.pattern('^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$')]],
+      lastName: ['', [Validators.required, Validators.pattern('^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$')]],
       dni: ['', Validators.required],
       position: ['', Validators.required],
       phone: ['', Validators.required],

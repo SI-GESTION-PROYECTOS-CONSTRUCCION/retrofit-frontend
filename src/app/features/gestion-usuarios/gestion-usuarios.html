@@ -45,6 +45,12 @@
                 <option value="INGENIERO_RESIDENTE">Ingeniero Residente</option>
                 <option value="ALMACENERO">Almacenero</option>
             </select>
+
+            <select class="btn btn-outline filter-select" [(ngModel)]="activeFilter" (change)="onFilterChange()">
+                <option value="">Todos los Estados</option>
+                <option value="true">Solo Activos</option>
+                <option value="false">Solo Inactivos</option>
+            </select>
         </div>
 
         @if (isLoading) {

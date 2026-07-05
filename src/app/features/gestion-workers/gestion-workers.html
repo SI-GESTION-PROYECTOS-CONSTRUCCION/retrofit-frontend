@@ -38,6 +38,11 @@
         <input type="text" placeholder="Buscar por DNI o nombre..." 
                [(ngModel)]="searchTerm" (input)="onSearchChange()">
       </div>
+      <select class="btn btn-outline filter-select" [(ngModel)]="activeFilter" (change)="onSearchChange()">
+        <option value="">Todos los Estados</option>
+        <option value="true">Solo Activos</option>
+        <option value="false">Solo Inactivos</option>
+      </select>
     </div>
 
     @if (isLoading) {

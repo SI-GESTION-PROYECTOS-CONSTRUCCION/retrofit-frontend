@@ -12,11 +12,13 @@ export class WorkerService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/workers`;
 
-  getWorkers(page: number = 0, size: number = 10, search: string = ''): Observable<Page<WorkerDto>> {
-    const params = new HttpParams()
+  getWorkers(page: number = 0, size: number = 10, search: string = '', active: string = ''): Observable<Page<WorkerDto>> {
+    let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
       .set('search', search);
+      
+    if (active !== '') params = params.set('active', active);
       
     return this.http.get<Page<WorkerDto>>(this.apiUrl, { params });
   }

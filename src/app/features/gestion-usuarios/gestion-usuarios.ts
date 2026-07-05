@@ -27,6 +27,7 @@ export class GestionUsuariosComponent implements OnInit {
   totalPages = 0;
   searchTerm = '';
   selectedRole = 'ALL';
+  activeFilter = '';
 
   // UI States
   isLoading = false;
@@ -46,7 +47,7 @@ export class GestionUsuariosComponent implements OnInit {
 
   loadUsers() {
     this.isLoading = true;
-    this.userService.getUsers(this.currentPage, this.pageSize, this.searchTerm, this.selectedRole)
+    this.userService.getUsers(this.currentPage, this.pageSize, this.searchTerm, this.selectedRole, this.activeFilter)
       .subscribe({
         next: (response) => {
           this.users = response.content;

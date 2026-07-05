@@ -26,6 +26,7 @@ export class GestionWorkersComponent implements OnInit {
   totalElements = 0;
   totalPages = 0;
   searchTerm = '';
+  activeFilter = '';
 
   // --- UI States ---
   isLoading = false;
@@ -44,7 +45,7 @@ export class GestionWorkersComponent implements OnInit {
 
   loadWorkers() {
     this.isLoading = true;
-    this.workerService.getWorkers(this.currentPage, this.pageSize, this.searchTerm)
+    this.workerService.getWorkers(this.currentPage, this.pageSize, this.searchTerm, this.activeFilter)
       .subscribe({
         next: (response) => {
           this.workers = response.content;

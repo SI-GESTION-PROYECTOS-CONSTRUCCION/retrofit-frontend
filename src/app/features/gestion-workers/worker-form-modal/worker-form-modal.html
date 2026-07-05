@@ -29,7 +29,8 @@
             <input type="text" formControlName="name" placeholder="Ej. Juan"
                    [class.is-invalid]="hasError('name')">
             @if (backendErrors['name']) { <span class="error-text">{{ backendErrors['name'] }}</span> }
-            @else if (workerForm.get('name')?.invalid && workerForm.get('name')?.touched) { <span class="error-text">Los nombres son requeridos</span> }
+            @else if (workerForm.get('name')?.hasError('required') && workerForm.get('name')?.touched) { <span class="error-text">Los nombres son requeridos</span> }
+            @else if (workerForm.get('name')?.hasError('pattern') && workerForm.get('name')?.touched) { <span class="error-text">Solo se permiten letras</span> }
           </div>
           
           <div class="form-group">
@@ -37,7 +38,8 @@
             <input type="text" formControlName="lastName" placeholder="Ej. Pérez"
                    [class.is-invalid]="hasError('lastName')">
             @if (backendErrors['lastName']) { <span class="error-text">{{ backendErrors['lastName'] }}</span> }
-            @else if (workerForm.get('lastName')?.invalid && workerForm.get('lastName')?.touched) { <span class="error-text">Los apellidos son requeridos</span> }
+            @else if (workerForm.get('lastName')?.hasError('required') && workerForm.get('lastName')?.touched) { <span class="error-text">Los apellidos son requeridos</span> }
+            @else if (workerForm.get('lastName')?.hasError('pattern') && workerForm.get('lastName')?.touched) { <span class="error-text">Solo se permiten letras</span> }
           </div>
         </div>
 
