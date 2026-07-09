@@ -9,7 +9,7 @@ let isRefreshing = false;
 let refreshTokenSubject = new BehaviorSubject<any>(null);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = sessionStorage.getItem('retrofit_jwt');
+  const token = localStorage.getItem('retrofit_jwt');
   
   const toastService = inject(ToastService);
   const authService = inject(AuthService);
@@ -26,6 +26,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(requestToForward).pipe(
     catchError((error: HttpErrorResponse) => {
       
+      if (req.url.includes('/auth/login') || req.url.includes('/auth/refresh')) {
+        return throwError(() => error);
+      }
+
       if (error.status === 403) {
         toastService.show('No tienes los permisos necesarios para realizar esta acción.', 'error');
       } 
@@ -37,6 +41,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
           return authService.refreshToken().pipe(
             switchMap((res: any) => {
+              if (!res) {
+                return throwError(() => new Error('No refresh token available'));
+              }
               isRefreshing = false;
               refreshTokenSubject.next(res.jwt);
               return next(req.clone({

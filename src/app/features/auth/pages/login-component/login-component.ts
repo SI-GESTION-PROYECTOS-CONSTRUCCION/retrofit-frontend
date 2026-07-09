@@ -41,10 +41,13 @@ export class LoginComponent implements OnInit {
 
       
       this.authService.login(credenciales).subscribe({
-        next: (respuesta) => {
+        next: (response) => {
           this.isLoading = false;
-          if (respuesta && respuesta.token) {
-            this.authService.saveToken(respuesta.token);
+          if (response && response.jwt) {
+            this.authService.saveToken(response.jwt);
+            if (response.refreshToken) {
+              this.authService.saveRefreshToken(response.refreshToken);
+            }
             
             this.router.navigate(['/dashboard']);
           } else {

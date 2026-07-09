@@ -35,24 +35,36 @@ export class AuthService {
   }
 
   refreshToken(): Observable<any> {
-    const token = this.getToken();
-    return this.http.post<any>(`${this.apiUrl}/refresh`, {}, {
-      headers: { Authorization: `Bearer ${token}` }
-    }).pipe(
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      return of(null);
+    }
+    return this.http.post<any>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
       tap(res => {
         if (res && res.jwt) {
           this.saveToken(res.jwt);
+          if (res.refreshToken) {
+            this.saveRefreshToken(res.refreshToken);
+          }
         }
       })
     );
   }
 
   saveToken(token: string): void {
-    sessionStorage.setItem('retrofit_jwt', token);
+    localStorage.setItem('retrofit_jwt', token);
+  }
+
+  saveRefreshToken(token: string): void {
+    localStorage.setItem('retrofit_refresh_jwt', token);
   }
 
   getToken(): string | null {
-    return sessionStorage.getItem('retrofit_jwt');
+    return localStorage.getItem('retrofit_jwt');
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem('retrofit_refresh_jwt');
   }
 
   isAutenticated(): boolean {
@@ -61,7 +73,8 @@ export class AuthService {
   }
 
   logout(): void {
-    sessionStorage.removeItem('retrofit_jwt');
+    localStorage.removeItem('retrofit_jwt');
+    localStorage.removeItem('retrofit_refresh_jwt');
     this.userPermissions.clear();
     this.isLoaded = false;
   }
