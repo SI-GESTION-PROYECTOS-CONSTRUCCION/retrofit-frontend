@@ -201,8 +201,8 @@ export class RoleListComponent {
         this.closeModal();
         this.loadRoles();
       },
-      error: (err) => {
-        this.toastService.show(err.error?.message || 'Error al guardar', 'error');
+      error: (err: any) => {
+        this.toastService.showApiError(err, 'Error al guardar');
       }
     });
   }
@@ -225,12 +225,12 @@ export class RoleListComponent {
 
     this.roleService.deleteRole(this.roleToDelete.id).subscribe({
       next: () => {
-        this.toastService.show('Rol eliminado con éxito', 'success');
+        this.toastService.show('Rol eliminado correctamente', 'success');
         this.closeDeleteModal();
         this.loadRoles();
       },
-      error: (err) => {
-        this.toastService.show(err.error?.message || 'Error al eliminar', 'error');
+      error: (err: any) => {
+        this.toastService.showApiError(err, 'Error al eliminar');
         this.closeDeleteModal();
       }
     });

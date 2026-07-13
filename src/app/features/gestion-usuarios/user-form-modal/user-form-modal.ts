@@ -59,7 +59,12 @@ export class UserFormModalComponent implements OnInit {
       }
 
       this.isSubmitting = true;
-      const userData = this.userForm.getRawValue();
+      const rawData = this.userForm.getRawValue();
+      const userData: any = Object.fromEntries(
+        Object.entries(rawData).map(([key, value]) => 
+          [key, typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : value]
+        )
+      );
 
       const request$ = (this.mode === 'edit' && this.userToEdit)
         ? this.userService.updateUser(this.userToEdit.id, userData)

@@ -9,14 +9,14 @@
       <label>Desde:</label>
       <div class="input-wrapper">
         <i class="fa-regular fa-calendar input-icon"></i>
-        <input type="date" formControlName="startDate" class="form-control-custom">
+        <input type="date" formControlName="startDate" class="form-control-custom" [min]="projectStartDate">
       </div>
     </div>
     <div class="filter-group">
       <label>Hasta:</label>
       <div class="input-wrapper">
         <i class="fa-regular fa-calendar input-icon"></i>
-        <input type="date" formControlName="endDate" class="form-control-custom">
+        <input type="date" formControlName="endDate" class="form-control-custom" [min]="projectStartDate">
       </div>
     </div>
     <div class="filter-group">

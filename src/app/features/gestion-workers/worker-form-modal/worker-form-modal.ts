@@ -77,18 +77,23 @@ export class WorkerFormModalComponent implements OnInit {
 
     this.isSubmitting = true;
     const rawData = this.workerForm.getRawValue();
+    const cleanData: any = Object.fromEntries(
+      Object.entries(rawData).map(([key, value]) => 
+        [key, typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : value]
+      )
+    );
 
     const requestData = {
-      position: rawData.position,
-      dni: rawData.dni,
-      phone: rawData.phone,
-      name: rawData.name,
-      lastName: rawData.lastName,
-      username: rawData.username,
-      email: rawData.email,
-      password: rawData.password,
-      role: rawData.role,
-      createAccount: rawData.createAccount
+      position: cleanData.position,
+      dni: cleanData.dni,
+      phone: cleanData.phone,
+      name: cleanData.name,
+      lastName: cleanData.lastName,
+      username: cleanData.username,
+      email: cleanData.email,
+      password: cleanData.password,
+      role: cleanData.role,
+      createAccount: cleanData.createAccount
     };
 
     const request$ = (this.mode === 'edit' && this.workerToEdit)

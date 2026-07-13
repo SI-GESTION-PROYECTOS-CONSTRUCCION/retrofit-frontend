@@ -36,6 +36,12 @@ export class ApuModalComponent {
   selectedResourceId: number | null = null;
   isLoading = false;
 
+  preventNegative(event: KeyboardEvent) {
+    if (event.key === '-' || event.key === 'e') {
+      event.preventDefault();
+    }
+  }
+
   ngOnInit() {
     // 1. Iniciamos el "carrito de compras" con lo que ya tenga la partida
     this.apuItems = JSON.parse(JSON.stringify(this.itemData.apuDetails || []));
@@ -130,8 +136,8 @@ export class ApuModalComponent {
         this.toastService.show('APU calculado y guardado con éxito', 'success');
         this.onSave.emit(updatedItem); 
       },
-      error: () => {
-        this.toastService.show('Error al guardar el APU', 'error');
+      error: (err: any) => {
+        this.toastService.showApiError(err, 'Error al guardar el APU');
         this.isLoading = false;
       }
     });

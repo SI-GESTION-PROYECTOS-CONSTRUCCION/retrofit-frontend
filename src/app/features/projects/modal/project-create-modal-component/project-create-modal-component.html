@@ -33,7 +33,10 @@
             <input type="text" formControlName="name" placeholder="Ej. Mantenimiento Subestación"
                    [class.is-invalid]="hasError('name')">
             @if (backendErrors['name']) { <span class="error-text">{{ backendErrors['name'] }}</span> }
-            @else if (projectForm.get('name')?.invalid && projectForm.get('name')?.touched) { <span class="error-text">Requerido</span> }
+            @else if (projectForm.get('name')?.invalid && projectForm.get('name')?.touched) {
+              @if (projectForm.get('name')?.errors?.['required']) { <span class="error-text">Requerido</span> }
+              @if (projectForm.get('name')?.errors?.['pattern']) { <span class="error-text">Debe contener al menos una letra y sin caracteres especiales</span> }
+            }
           </div>
         </div>
 
@@ -42,6 +45,10 @@
           <input type="text" formControlName="client" placeholder="Ej. Engie Energía Perú"
                  [class.is-invalid]="hasError('client')">
           @if (backendErrors['client']) { <span class="error-text">{{ backendErrors['client'] }}</span> }
+          @else if (projectForm.get('client')?.invalid && projectForm.get('client')?.touched) {
+            @if (projectForm.get('client')?.errors?.['required']) { <span class="error-text">Requerido</span> }
+            @if (projectForm.get('client')?.errors?.['pattern']) { <span class="error-text">Debe contener al menos una letra y sin caracteres especiales</span> }
+          }
         </div>
 
 
@@ -51,6 +58,9 @@
             <input type="text" formControlName="location" placeholder="Ej. Planta Talara"
                    [class.is-invalid]="hasError('location')">
             @if (backendErrors['location']) { <span class="error-text">{{ backendErrors['location'] }}</span> }
+            @else if (projectForm.get('location')?.invalid && projectForm.get('location')?.touched) {
+              @if (projectForm.get('location')?.errors?.['pattern']) { <span class="error-text">Debe contener al menos una letra y sin caracteres especiales</span> }
+            }
           </div>
           
           <div class="form-group">

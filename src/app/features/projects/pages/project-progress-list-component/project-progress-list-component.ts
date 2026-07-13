@@ -12,6 +12,7 @@ import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 })
 export class ProjectProgressListComponent implements OnInit {
   @Input({ required: true }) projectId!: number;
+  @Input() projectStartDate!: string;
   
   private reportService = inject(ProgressReportService);
   private fb = inject(FormBuilder);

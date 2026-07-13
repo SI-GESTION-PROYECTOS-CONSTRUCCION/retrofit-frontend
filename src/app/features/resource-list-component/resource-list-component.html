@@ -168,7 +168,8 @@
             <label>Descripción / Nombre del Recurso</label>
             <input type="text" formControlName="name" placeholder="Ej: Cemento Portland Tipo I, Operario de Obra..." autocomplete="off">
             @if (resourceForm.get('name')?.invalid && resourceForm.get('name')?.touched) {
-              <span class="error-text">El nombre del recurso es obligatorio.</span>
+              @if (resourceForm.get('name')?.errors?.['required']) { <span class="error-text">El nombre del recurso es obligatorio.</span> }
+              @if (resourceForm.get('name')?.errors?.['pattern']) { <span class="error-text">Debe contener al menos una letra y sin caracteres especiales.</span> }
             }
           </div>
 

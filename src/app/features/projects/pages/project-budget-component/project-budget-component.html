@@ -247,13 +247,13 @@
           </tr>
           <tr>
             <td class="summary-label text-right text-primario">
-              Gastos Generales (<input type="number" [(ngModel)]="generalExpensesPercentage" [ngModelOptions]="{standalone: true}" [disabled]="isLocked" class="percentage-input" />%)
+              Gastos Generales (<input type="number" [(ngModel)]="generalExpensesPercentage" (keypress)="preventNegative($event)" [ngModelOptions]="{standalone: true}" [disabled]="isLocked" class="percentage-input" min="0" />%)
             </td>
             <td class="summary-value text-right text-primario">{{ generalExpenses | number:'1.2-2' }}</td>
           </tr>
           <tr class="summary-border-bottom">
             <td class="summary-label text-right text-primario">
-              Utilidad (<input type="number" [(ngModel)]="utilityPercentage" [ngModelOptions]="{standalone: true}" [disabled]="isLocked" class="percentage-input" />%)
+              Utilidad (<input type="number" [(ngModel)]="utilityPercentage" (keypress)="preventNegative($event)" [ngModelOptions]="{standalone: true}" [disabled]="isLocked" class="percentage-input" min="0" />%)
             </td>
             <td class="summary-value text-right text-primario">{{ utility | number:'1.2-2' }}</td>
           </tr>

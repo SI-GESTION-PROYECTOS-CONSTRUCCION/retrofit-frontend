@@ -105,7 +105,7 @@
           <app-project-gantt-component [projectId]="project.id" [projectStartDate]="project.startDate"></app-project-gantt-component>
         }
         @case ('AVANCES') {
-          <app-project-progress-list-component [projectId]="project.id"></app-project-progress-list-component>
+          <app-project-progress-list-component [projectId]="project.id" [projectStartDate]="project.startDate"></app-project-progress-list-component>
         }
         @case ('INVENTARIO') {
           <app-project-inventory [projectId]="project.id"></app-project-inventory>

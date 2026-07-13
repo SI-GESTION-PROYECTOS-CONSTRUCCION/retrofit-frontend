@@ -28,18 +28,24 @@
         <div class="form-group">
           <label>Rendimiento Mano de Obra (MO)</label>
           <div style="display: flex; align-items: center; gap: 8px;">
-            <input type="number" [(ngModel)]="itemData.laborYield" (input)="recalculateApu()" placeholder="0.00"
+            <input type="number" [(ngModel)]="itemData.laborYield" (input)="recalculateApu()" (keypress)="preventNegative($event)" placeholder="0.00"
               min="0">
             <span class="text-muted" style="font-size: 13px; font-weight: 600;">{{ itemData.unit }} / Día</span>
           </div>
+          @if (itemData.laborYield < 0) {
+            <div class="error-text" style="color: #EF4444; font-size: 12px; margin-top: 4px;">El rendimiento no puede ser negativo</div>
+          }
         </div>
         <div class="form-group">
           <label>Rendimiento Equipos (EQ)</label>
           <div style="display: flex; align-items: center; gap: 8px;">
-            <input type="number" [(ngModel)]="itemData.equipmentYield" (input)="recalculateApu()" placeholder="0.00"
+            <input type="number" [(ngModel)]="itemData.equipmentYield" (input)="recalculateApu()" (keypress)="preventNegative($event)" placeholder="0.00"
               min="0">
             <span class="text-muted" style="font-size: 13px; font-weight: 600;">{{ itemData.unit }} / Día</span>
           </div>
+          @if (itemData.equipmentYield < 0) {
+            <div class="error-text" style="color: #EF4444; font-size: 12px; margin-top: 4px;">El rendimiento no puede ser negativo</div>
+          }
         </div>
       </div>
 
@@ -98,10 +104,10 @@
                 {{ apu.resourceName }}
               </td>
               <td class="text-center">{{ apu.resourceUnit }}</td>
-              <td><input type="number" [(ngModel)]="apu.squad" (input)="recalculateApu()" class="cell-input text-right"
+              <td><input type="number" [(ngModel)]="apu.squad" (input)="recalculateApu()" (keypress)="preventNegative($event)" class="cell-input text-right"
                   [disabled]="apu.resourceType === 'MATERIAL'"
                   [ngStyle]="{'background-color': apu.resourceType === 'MATERIAL' ? '#F3F4F6' : '#FFFFFF'}"></td>
-              <td><input type="number" [(ngModel)]="apu.quantity" (input)="recalculateApu()"
+              <td><input type="number" [(ngModel)]="apu.quantity" (input)="recalculateApu()" (keypress)="preventNegative($event)"
                   class="cell-input text-right" [disabled]="apu.resourceType !== 'MATERIAL'"
                   [ngStyle]="{'background-color': apu.resourceType !== 'MATERIAL' ? '#F3F4F6' : '#FFFFFF'}"></td>
               <td class="text-right text-muted">S/ {{ apu.resourceBasePrice | number:'1.2-2' }}</td>

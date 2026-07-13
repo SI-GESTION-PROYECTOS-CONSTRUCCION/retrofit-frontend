@@ -209,8 +209,7 @@ export class DailyReportComponent implements OnInit {
         this.loadProjectDetails();
       },
       error: (err) => {
-        const errorMsg = err.error?.message || err.error || 'Error de conexión al enviar el reporte.';
-        this.toastService.show(`${errorMsg}`, `error`);
+        this.toastService.showApiError(err, 'Error de conexión al enviar el reporte.');
         this.isLoading = false;
       }
     });

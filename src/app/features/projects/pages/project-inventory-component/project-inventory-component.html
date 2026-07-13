@@ -11,7 +11,7 @@
       <input type="text" placeholder="Buscar material nombre" (input)="onSearchChange($event)">
     </div>
 
-    <button *appHasPermission="'INVENTORY_READ'" class="btn-custom btn-accent" (click)="downloadPdf()"
+    <button *appHasPermission="'INVENTORY_READ'" class="btn-custom btn-accent" (click)="generateReport('pdf')"
       [disabled]="isDownloadingPdf">
       @if (isDownloadingPdf) {
       <i class="fa-solid fa-spinner fa-spin"></i> Generando...

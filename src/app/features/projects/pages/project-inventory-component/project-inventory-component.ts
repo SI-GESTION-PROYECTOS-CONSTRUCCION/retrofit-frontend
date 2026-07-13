@@ -203,7 +203,9 @@ export class ProjectInventoryComponent implements OnInit {
         this.closeModals();
         this.loadInventory();
       },
-      error: (err) => console.error(err)
+      error: (err: any) => {
+        this.toastService.showApiError(err, 'Error al guardar la transacción');
+      }
     });
   }
 
@@ -219,31 +221,27 @@ export class ProjectInventoryComponent implements OnInit {
         this.closeModals();
         this.loadInventory();
       },
-      error: (err) => {
-        console.error(err);
-        this.toastService.show(err.error.message, 'error')
+      error: (err: any) => {
+        this.toastService.showApiError(err, 'Error al guardar la transacción');
       }
     });
   }
 
-  downloadPdf() {
+  generateReport(type: 'pdf' | 'excel') {
     this.isDownloadingPdf = true;
+    this.toastService.show('Generando reporte...', 'success');
     this.inventoryService.downloadInventoryReport(this.projectId).subscribe({
-      next: (blob) => {
+      next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Reporte_Inventario_Proyecto_${this.projectId}.pdf`;
-        document.body.appendChild(a);
+        a.download = `Reporte_Inventario_Proyecto_${this.projectId}.${type === 'pdf' ? 'pdf' : 'xlsx'}`;
         a.click();
-        document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         this.isDownloadingPdf = false;
-        this.toastService.show('Reporte generado exitosamente', 'success');
       },
-      error: (error) => {
-        console.error('Error al descargar reporte', error);
-        this.toastService.show('Error al generar el reporte', 'error');
+      error: (err: any) => {
+        this.toastService.showApiError(err, 'Error al generar el reporte');
         this.isDownloadingPdf = false;
       }
     });

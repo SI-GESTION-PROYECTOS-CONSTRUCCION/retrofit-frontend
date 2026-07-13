@@ -5,6 +5,7 @@ import { ProjectService } from '../../../../core/services/project.service';
 import { UserService } from '../../../../core/services/user.service';
 import { UserDto } from '../../../../core/models/user.model';
 import { ProjectResponseDto } from '../../../../core/models/project.model';
+import { ToastService } from '../../../../core/services/toast-service';
 
 @Component({
   selector: 'app-project-create-modal-component',
@@ -20,6 +21,7 @@ export class ProjectCreateModalComponent implements OnInit {
   private fb = inject(FormBuilder);
   private projectService = inject(ProjectService);
   private userService = inject(UserService);
+  private toastService = inject(ToastService);
 
   projectForm: FormGroup;
   isSubmitting = false;
@@ -30,9 +32,9 @@ export class ProjectCreateModalComponent implements OnInit {
   constructor() {
     this.projectForm = this.fb.group({
       code: ['', Validators.required],
-      name: ['', Validators.required],
-      client: ['', Validators.required],
-      location: [''],
+      name: ['', [Validators.required, Validators.pattern('^(?=.*[a-zA-ZñÑáéíóúÁÉÍÓÚ])[a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 ]+$')]],
+      client: ['', [Validators.required, Validators.pattern('^(?=.*[a-zA-ZñÑáéíóúÁÉÍÓÚ])[a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 ]+$')]],
+      location: ['', [Validators.pattern('^$|^(?=.*[a-zA-ZñÑáéíóúÁÉÍÓÚ])[a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 ]+$')]],
       description: [''],
       startDate: ['', Validators.required],
       status: ['PLANNING', Validators.required], 
@@ -83,7 +85,12 @@ export class ProjectCreateModalComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    const requestDto = this.projectForm.value;
+    const rawData = this.projectForm.value;
+    const requestDto: any = Object.fromEntries(
+      Object.entries(rawData).map(([key, value]) => 
+        [key, typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : value]
+      )
+    );
 
     const request$ = this.projectToEdit 
       ? this.projectService.updateProject(this.projectToEdit.id, requestDto)
@@ -97,10 +104,15 @@ export class ProjectCreateModalComponent implements OnInit {
       },
       error: (err) => {
         this.isSubmitting = false;
-        if (err.status === 400 && err.error) {
-          this.backendErrors = err.error; 
+        if (err.status === 400 && err.error && Object.keys(err.error).length > 0) {
+          // Si el error tiene campo 'general', lo mostramos, si no lo pasamos a backendErrors para los inputs
+          if (err.error.general || err.error.message) {
+            this.toastService.showApiError(err, 'Error al guardar proyecto');
+          } else {
+            this.backendErrors = err.error; 
+          }
         } else {
-          console.error('Error no controlado al guardar proyecto', err);
+          this.toastService.showApiError(err, 'Error no controlado al guardar proyecto');
         }
       }
     });

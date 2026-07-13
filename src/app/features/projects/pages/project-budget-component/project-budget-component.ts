@@ -40,6 +40,12 @@ export class ProjectBudgetComponent implements OnInit {
   generalExpensesPercentage: number = 5.0;
   utilityPercentage: number = 4.0;
 
+  preventNegative(event: KeyboardEvent) {
+    if (event.key === '-' || event.key === 'e') {
+      event.preventDefault();
+    }
+  }
+
   ngOnInit() {
     this.loadProjectDetails();
     this.budgetForm = this.fb.group({
@@ -375,6 +381,11 @@ export class ProjectBudgetComponent implements OnInit {
       return;
     }
 
+    if (this.generalExpensesPercentage < 0 || this.utilityPercentage < 0) {
+      this.toastService.show('Los porcentajes de gastos generales y utilidad no pueden ser negativos.', 'warning');
+      return;
+    }
+
     const rawData = this.itemsFormArray.getRawValue();
 
 
@@ -434,7 +445,7 @@ export class ProjectBudgetComponent implements OnInit {
         this.toastService.show('Presupuesto guardado con éxito.', 'success');
         this.loadExistingItems();
       },
-      error: () => this.toastService.show('Error de conexión al guardar el presupuesto.', 'error')
+      error: (err: any) => this.toastService.showApiError(err, 'Error de conexión al guardar el presupuesto.')
     });
   }
 

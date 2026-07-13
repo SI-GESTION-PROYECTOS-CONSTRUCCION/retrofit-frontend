@@ -63,7 +63,7 @@ export class ResourceListComponent implements OnInit {
 
   initForm() {
     this.resourceForm = this.fb.group({
-      name: ['', Validators.required],
+      name: ['', [Validators.required, Validators.pattern('^(?=.*[a-zA-ZñÑáéíóúÁÉÍÓÚ])[a-zA-ZñÑáéíóúÁÉÍÓÚ0-9 ]+$')]],
       unit: ['', Validators.required],
       basePrice: [0, [Validators.required, Validators.min(0)]]
     });
@@ -173,7 +173,12 @@ export class ResourceListComponent implements OnInit {
   saveResource() {
     if (this.resourceForm.invalid) return;
 
-    const dataToSend = this.resourceForm.value;
+    const rawData = this.resourceForm.value;
+    const dataToSend: any = Object.fromEntries(
+      Object.entries(rawData).map(([key, value]) => 
+        [key, typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : value]
+      )
+    );
     
     const apiPath = this.activeTab.apiPath;
 
@@ -188,7 +193,7 @@ export class ResourceListComponent implements OnInit {
         this.loadData();
       },
       error: (err) => {
-        this.toastService.show('Error al guardar el recurso', 'error');
+        this.toastService.showApiError(err, 'Error al guardar el recurso');
         console.error(err);
       }
     });
@@ -220,8 +225,8 @@ export class ResourceListComponent implements OnInit {
         }
         this.loadData();
       },
-      error: () => {
-        this.toastService.show('No se puede eliminar, el recurso está en uso', 'error');
+      error: (err) => {
+        this.toastService.showApiError(err, 'No se puede eliminar, el recurso está en uso');
         this.closeDeleteModal();
       }
     });
