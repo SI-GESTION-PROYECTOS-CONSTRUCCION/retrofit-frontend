@@ -35,4 +35,8 @@ export class UserService {
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  reactivateUser(id: number): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/reactivate`, {});
+  }
 }

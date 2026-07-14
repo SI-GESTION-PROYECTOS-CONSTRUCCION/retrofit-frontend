@@ -41,6 +41,11 @@ export class GestionUsuariosComponent implements OnInit {
   userToDelete: UserDto | null = null;
   isDeleting = false;
 
+  // Variables para el modal de reactivación
+  isReactivateModalOpen = false;
+  userToReactivate: UserDto | null = null;
+  isReactivating = false;
+
   ngOnInit() {
     this.loadUsers();
   }
@@ -138,6 +143,34 @@ export class GestionUsuariosComponent implements OnInit {
       error: (err) => {
         console.error('Error al eliminar:', err);
         this.isDeleting = false;
+      }
+    });
+  }
+
+  // Lógica para la reactivación
+  openReactivateConfirm(user: UserDto) {
+    this.userToReactivate = user;
+    this.isReactivateModalOpen = true;
+  }
+
+  closeReactivateModal() {
+    this.isReactivateModalOpen = false;
+    this.userToReactivate = null;
+  }
+
+  confirmReactivate() {
+    if (!this.userToReactivate) return;
+    
+    this.isReactivating = true;
+    this.userService.reactivateUser(this.userToReactivate.id).subscribe({
+      next: () => {
+        this.isReactivating = false;
+        this.closeReactivateModal();
+        this.loadUsers();
+      },
+      error: (err) => {
+        console.error('Error al reactivar:', err);
+        this.isReactivating = false;
       }
     });
   }

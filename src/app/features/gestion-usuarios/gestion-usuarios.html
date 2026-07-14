@@ -23,11 +23,22 @@
     @if (isDeleteModalOpen && userToDelete) {
     <app-confirm-modal
         title="Desactivar Usuario"
-        [message]="'¿Estás seguro de que deseas eliminar al usuario <strong>' + userToDelete.username + '</strong>?<br>Esta acción revocará sus accesos al sistema.'"
-        confirmText="Eliminar"
+        [message]="'¿Estás seguro de que deseas desactivar al usuario <strong>' + userToDelete.username + '</strong>?<br>Esta acción revocará sus accesos al sistema.'"
+        confirmText="Desactivar"
         [isProcessing]="isDeleting"
         (confirm)="confirmDelete()"
         (cancel)="closeDeleteModal()">
+    </app-confirm-modal>
+    }
+
+    @if (isReactivateModalOpen && userToReactivate) {
+    <app-confirm-modal
+        title="Reactivar Usuario"
+        [message]="'¿Estás seguro de que deseas reactivar al usuario <strong>' + userToReactivate.username + '</strong>?<br>Esta acción restaurará sus accesos al sistema.'"
+        confirmText="Reactivar"
+        [isProcessing]="isReactivating"
+        (confirm)="confirmReactivate()"
+        (cancel)="closeReactivateModal()">
     </app-confirm-modal>
     }
 
@@ -75,15 +86,15 @@
                                 <app-skeleton width="100px" height="16px" marginBottom="0"></app-skeleton>
                             </div>
                         </td>
-                        
+
                         <td><app-skeleton width="160px" height="16px" marginBottom="0"></app-skeleton></td>
-                        
+
                         <td><app-skeleton width="180px" height="16px" marginBottom="0"></app-skeleton></td>
-                        
+
                         <td><app-skeleton width="130px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton></td>
-                        
+
                         <td><app-skeleton width="60px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton></td>
-                        
+
                         <td class="col-actions">
                             <div style="display: flex; gap: 8px;">
                                 <app-skeleton width="32px" height="32px" borderRadius="6px" marginBottom="0"></app-skeleton>
@@ -142,9 +153,15 @@
                                 <button *appHasPermission="'USER_UPDATE'" class="action-btn edit" title="Editar" (click)="openModal('edit', user)">
                                 <i class="fa-regular fa-pen-to-square"></i>
                                 </button>
-                                <button *appHasPermission="'USER_DELETE'" class="action-btn delete" title="Eliminar" (click)="openDeleteConfirm(user)">
+                                @if (user.active) {
+                                <button *appHasPermission="'USER_DELETE'" class="action-btn delete" title="Desactivar" (click)="openDeleteConfirm(user)">
                                 <i class="fa-regular fa-trash-can"></i>
                                 </button>
+                                } @else {
+                                <button *appHasPermission="'USER_DELETE'" class="action-btn reactivate" title="Reactivar" (click)="openReactivateConfirm(user)" >
+                                <i class="fa-solid fa-arrow-rotate-left"></i>
+                                </button>
+                                }
                             </div>
                             </td>
                     </tr>
