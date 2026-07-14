@@ -9,18 +9,20 @@ import { Observable, of, tap } from 'rxjs';
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
   private userPermissions = new Set<string>();
+  private requirePasswordChange = false;
   private isLoaded = false;
   constructor(private http: HttpClient) { }
 
 
   loadUserProfile(): Observable<any> {
     if (this.isLoaded) {
-      return of({ permissions: Array.from(this.userPermissions) });
+      return of({ permissions: Array.from(this.userPermissions), requirePasswordChange: this.requirePasswordChange });
     }
 
     return this.http.get<any>(`${this.apiUrl}/profile`).pipe(
       tap(profile => {
         this.userPermissions = new Set(profile.permissions);
+        this.requirePasswordChange = profile.requirePasswordChange;
         this.isLoaded = true; 
       })
     );
@@ -32,6 +34,14 @@ export class AuthService {
 
   login(credenciales: { username: string; password: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, credenciales);
+  }
+
+  changePassword(newPassword: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/change-password`, { newPassword }).pipe(
+      tap(() => {
+        this.requirePasswordChange = false;
+      })
+    );
   }
 
   refreshToken(): Observable<any> {
@@ -76,6 +86,7 @@ export class AuthService {
     localStorage.removeItem('retrofit_jwt');
     localStorage.removeItem('retrofit_refresh_jwt');
     this.userPermissions.clear();
+    this.requirePasswordChange = false;
     this.isLoaded = false;
   }
 }

@@ -65,6 +65,26 @@ form {
   flex-direction: column;
   gap: 20px;
 
+  .info-box {
+    display: flex;
+    gap: 12px;
+    background-color: rgba(63, 177, 197, 0.1); 
+    border-left: 4px solid var(--color-primario);
+    padding: 15px;
+    border-radius: 6px;
+    color: var(--color-texto);
+    font-size: 13px;
+    line-height: 1.5;
+    
+    span {
+      color: var(--color-primario);
+      font-size: 18px;
+    }
+    p {
+      margin: 0;
+    }
+  }
+
   .form-group {
     display: flex;
     flex-direction: column;
