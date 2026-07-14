@@ -37,7 +37,7 @@ export class UserFormModalComponent implements OnInit {
   ngOnInit(): void {
     if (this.mode === 'create') {
       this.userForm.reset({ role: 'ALMACENERO' });
-      this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
+      this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$')]);
     } 
     else if (this.userToEdit) {
       this.userForm.patchValue(this.userToEdit);

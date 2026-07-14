@@ -66,8 +66,11 @@
             type="password"
             id="newPassword"
             formControlName="newPassword"
-            placeholder="Nueva contraseña"
+            placeholder="Mín. 8 chars, 1 mayúscula, 1 número, 1 especial"
             [class.is-invalid]="changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched">
+        </div>
+        <div class="error-text" *ngIf="changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched" style="color: #f44336; font-size: 0.85rem; margin-top: 5px;">
+          Debe tener al menos 8 caracteres, 1 mayúscula, 1 número y 1 carácter especial.
         </div>
       </div>
 

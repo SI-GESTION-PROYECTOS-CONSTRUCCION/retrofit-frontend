@@ -47,6 +47,8 @@ export class WorkerFormModalComponent implements OnInit {
           if (isChecked) {
             if (controlName === 'email') {
               control.setValidators([Validators.required, Validators.email]);
+            } else if (controlName === 'password') {
+              control.setValidators([Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$')]);
             } else {
               control.setValidators([Validators.required]);
             }
