@@ -29,14 +29,17 @@
         <div class="label-row">
           <label for="password">Contraseña</label>
         </div>
-        <div class="input-wrapper">
+        <div class="input-wrapper" style="position: relative;">
           <span class="icon"><i class="fa-solid fa-lock"></i></span>
           <input
-            type="password"
+            [type]="showPassword ? 'text' : 'password'"
             id="password"
             formControlName="password"
             placeholder="••••••••"
             [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <span class="icon toggle-password" (click)="togglePasswordVisibility('password')" style="position: absolute; right: 10px; cursor: pointer;">
+            <i class="fa-regular" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </span>
         </div>
       </div>
 
@@ -60,14 +63,17 @@
 
       <div class="form-group">
         <label for="newPassword">Nueva contraseña</label>
-        <div class="input-wrapper">
+        <div class="input-wrapper" style="position: relative;">
           <span class="icon"><i class="fa-solid fa-lock"></i></span>
           <input
-            type="password"
+            [type]="showNewPassword ? 'text' : 'password'"
             id="newPassword"
             formControlName="newPassword"
             placeholder="Mín. 8 chars, 1 mayúscula, 1 número, 1 especial"
             [class.is-invalid]="changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched">
+          <span class="icon toggle-password" (click)="togglePasswordVisibility('newPassword')" style="position: absolute; right: 10px; cursor: pointer;">
+            <i class="fa-regular" [ngClass]="showNewPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </span>
         </div>
         <div class="error-text" *ngIf="changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched" style="color: #f44336; font-size: 0.85rem; margin-top: 5px;">
           Debe tener al menos 8 caracteres, 1 mayúscula, 1 número y 1 carácter especial.
@@ -76,14 +82,17 @@
 
       <div class="form-group">
         <label for="confirmPassword">Confirmar contraseña</label>
-        <div class="input-wrapper">
+        <div class="input-wrapper" style="position: relative;">
           <span class="icon"><i class="fa-solid fa-lock"></i></span>
           <input
-            type="password"
+            [type]="showConfirmPassword ? 'text' : 'password'"
             id="confirmPassword"
             formControlName="confirmPassword"
             placeholder="Confirmar contraseña"
             [class.is-invalid]="changePasswordForm.get('confirmPassword')?.invalid && changePasswordForm.get('confirmPassword')?.touched">
+          <span class="icon toggle-password" (click)="togglePasswordVisibility('confirmPassword')" style="position: absolute; right: 10px; cursor: pointer;">
+            <i class="fa-regular" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </span>
         </div>
       </div>
 

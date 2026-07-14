@@ -112,10 +112,13 @@
           
           @if (mode === 'create') {
             
-            <div class="form-group">
+            <div class="form-group" style="position: relative;">
               <label>CONTRASEÑA</label>
-              <input type="password" formControlName="password" placeholder="Mín. 8 chars, 1 mayúscula, 1 número, 1 especial"
+              <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Mín. 8 chars, 1 mayúscula, 1 número, 1 especial"
                      [class.is-invalid]="hasError('password')">
+              <span class="icon toggle-password" (click)="togglePasswordVisibility()" style="position: absolute; right: 10px; top: 38px; cursor: pointer; color: #888;">
+                <i class="fa-regular" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+              </span>
               @if (backendErrors['password']) { <span class="error-text">{{ backendErrors['password'] }}</span> }
               @else if (workerForm.get('password')?.invalid && workerForm.get('password')?.touched) { <span class="error-text">Debe tener al menos 8 caracteres, 1 mayúscula, 1 número y 1 carácter especial.</span> }
             </div>

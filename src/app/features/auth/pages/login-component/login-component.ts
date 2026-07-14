@@ -17,6 +17,16 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   requirePasswordChange = false;
 
+  showPassword = false;
+  showNewPassword = false;
+  showConfirmPassword = false;
+
+  togglePasswordVisibility(field: 'password' | 'newPassword' | 'confirmPassword') {
+    if (field === 'password') this.showPassword = !this.showPassword;
+    else if (field === 'newPassword') this.showNewPassword = !this.showNewPassword;
+    else if (field === 'confirmPassword') this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,

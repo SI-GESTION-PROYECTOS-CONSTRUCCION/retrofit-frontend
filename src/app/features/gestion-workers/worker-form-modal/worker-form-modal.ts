@@ -23,6 +23,12 @@ export class WorkerFormModalComponent implements OnInit {
   isSubmitting = false;
   backendErrors: { [key: string]: string } = {};
 
+  showPassword = false;
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
   constructor() {
     this.workerForm = this.fb.group({
       name: ['', [Validators.required, Validators.pattern('^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$')]],
