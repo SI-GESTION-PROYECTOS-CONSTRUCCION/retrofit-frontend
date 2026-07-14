@@ -73,7 +73,7 @@
           <div class="form-group" style="position: relative;">
             <label>CONTRASEÑA INICIAL</label>
             <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Mín. 8 chars, 1 mayúscula, 1 número, 1 especial" [class.is-invalid]="hasError('password')">
-            <span class="icon toggle-password" (click)="togglePasswordVisibility()" style="position: absolute; right: 10px; top: 38px; cursor: pointer; color: #888;">
+            <span class="toggle-password" (click)="togglePasswordVisibility()" style="position: absolute; right: 15px; top: 38px; cursor: pointer; color: #888;">
               <i class="fa-regular" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
             </span>
             @if (backendErrors['password']) { <span class="error-text">{{ backendErrors['password'] }}</span> }

@@ -37,7 +37,7 @@
             formControlName="password"
             placeholder="••••••••"
             [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-          <span class="icon toggle-password" (click)="togglePasswordVisibility('password')" style="position: absolute; right: 10px; cursor: pointer;">
+          <span class="toggle-password" (click)="togglePasswordVisibility('password')" style="position: absolute; right: 15px; cursor: pointer; color: #888;">
             <i class="fa-regular" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
           </span>
         </div>
@@ -71,7 +71,7 @@
             formControlName="newPassword"
             placeholder="Mín. 8 chars, 1 mayúscula, 1 número, 1 especial"
             [class.is-invalid]="changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched">
-          <span class="icon toggle-password" (click)="togglePasswordVisibility('newPassword')" style="position: absolute; right: 10px; cursor: pointer;">
+          <span class="toggle-password" (click)="togglePasswordVisibility('newPassword')" style="position: absolute; right: 15px; cursor: pointer; color: #888;">
             <i class="fa-regular" [ngClass]="showNewPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
           </span>
         </div>
@@ -90,7 +90,7 @@
             formControlName="confirmPassword"
             placeholder="Confirmar contraseña"
             [class.is-invalid]="changePasswordForm.get('confirmPassword')?.invalid && changePasswordForm.get('confirmPassword')?.touched">
-          <span class="icon toggle-password" (click)="togglePasswordVisibility('confirmPassword')" style="position: absolute; right: 10px; cursor: pointer;">
+          <span class="toggle-password" (click)="togglePasswordVisibility('confirmPassword')" style="position: absolute; right: 15px; cursor: pointer; color: #888;">
             <i class="fa-regular" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
           </span>
         </div>
