@@ -60,9 +60,10 @@
           <div class="form-group">
             <label>ROL DEL SISTEMA</label>
             <select formControlName="role" [class.is-invalid]="hasError('role')">
-              <option value="ADMIN">Administrador</option>
-              <option value="INGENIERO_RESIDENTE">Residente de Obra</option>
-              <option value="ALMACENERO">Almacenero</option>
+              <option value="" disabled>Seleccione un rol</option>
+              @for (role of roles; track role.id) {
+                <option [value]="role.name">{{ role.description || role.name }}</option>
+              }
             </select>
             @if (backendErrors['role']) { <span class="error-text">{{ backendErrors['role'] }}</span> }
             @else if (userForm.get('role')?.invalid && userForm.get('role')?.touched) { <span class="error-text">Seleccione un rol</span> }

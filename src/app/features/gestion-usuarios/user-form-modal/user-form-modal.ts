@@ -3,6 +3,7 @@ import { Component, EventEmitter, inject, Input, OnInit, Output, SimpleChanges }
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../../core/services/user.service';
 import { UserDto } from '../../../core/models/user.model';
+import { RoleService } from '../../../core/services/role.service';
 
 @Component({
   selector: 'app-user-form-modal',
@@ -18,10 +19,12 @@ export class UserFormModalComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
+  private roleService = inject(RoleService);
 
   userForm: FormGroup;
   isSubmitting = false;
   backendErrors: { [key: string]: string } = {};
+  roles: any[] = [];
 
   showPassword = false;
 
@@ -41,6 +44,11 @@ export class UserFormModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.roleService.getAllRoles().subscribe({
+      next: (roles) => this.roles = roles,
+      error: (err) => console.error('Error fetching roles', err)
+    });
+
     if (this.mode === 'create') {
       this.userForm.reset({ role: 'ALMACENERO' });
       this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$')]);
