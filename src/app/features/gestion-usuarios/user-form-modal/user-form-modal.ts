@@ -39,7 +39,7 @@ export class UserFormModalComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       username: ['', Validators.required],
       role: ['ALMACENERO', Validators.required],
-      password: [''] 
+      password: ['']
     });
   }
 
@@ -52,11 +52,11 @@ export class UserFormModalComponent implements OnInit {
     if (this.mode === 'create') {
       this.userForm.reset({ role: 'ALMACENERO' });
       this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$')]);
-    } 
+    }
     else if (this.userToEdit) {
       this.userForm.patchValue(this.userToEdit);
       this.userForm.get('password')?.clearValidators();
-      
+
       if (this.mode === 'view') {
         this.userForm.disable();
       }
@@ -75,7 +75,7 @@ export class UserFormModalComponent implements OnInit {
       this.isSubmitting = true;
       const rawData = this.userForm.getRawValue();
       const userData: any = Object.fromEntries(
-        Object.entries(rawData).map(([key, value]) => 
+        Object.entries(rawData).map(([key, value]) =>
           [key, typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : value]
         )
       );

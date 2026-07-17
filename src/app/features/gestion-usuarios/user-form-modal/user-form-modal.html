@@ -15,7 +15,7 @@
 
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
       <div class="modal-body">
-        
+
         @if (backendErrors['general']) {
           <div class="info-alert" style="background-color: #fef2f2; border-color: #fca5a5; color: #ef4444; margin-bottom: 15px; padding: 12px; border-radius: 8px;">
             <i class="fa-solid fa-circle-exclamation"></i> {{ backendErrors['general'] }}
@@ -30,7 +30,7 @@
             @else if (userForm.get('name')?.hasError('required') && userForm.get('name')?.touched) { <span class="error-text">Los nombres son requeridos</span> }
             @else if (userForm.get('name')?.hasError('pattern') && userForm.get('name')?.touched) { <span class="error-text">Solo se permiten letras</span> }
           </div>
-          
+
           <div class="form-group">
             <label>APELLIDOS</label>
             <input type="text" formControlName="lastName" placeholder="Ej. Mendoza" [class.is-invalid]="hasError('lastName')">
@@ -44,8 +44,8 @@
           <label>CORREO ELECTRÓNICO</label>
           <input type="email" formControlName="email" placeholder="Ej. cmendoza@empresa.com" [class.is-invalid]="hasError('email')">
           @if (backendErrors['email']) { <span class="error-text">{{ backendErrors['email'] }}</span> }
-          @else if (userForm.get('email')?.invalid && userForm.get('email')?.touched) { 
-            <span class="error-text">Ingrese un correo electrónico válido</span> 
+          @else if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+            <span class="error-text">Ingrese un correo electrónico válido</span>
           }
         </div>
 
@@ -56,13 +56,13 @@
             @if (backendErrors['username']) { <span class="error-text">{{ backendErrors['username'] }}</span> }
             @else if (userForm.get('username')?.invalid && userForm.get('username')?.touched) { <span class="error-text">El usuario es requerido</span> }
           </div>
-          
+
           <div class="form-group">
             <label>ROL DEL SISTEMA</label>
             <select formControlName="role" [class.is-invalid]="hasError('role')">
               <option value="" disabled>Seleccione un rol</option>
               @for (role of roles; track role.id) {
-                <option [value]="role.name">{{ role.description || role.name }}</option>
+                <option [value]="role.name">{{ role.name }}</option>
               }
             </select>
             @if (backendErrors['role']) { <span class="error-text">{{ backendErrors['role'] }}</span> }
@@ -87,7 +87,7 @@
         <button type="button" class="btn btn-cancel" (click)="closeModal()">
           {{ mode === 'view' ? 'Cerrar' : 'Cancelar' }}
         </button>
-        
+
         @if (mode !== 'view') {
           <button type="submit" class="btn btn-submit" [disabled]="isSubmitting">
             @if (isSubmitting) {
