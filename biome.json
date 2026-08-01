@@ -1,12 +1,10 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
-	"organizeImports": {
-		"enabled": true
-	},
+	"$schema": "https://biomejs.dev/schemas/2.5.6/schema.json",
+	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true,
+			"preset": "recommended",
 			"complexity": {
 				"noStaticOnlyClass": "error",
 				"noUselessTypeConstraint": "error"
@@ -24,13 +22,13 @@
 			},
 			"suspicious": {
 				"noExplicitAny": "error",
-				"noConsoleLog": "warn",
-				"noDebugger": "error"
+				"noDebugger": "error",
+				"noConsole": { "level": "warn", "options": { "allow": ["log"] } }
 			}
 		}
 	},
 	"files": {
-		"ignore": ["**/node_modules/**", "**/dist/**", "**/.angular/**", "**/coverage/**"]
+		"includes": ["**", "!**/node_modules", "!**/dist", "!**/.angular", "!**/coverage"]
 	},
 	"formatter": {
 		"enabled": true,
