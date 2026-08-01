@@ -1,0 +1,12 @@
+# Carpetas a ignorar (Angular y compilados)
+/dist
+/.angular
+/node_modules
+/coverage
+
+# ¡CRÍTICO! Ignoramos los lenguajes que ahora maneja Biome
+# Esto asegura que Prettier nunca formatee estos archivos por error.
+*.ts
+*.js
+*.json
+*.jsonc
