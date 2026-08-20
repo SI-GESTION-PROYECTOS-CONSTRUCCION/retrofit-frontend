@@ -1,0 +1,28 @@
+ :host { display: contents; }
+
+.modal-backdrop { position: fixed; inset: 0; z-index: 1200; display: grid; place-items: center; overflow-y: auto; padding: 24px; background: rgba(9, 18, 31, .66); backdrop-filter: blur(7px); }
+.modal-container { width: min(760px, 100%); overflow: hidden; background: #fff; border: 1px solid rgba(255,255,255,.65); border-radius: 20px; box-shadow: 0 28px 70px rgba(4, 16, 31, .35); }
+.modal-header { position: relative; padding: 30px 34px 24px; border-radius: 19px 19px 0 0; color: #f8fbff; background: linear-gradient(120deg, #102a43, #075985); }
+.header-title { display: flex; align-items: center; gap: 12px; }
+.icon-title { color: #5eead4; font-size: 1.25rem; }
+.header-title h2 { margin: 0; font: 700 1.45rem/1.2 var(--rt-font-display, Manrope, sans-serif); letter-spacing: -.04em; }
+.header-subtitle { max-width: 540px; margin: 10px 44px 0 0; color: #c8e3f5; font-size: .88rem; line-height: 1.55; }
+.btn-close { position: absolute; top: 20px; right: 22px; color: #fff !important; }
+.modal-body { display: grid; gap: 18px; padding: 28px 34px 30px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.form-group { min-width: 0; display: grid; gap: 8px; }
+.form-group label { color: #547087; font: 800 .65rem/1 var(--rt-font-display, Manrope, sans-serif); letter-spacing: .11em; }
+.form-group input, .form-group textarea { width: 100%; color: #183449; background: #fbfdff; border: 1px solid #d8e4ec; border-radius: 9px; font: 500 .9rem var(--rt-font-body, Manrope, sans-serif); }
+.form-group input { height: 43px; padding: 0 12px; }
+.form-group textarea { min-height: 88px; padding: 12px; resize: vertical; }
+.form-group input:focus, .form-group textarea:focus { border-color: #0ea5b7; box-shadow: 0 0 0 3px rgba(14,165,183,.12); outline: 0; }
+.project-form-select, .project-date-picker { width: 100%; }
+:host ::ng-deep .project-form-select .p-select, :host ::ng-deep .project-date-picker .p-datepicker-input { width: 100%; min-height: 43px; border-color: #d8e4ec; background: #fbfdff; border-radius: 9px; color: #183449; }
+:host ::ng-deep .project-form-select .p-select-label, :host ::ng-deep .project-date-picker .p-datepicker-input { font-size: .9rem; padding-top: .7rem; padding-bottom: .7rem; }
+:host ::ng-deep .project-date-picker .p-datepicker-dropdown { color: #087f8c; background: transparent; border: 0; }
+.is-invalid, :host ::ng-deep .is-invalid .p-select, :host ::ng-deep .is-invalid .p-datepicker-input { border-color: #ef4444 !important; }
+.error-text { color: #dc2626; font-size: .73rem; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding: 18px 34px 24px; border-top: 1px solid #e7eef3; border-radius: 0 0 19px 19px; background: #fbfdff; }
+.btn { min-width: 128px; justify-content: center; }
+.btn-submit { background: #087f8c !important; border-color: #087f8c !important; }
+@media (max-width: 620px) { .modal-backdrop { padding: 12px; } .modal-container { max-height: calc(100vh - 24px); border-radius: 14px; } .modal-header, .modal-body { padding-left: 20px; padding-right: 20px; } .form-row { grid-template-columns: 1fr; } .modal-footer { padding: 16px 20px; } .btn { min-width: 0; flex: 1; } }

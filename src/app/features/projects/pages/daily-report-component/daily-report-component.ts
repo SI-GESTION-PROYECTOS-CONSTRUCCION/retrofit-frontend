@@ -9,10 +9,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ToastService } from '../../../../core/services/toast-service';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 import { InventoryService } from '../../../../core/services/inventory.service';
+import { DatePickerModule } from 'primeng/datepicker';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-daily-report-component',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, Skeleton],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, Skeleton, DatePickerModule, SelectModule],
   templateUrl: './daily-report-component.html',
   styleUrl: './daily-report-component.css',
 })
@@ -35,6 +37,19 @@ export class DailyReportComponent implements OnInit {
   selectedFiles: File[] = [];
   previewUrls: string[] = [];
   isLoading = false;
+
+  get projectItemOptions() {
+    return this.executableItems.map(item => ({
+      label: `${item.code} · ${item.description} (${item.unit})`,
+      value: item.id
+    }));
+  }
+
+  get projectStartMinDate(): Date | undefined {
+    if (!this.project?.startDate) return undefined;
+    const [year, month, day] = this.project.startDate.split('-').map(Number);
+    return year && month && day ? new Date(year, month - 1, day) : undefined;
+  }
 
   ngOnInit(): void {
     this.projectId = Number(this.route.snapshot.paramMap.get('id'));

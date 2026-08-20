@@ -2,34 +2,104 @@
 @import "@ng-select/ng-select/themes/default.theme.css";
 
 :root {
-  --color-primario: #003B7E;
-  --color-secundario: #0097A7;
-  --color-acento: #3FB1C5;
-  --color-divisor: #A7A9AC;
-  --color-texto: #7D7E81;
-  --color-fondo: #FFFFFF;
-  --color-fondo-app: #F5F9FA; 
+  /* Retrofit design tokens: foundation */
+  --rt-brand-950: #0b1f3a;
+  --rt-brand-900: #12335c;
+  --rt-brand-800: #103c6f;
+  --rt-brand-700: #0e4685;
+  --rt-brand-600: #1158a5;
+  --rt-brand-500: #186fc2;
+  --rt-teal-600: #087e8b;
+  --rt-teal-500: #0ea5a8;
+  --rt-canvas: #f3f7fb;
+  --rt-surface: #ffffff;
+  --rt-surface-soft: #f8fafc;
+  --rt-ink: #13233a;
+  --rt-ink-muted: #68778c;
+  --rt-line: #dce5ef;
+  --rt-success: #1c9a70;
+  --rt-warning: #e99b28;
+  --rt-danger: #d95359;
+  --rt-radius-sm: 10px;
+  --rt-radius-md: 16px;
+  --rt-radius-lg: 24px;
+  --rt-shadow-sm: 0 2px 8px rgb(19 35 58 / 0.05);
+  --rt-shadow-md: 0 16px 40px rgb(19 35 58 / 0.08);
+  --rt-font-sans: 'Manrope', 'Segoe UI', sans-serif;
+  --rt-font-mono: 'DM Mono', ui-monospace, monospace;
 
-  --color-exito: #10B981; /* Verde (Finalizado / En Ejecución) */
-  --color-exito-fondo: #D1FAE5;
-  --color-alerta: #F59E0B; /* Amarillo/Naranja (Pausado) */
-  --color-alerta-fondo: #FEF3C7;
-  --color-peligro: #EF4444; /* Rojo (Alta prioridad / Crítico) */
-  --color-peligro-fondo: #FEE2E2;
-  --color-info: #3B82F6; /* Azul claro (Media prioridad / Planeamiento) */
-  --color-info-fondo: #DBEAFE;
+  /* Aliases preserved while the remaining screens are migrated. */
+  --color-primario: var(--rt-brand-700);
+  --color-secundario: var(--rt-teal-600);
+  --color-acento: var(--rt-teal-500);
+  --color-divisor: var(--rt-line);
+  --color-texto: var(--rt-ink-muted);
+  --color-texto-principal: var(--rt-ink);
+  --color-fondo: var(--rt-surface);
+  --color-fondo-tarjeta: var(--rt-surface);
+  --color-fondo-app: var(--rt-canvas);
+  --color-exito: var(--rt-success);
+  --color-exito-fondo: #e6f6ef;
+  --color-alerta: var(--rt-warning);
+  --color-alerta-fondo: #fff3de;
+  --color-peligro: var(--rt-danger);
+  --color-peligro-fondo: #fbe9ea;
+  --color-info: var(--rt-brand-500);
+  --color-info-fondo: #eaf4ff;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--rt-font-sans);
 }
 
 body {
-  background-color: var(--color-fondo-app);
-  color: var(--color-texto);
+  min-width: 320px;
+  background: var(--rt-canvas);
+  color: var(--rt-ink);
+  text-rendering: optimizeLegibility;
+}
+
+/* Los overlays que se montan en body no deben quedar detrás de los modales. */
+body > .p-select-overlay,
+body > .p-datepicker-panel {
+  z-index: 1301 !important;
+}
+
+body > .dashboard-kpi-tooltip {
+  z-index: 1301 !important;
+  max-width: 260px;
+  background: transparent !important;
+}
+
+body > .dashboard-kpi-tooltip .p-tooltip-text {
+  background: var(--rt-brand-950) !important;
+  color: #fff !important;
+  padding: 11px 14px;
+  border-radius: 10px;
+  box-shadow: var(--rt-shadow-md);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+body > .dashboard-kpi-tooltip.p-tooltip-top .p-tooltip-arrow {
+  border-top-color: var(--rt-brand-950) !important;
+  border-bottom-color: var(--rt-brand-950) !important;
+}
+
+body > .dashboard-kpi-tooltip.p-tooltip-bottom .p-tooltip-arrow {
+  border-top-color: var(--rt-brand-950) !important;
+  border-bottom-color: var(--rt-brand-950) !important;
+}
+
+button, input, select, textarea { font: inherit; }
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--rt-brand-400);
+  outline-offset: 2px;
 }
 
 
@@ -663,3 +733,13 @@ body {
 }
 
 .btn-custom { padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s; border: none; }
+
+/* Acciones compactas y consistentes para tablas y listados. */
+.rt-action-group { display: inline-flex; align-items: center; gap: 5px; }
+.rt-action-group--center { justify-content: center; }
+.rt-action-button { display: inline-grid !important; width: 29px; height: 29px; min-width: 29px; padding: 0 !important; place-items: center; border: 1px solid var(--rt-line) !important; border-radius: 7px !important; background: #fff !important; color: var(--rt-ink-muted) !important; box-shadow: none !important; cursor: pointer; transition: transform .2s ease, background .2s ease, border-color .2s ease, color .2s ease; }
+.rt-action-button:hover { transform: translateY(-1px); }
+.rt-action-button--view:hover { border-color: #9bded7 !important; background: #e8f7f6 !important; color: var(--rt-teal-700) !important; }
+.rt-action-button--edit:hover, .rt-action-button--configure:hover { border-color: #b9d4f3 !important; background: #edf6ff !important; color: var(--rt-brand-700) !important; }
+.rt-action-button--delete:hover { border-color: #f2b9bd !important; background: #fff0f1 !important; color: var(--rt-danger) !important; }
+.rt-action-button--reactivate:hover { border-color: #9bded7 !important; background: #e8f7f6 !important; color: var(--rt-teal-700) !important; }

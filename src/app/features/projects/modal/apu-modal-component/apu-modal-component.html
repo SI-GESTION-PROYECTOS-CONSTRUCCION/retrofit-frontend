@@ -1,21 +1,23 @@
-<div class="modal-backdrop">
-  <div class="modal-container" style="max-width: 900px;">
+<div class="modal-backdrop apu-backdrop" (click)="onClose.emit()">
+  <div class="modal-container apu-modal" role="dialog" aria-modal="true" aria-labelledby="apu-modal-title" (click)="$event.stopPropagation()">
 
     <div class="modal-header">
       <div class="header-content">
         <div class="header-title">
           <i class="fa-solid fa-calculator icon-title"></i>
-          <h2>Análisis de Precios Unitarios (APU)</h2>
+          <h2 id="apu-modal-title">Análisis de Precios Unitarios (APU)</h2>
         </div>
         <p class="header-subtitle">Partida: <b>{{ itemData.code }} - {{ itemData.description }}</b></p>
       </div>
-      <button class="btn-close" (click)="onClose.emit()"><i class="fa-solid fa-xmark"></i></button>
+      <button class="btn-close" type="button" (click)="onClose.emit()" aria-label="Cerrar APU"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <div class="modal-body">
 
-      <div class="section-title" style="margin-bottom: 8px;">1. Rendimientos de la Partida</div>
-      <div class="info-alert mb-3">
+      <div class="apu-config-grid">
+      <section class="apu-yield-panel">
+      <div class="apu-section-heading"><span>01</span><div><h3>Rendimientos de la Partida</h3><p>Variables base para el cálculo automático.</p></div></div>
+      <div class="info-alert mb-3 apu-info-alert">
         <i class="fa-solid fa-circle-info alert-icon"></i>
         <div class="alert-text">
           <h4>Información de Cálculo</h4>
@@ -24,7 +26,7 @@
         </div>
       </div>
 
-      <div class="form-row">
+      <div class="form-row apu-yield-grid">
         <div class="form-group">
           <label>Rendimiento Mano de Obra (MO)</label>
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -49,37 +51,29 @@
         </div>
       </div>
 
-      <hr style="border: 0; border-top: 1px solid #E5E7EB; margin: 24px 0;">
-      <div class="section-title">2. Estructura de Costos (Recursos)</div>
+      </section>
+      <section class="apu-resources-panel">
+      <div class="apu-section-heading"><span>02</span><div><h3>Estructura de Costos</h3><p>Agrega y configura los recursos de la partida.</p></div></div>
 
-      <div
-        style="display: flex; gap: 12px; align-items: flex-end; margin-bottom: 16px; background: #F9FAFB; padding: 16px; border-radius: 8px;">
-        <div class="form-group" style="flex: 1;">
+      <div class="apu-resource-picker">
+        <div class="form-group">
           <label>Tipo de Recurso</label>
-          <select [(ngModel)]="selectedResourceType" (change)="selectedResourceId = null">
-            <option value="LABOR">Mano de Obra</option>
-            <option value="MATERIAL">Materiales</option>
-            <option value="EQUIPMENT">Maquinaria y Equipos</option>
-          </select>
+          <p-select [(ngModel)]="selectedResourceType" [options]="resourceTypeOptions" optionLabel="label" optionValue="value"
+            (onChange)="onResourceTypeChange()" appendTo="body" [overlayOptions]="overlayOptions" styleClass="apu-select"></p-select>
         </div>
-        <div class="form-group" style="flex: 2;">
+        <div class="form-group">
           <label>Seleccionar del Catálogo</label>
-          <select [(ngModel)]="selectedResourceId">
-            <option [ngValue]="null">-- Seleccione un recurso --</option>
-            @if (selectedResourceType === 'LABOR') { @for (r of laborCatalog; track r.id) { <option [value]="r.id">{{
-              r.name }} (S/ {{r.basePrice}})</option> } }
-            @if (selectedResourceType === 'MATERIAL') { @for (r of materialCatalog; track r.id) { <option
-              [value]="r.id">{{ r.name }} (S/ {{r.basePrice}})</option> } }
-            @if (selectedResourceType === 'EQUIPMENT') { @for (r of equipmentCatalog; track r.id) { <option
-              [value]="r.id">{{ r.name }} (S/ {{r.basePrice}})</option> } }
-          </select>
+          <p-select [(ngModel)]="selectedResourceId" [options]="resourceOptions" optionLabel="label" optionValue="value" [filter]="true"
+            filterBy="label" placeholder="Seleccione un recurso" appendTo="body" [overlayOptions]="overlayOptions" styleClass="apu-select"></p-select>
         </div>
         <button type="button" class="btn btn-primary" (click)="addResourceToApu()" [disabled]="!selectedResourceId">
           <i class="fa-solid fa-plus"></i> Agregar
         </button>
       </div>
+      </section>
+      </div>
 
-      <div class="table-responsive" style="border: 1px solid #E5E7EB; border-radius: 8px;">
+      <div class="table-responsive apu-table-wrap">
         <table class="retrofit-table">
           <thead>
             <tr>

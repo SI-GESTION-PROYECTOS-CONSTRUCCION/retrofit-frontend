@@ -1,119 +1,68 @@
-<div class="page-container">
-  
+<div class="project-detail-page">
   @if (isLoading) {
-    <div class="detail-header" style="margin-bottom: 24px;">
-      <div class="header-main">
-        <div class="title-row" style="display: flex; align-items: center; gap: 16px; margin-bottom: 12px;">
-          <app-skeleton width="45%" height="32px" marginBottom="0"></app-skeleton>
-          <app-skeleton width="80px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton>
-        </div>
-        <div class="meta-row" style="display: flex; gap: 24px;">
-          <app-skeleton width="120px" height="18px" marginBottom="0"></app-skeleton>
-          <app-skeleton width="200px" height="18px" marginBottom="0"></app-skeleton>
-          <app-skeleton width="180px" height="18px" marginBottom="0"></app-skeleton>
-        </div>
-      </div>
-    </div>
-
-    <div class="tabs-container" style="display: flex; gap: 8px; border-bottom: 1px solid #E5E7EB; margin-bottom: 24px; padding-bottom: 0;">
-      <app-skeleton width="100px" height="38px" borderRadius="8px 8px 0 0" marginBottom="0"></app-skeleton>
-      <app-skeleton width="130px" height="38px" borderRadius="8px 8px 0 0" marginBottom="0"></app-skeleton>
-      <app-skeleton width="180px" height="38px" borderRadius="8px 8px 0 0" marginBottom="0"></app-skeleton>
-      <app-skeleton width="100px" height="38px" borderRadius="8px 8px 0 0" marginBottom="0"></app-skeleton>
-    </div>
-
-    <div class="tab-content" style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
-      
-      <div class="left-panel">
-        <app-skeleton width="30%" height="24px" marginBottom="16px"></app-skeleton>
-        <app-skeleton width="100%" height="14px" marginBottom="8px"></app-skeleton>
-        <app-skeleton width="90%" height="14px" marginBottom="8px"></app-skeleton>
-        <app-skeleton width="95%" height="14px" marginBottom="32px"></app-skeleton>
-        
-        <div style="display: flex; gap: 32px; margin-bottom: 32px;">
-          <div>
-            <app-skeleton width="120px" height="12px" marginBottom="8px"></app-skeleton>
-            <app-skeleton width="150px" height="20px" marginBottom="0"></app-skeleton>
-          </div>
-          <div>
-            <app-skeleton width="120px" height="12px" marginBottom="8px"></app-skeleton>
-            <app-skeleton width="120px" height="20px" marginBottom="0"></app-skeleton>
-          </div>
-        </div>
-
-        <div style="display: flex; gap: 16px;">
-          <app-skeleton width="220px" height="110px" borderRadius="12px"></app-skeleton>
-          <app-skeleton width="220px" height="110px" borderRadius="12px"></app-skeleton>
-        </div>
-      </div>
-      
-      <div class="right-panel">
-        <app-skeleton width="50%" height="24px" marginBottom="24px"></app-skeleton>
-        <app-skeleton width="100%" height="48px" borderRadius="8px" marginBottom="12px"></app-skeleton>
-        <app-skeleton width="100%" height="48px" borderRadius="8px" marginBottom="12px"></app-skeleton>
-      </div>
-
-    </div>
-
+    <section class="detail-loading">
+      <app-skeleton width="110px" height="14px" marginBottom="20px"></app-skeleton>
+      <app-skeleton width="58%" height="46px" marginBottom="14px"></app-skeleton>
+      <app-skeleton width="100%" height="170px" borderRadius="20px" marginBottom="20px"></app-skeleton>
+      <app-skeleton width="100%" height="54px" borderRadius="12px" marginBottom="0"></app-skeleton>
+    </section>
   } @else if (errorMessage) {
-    <div class="error-state text-danger" style="padding: 20px; text-align: center;">
-      {{ errorMessage }}
-      <br><br>
-      <button class="btn btn-outline" routerLink="/portafolio">Volver al Portafolio</button>
-    </div>
+    <section class="detail-error">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <h2>No pudimos abrir el proyecto</h2>
+      <p>{{ errorMessage }}</p>
+      <a routerLink="/portafolio" class="back-button"><i class="fa-solid fa-arrow-left"></i> Volver al Portafolio</a>
+    </section>
   } @else if (project) {
-    
-    <div class="detail-header">
-      <div class="header-main">
-        <div class="title-row">
-          <h1 class="project-title">{{ project.name }}</h1>
-          <span class="badge" [ngClass]="getStatusBadgeClass(project.status)">
-            {{ formatEnum(project.status) }}
-          </span>
+    <a routerLink="/portafolio" class="portfolio-back"><i class="fa-solid fa-arrow-left"></i> Portafolio</a>
+
+    <header class="project-command-hero">
+      <div class="hero-grid-pattern"></div>
+      <div class="project-command-copy">
+        <div class="project-hero-kicker">
+          <span class="project-code">{{ project.code }}</span>
+          <span class="detail-chip status-chip" [ngClass]="getStatusBadgeClass(project.status)"><i class="fa-solid fa-circle"></i>{{ formatEnum(project.status) }}</span>
+          <span class="detail-chip priority-chip" [ngClass]="getPriorityBadgeClass(project.priority)">{{ formatEnum(project.priority) }}</span>
         </div>
-        <div class="meta-row">
-          <span><i class="fa-regular fa-clipboard"></i> Cód: {{ project.code }}</span>
-          <span><i class="fa-solid fa-user-tie"></i> Cliente: {{ project.client }}</span>
-          @if (project.location) {
-            <span><i class="fa-solid fa-location-dot"></i> {{ project.location }}</span>
-          }
+        <h1>{{ project.name }}</h1>
+        <p>{{ project.description || 'Proyecto habilitado para la gestión operativa, control de recursos y seguimiento de avances.' }}</p>
+
+        <div class="project-meta-grid">
+          <span><i class="fa-solid fa-building"></i><small>CLIENTE</small><strong>{{ project.client || 'Sin cliente' }}</strong></span>
+          <span><i class="fa-solid fa-location-dot"></i><small>UBICACIÓN</small><strong>{{ project.location || 'Sin ubicación' }}</strong></span>
+          <span><i class="fa-regular fa-calendar"></i><small>INICIO</small><strong>{{ formatDate(project.startDate) }}</strong></span>
         </div>
       </div>
-      <div class="header-actions">
-        <!--<button class="btn btn-primary"><i class="fa-solid fa-arrow-up-from-bracket"></i> Subir Planos</button>-->
-      </div>
-    </div>
 
-    <div class="tabs-container">
-      <button class="tab-item" [class.active]="activeTab === 'RESUMEN'" (click)="activeTab = 'RESUMEN'">RESUMEN</button>
-      <button class="tab-item" [class.active]="activeTab === 'PRESUPUESTO'" (click)="activeTab = 'PRESUPUESTO'">PRESUPUESTO</button>
-      <button class="tab-item" [class.active]="activeTab === 'CRONOGRAMA'" (click)="activeTab = 'CRONOGRAMA'">CRONOGRAMA (GANTT)</button>
-      <button class="tab-item" [class.active]="activeTab === 'AVANCES'" (click)="activeTab = 'AVANCES'">AVANCES</button>
-      <button class="tab-item" [class.active]="activeTab === 'INVENTARIO'" (click)="activeTab = 'INVENTARIO'">INVENTARIO</button>
-      <button class="tab-item" [class.active]="activeTab === 'ABASTECIMIENTO'" (click)="activeTab = 'ABASTECIMIENTO'">ABASTECIMIENTO</button>
-    </div>
+      <aside class="project-hero-status" aria-label="Estado del proyecto">
+        <span class="status-label">AVANCE FÍSICO</span>
+        <strong>{{ project.currentProgress | number:'1.0-1' }}<small>%</small></strong>
+        <div class="hero-progress-track"><span [style.width.%]="project.currentProgress"></span></div>
+        <div class="manager-block">
+          <div class="manager-avatar">{{ getInitials(project.managerFullName) }}</div>
+          <div><small>RESPONSABLE</small><b>{{ project.managerFullName || 'Sin asignar' }}</b></div>
+        </div>
+      </aside>
+    </header>
 
-    <div class="tab-content">
+    <nav class="project-tabs" aria-label="Módulos del proyecto">
+      <button class="project-tab" [class.active]="activeTab === 'RESUMEN'" (click)="selectTab('RESUMEN')"><i class="fa-solid fa-chart-pie"></i><span>Resumen</span></button>
+      <button class="project-tab" [class.active]="activeTab === 'PRESUPUESTO'" (click)="selectTab('PRESUPUESTO')"><i class="fa-solid fa-file-invoice-dollar"></i><span>Presupuesto</span></button>
+      <button class="project-tab" [class.active]="activeTab === 'CRONOGRAMA'" (click)="selectTab('CRONOGRAMA')"><i class="fa-solid fa-timeline"></i><span>Cronograma</span></button>
+      <button class="project-tab" [class.active]="activeTab === 'AVANCES'" (click)="selectTab('AVANCES')"><i class="fa-solid fa-person-digging"></i><span>Avances</span></button>
+      <button class="project-tab" [class.active]="activeTab === 'INVENTARIO'" (click)="selectTab('INVENTARIO')"><i class="fa-solid fa-boxes-stacked"></i><span>Inventario</span></button>
+      <button class="project-tab" [class.active]="activeTab === 'ABASTECIMIENTO'" (click)="selectTab('ABASTECIMIENTO')"><i class="fa-solid fa-truck-fast"></i><span>Abastecimiento</span></button>
+    </nav>
+
+    <main class="project-module-content">
       @switch (activeTab) {
-        @case ('RESUMEN') {
-          <app-project-summary-component [project]="project"></app-project-summary-component>
-        }
-        @case ('PRESUPUESTO') {
-          <app-project-budget [projectId]="project.id"></app-project-budget>
-        }
-        @case ('CRONOGRAMA') {
-          <app-project-gantt-component [projectId]="project.id" [projectStartDate]="project.startDate"></app-project-gantt-component>
-        }
-        @case ('AVANCES') {
-          <app-project-progress-list-component [projectId]="project.id" [projectStartDate]="project.startDate"></app-project-progress-list-component>
-        }
-        @case ('INVENTARIO') {
-          <app-project-inventory [projectId]="project.id"></app-project-inventory>
-        }
-        @case ('ABASTECIMIENTO') {
-          <app-project-supply-control [projectId]="project.id"></app-project-supply-control>
-        }
+        @case ('RESUMEN') { <app-project-summary-component [project]="project"></app-project-summary-component> }
+        @case ('PRESUPUESTO') { <app-project-budget [projectId]="project.id"></app-project-budget> }
+        @case ('CRONOGRAMA') { <app-project-gantt-component [projectId]="project.id" [projectStartDate]="project.startDate"></app-project-gantt-component> }
+        @case ('AVANCES') { <app-project-progress-list-component [projectId]="project.id" [projectStartDate]="project.startDate"></app-project-progress-list-component> }
+        @case ('INVENTARIO') { <app-project-inventory [projectId]="project.id"></app-project-inventory> }
+        @case ('ABASTECIMIENTO') { <app-project-supply-control [projectId]="project.id"></app-project-supply-control> }
       }
-    </div>
+    </main>
   }
 </div>

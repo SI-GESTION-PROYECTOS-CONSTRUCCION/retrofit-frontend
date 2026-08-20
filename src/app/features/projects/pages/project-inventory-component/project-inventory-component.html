@@ -113,8 +113,8 @@
 </div>
 
 @if (showInboundModal) {
-<div class="modal-backdrop" (click)="closeModals()">
-  <div class="modal-container" (click)="$event.stopPropagation()">
+<div class="modal-backdrop inventory-backdrop" (click)="closeModals()">
+  <div class="modal-container inventory-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <button class="btn-close" (click)="closeModals()">✕</button>
       <div class="header-content">
@@ -130,11 +130,8 @@
 
         <div class="form-group">
           <label>Material / Insumo *</label>
-          <ng-select formControlName="resourceId" placeholder="Seleccione un material...">
-            @for (res of resources; track res.id) {
-            <ng-option [value]="res.id">{{ res.name }} ({{ res.unit }})</ng-option>
-            }
-          </ng-select>
+          <p-select formControlName="resourceId" [options]="resourceOptions" optionLabel="label" optionValue="value" [filter]="true" filterBy="label"
+            placeholder="Seleccione un material..." appendTo="body" [overlayOptions]="modalOverlayOptions" styleClass="inventory-select"></p-select>
         </div>
 
         <div class="form-row">
@@ -144,10 +141,8 @@
           </div>
           <div class="form-group">
             <label>Motivo *</label>
-            <select formControlName="reason">
-              <option value="PURCHASE">Compra a Proveedor</option>
-              <option value="INITIAL_BALANCE">Inventario Inicial</option>
-            </select>
+            <p-select formControlName="reason" [options]="inboundReasonOptions" optionLabel="label" optionValue="value"
+              appendTo="body" [overlayOptions]="modalOverlayOptions" styleClass="inventory-select"></p-select>
           </div>
         </div>
 
@@ -167,8 +162,8 @@
 }
 
 @if (showOutboundModal) {
-<div class="modal-backdrop" (click)="closeModals()">
-  <div class="modal-container" (click)="$event.stopPropagation()">
+<div class="modal-backdrop inventory-backdrop" (click)="closeModals()">
+  <div class="modal-container inventory-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <button class="btn-close" (click)="closeModals()">✕</button>
       <div class="header-content">
@@ -193,20 +188,14 @@
 
         <div class="form-group">
           <label>Material / Insumo *</label>
-          <ng-select formControlName="resourceId" placeholder="Seleccione el material a despachar...">
-            @for (res of resources; track res.id) {
-            <ng-option [value]="res.id">{{ res.name }} ({{ res.unit }})</ng-option>
-            }
-          </ng-select>
+          <p-select formControlName="resourceId" [options]="resourceOptions" optionLabel="label" optionValue="value" [filter]="true" filterBy="label"
+            placeholder="Seleccione el material a despachar..." appendTo="body" [overlayOptions]="modalOverlayOptions" styleClass="inventory-select"></p-select>
         </div>
 
         <div class="form-group">
           <label>Partida de Destino (Frente de Trabajo) *</label>
-          <ng-select formControlName="projectItemId" placeholder="Seleccione la partida...">
-            @for (item of filteredProjectItems; track item.id) {
-            <ng-option [value]="item.id">{{ item.code || '' }} - {{ item.description }}</ng-option>
-            }
-          </ng-select>
+          <p-select formControlName="projectItemId" [options]="projectItemOptions" optionLabel="label" optionValue="value" [filter]="true" filterBy="label"
+            placeholder="Seleccione la partida..." appendTo="body" [overlayOptions]="modalOverlayOptions" styleClass="inventory-select"></p-select>
         </div>
 
         <div class="form-row">
@@ -216,10 +205,8 @@
           </div>
           <div class="form-group">
             <label>Motivo *</label>
-            <select formControlName="reason">
-              <option value="CONSUMPTION">Consumo en Obra</option>
-              <option value="LOSS">Pérdida / Merma</option>
-            </select>
+            <p-select formControlName="reason" [options]="outboundReasonOptions" optionLabel="label" optionValue="value"
+              appendTo="body" [overlayOptions]="modalOverlayOptions" styleClass="inventory-select"></p-select>
           </div>
         </div>
       </form>
@@ -235,8 +222,8 @@
 }
 
 @if (showKardexModal) {
-<div class="modal-backdrop" (click)="closeModals()">
-  <div class="modal-container" style="max-width: 800px;" (click)="$event.stopPropagation()">
+<div class="modal-backdrop inventory-backdrop" (click)="closeModals()">
+  <div class="modal-container inventory-modal inventory-modal--wide" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <button class="btn-close" (click)="closeModals()">✕</button>
       <div class="header-content">

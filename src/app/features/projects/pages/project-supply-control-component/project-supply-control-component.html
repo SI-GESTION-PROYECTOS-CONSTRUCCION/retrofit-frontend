@@ -12,12 +12,15 @@
       <input type="text" class="form-control" placeholder="Buscar por insumo..." [(ngModel)]="filterName" (keyup.enter)="loadSupplyControl()">
     </div>
     <div class="filter-group">
-      <select class="form-select" [(ngModel)]="filterStatus" (change)="loadSupplyControl()">
-        <option value="">Todos los estados</option>
-        <option value="OK">COMPLETO</option>
-        <option value="PENDING">PENDIENTE</option>
-        <option value="EXCESS">EXCEDIDO</option>
-      </select>
+      <p-select
+        [(ngModel)]="filterStatus"
+        [options]="statusOptions"
+        optionLabel="label"
+        optionValue="value"
+        appendTo="body"
+        styleClass="supply-status-select"
+        (onChange)="loadSupplyControl()">
+      </p-select>
     </div>
     <div class="filter-group">
       <button class="btn btn-secondary" (click)="loadSupplyControl()">

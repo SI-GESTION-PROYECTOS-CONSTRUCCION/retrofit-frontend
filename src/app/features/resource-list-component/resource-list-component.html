@@ -1,19 +1,20 @@
-<div class="page-container">
+<div class="page-container resource-catalog">
   
   <div class="page-header mb-4">
     <div>
+      <span class="catalog-eyebrow"><i class="fa-solid fa-cubes"></i> Catálogo técnico</span>
       <h2 class="page-title">Catálogo de Recursos</h2>
-      <p class="page-subtitle">Gestione los recursos base del sistema paginados desde el servidor.</p>
+      <p class="page-subtitle">Administre materiales, mano de obra y equipos que alimentan los análisis de costos.</p>
     </div>
     <button *appHasPermission="'RESOURCE_CREATE'" class="btn btn-primary" (click)="openModal()">
       <i class="fa-solid fa-plus"></i> Nuevo Recurso
     </button>
   </div>
 
-  <div class="tabs-navigation mb-4" style="display: flex; gap: 8px; border-bottom: 2px solid #E5E7EB; padding-bottom: 8px;">
+  <div class="tabs-navigation mb-4">
     @for (tab of tabs; track tab.type) {
-      <button class="btn" 
-              [ngClass]="activeTab.type === tab.type ? 'btn-primary' : 'btn-outline'" 
+      <button class="resource-tab" 
+              [class.active]="activeTab.type === tab.type" 
               (click)="switchTab(tab)">
         <i class="fa-solid {{ tab.icon }}"></i> {{ tab.label }}
       </button>
@@ -32,6 +33,13 @@
   </div>
 
   <div class="table-card-container">
+    <div class="resource-table-heading">
+      <div>
+        <span class="table-eyebrow">{{ activeTab.label }}</span>
+        <h3>Recursos registrados</h3>
+      </div>
+      <span class="resource-count">{{ totalElements }} registros</span>
+    </div>
     <div class="table-responsive">
     <table class="retrofit-table">
       <thead>
@@ -100,12 +108,14 @@
                 S/ {{ resource.resourceBasePrice | number:'1.2-2' }}
               </td>
               <td style="text-align: center;">
-                <button *appHasPermission="'RESOURCE_UPDATE'" class="btn btn-outline" style="padding: 6px 10px;" title="Editar" (click)="openModal(resource)">
+                <div class="rt-action-group">
+                <button *appHasPermission="'RESOURCE_UPDATE'" class="rt-action-button rt-action-button--edit" title="Editar" (click)="openModal(resource)">
                   <i class="fa-solid fa-pen"></i>
                 </button>
-                <button *appHasPermission="'RESOURCE_DELETE'" class="btn btn-outline text-danger" style="padding: 6px 10px;" title="Eliminar" (click)="openDeleteModal(resource)">
+                <button *appHasPermission="'RESOURCE_DELETE'" class="rt-action-button rt-action-button--delete" title="Eliminar" (click)="openDeleteModal(resource)">
                   <i class="fa-solid fa-trash-can"></i>
                 </button>
+                </div>
               </td>
             </tr>
           }
@@ -147,17 +157,17 @@
 </div>
 
 @if (isModalOpen) {
-  <div class="modal-backdrop">
-    <div class="modal-container">
+  <div class="modal-backdrop resource-backdrop">
+    <div class="modal-container resource-modal" role="dialog" aria-modal="true" aria-labelledby="resource-modal-title">
       
       <div class="modal-header">
         <button type="button" class="btn-close" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
         <div class="header-content">
           <div class="header-title">
-            <i class="fa-solid fa-circle-info icon-title"></i>
-            <h2>{{ editingId ? 'Modificar ' + activeTab.label : 'Registrar Nuevo Insumo (' + activeTab.label + ')' }}</h2>
+            <i class="fa-solid fa-cubes-stacked icon-title"></i>
+            <h2 id="resource-modal-title">{{ editingId ? 'Editar ' + activeTab.label : 'Registrar recurso' }}</h2>
           </div>
-          <p class="header-subtitle">Defina las especificaciones comerciales del recurso técnico.</p>
+          <p class="header-subtitle">{{ editingId ? 'Actualice las especificaciones comerciales del recurso.' : 'Añada un recurso a la categoría ' + activeTab.label + '.' }}</p>
         </div>
       </div>
 

@@ -1,79 +1,17 @@
-.app-shell {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  background-color: var(--color-fondo-app);
-}
+.app-shell { display: flex; height: 100vh; width: 100vw; overflow: hidden; background: var(--rt-canvas); }
+.app-sidebar { width: 264px; flex-shrink: 0; box-shadow: 8px 0 30px rgb(11 31 58 / .10); transition: width .25s ease; z-index: 2; }
+.app-shell.sidebar-collapsed .app-sidebar { width: 76px; }
+.app-main-wrapper { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
+.app-header { height: 68px; flex-shrink: 0; border-bottom: 1px solid var(--rt-line); background: var(--rt-surface); z-index: 1; }
+.app-content { flex-grow: 1; overflow-y: auto; padding: 28px; }
+.app-footer { height: 36px; flex-shrink: 0; border-top: 1px solid var(--rt-line); background: var(--rt-surface); }
 
-.app-sidebar {
-  width: 250px;
-  flex-shrink: 0;
-  border-right: 1px solid var(--color-divisor);
-  background-color: var(--color-fondo);
-}
-
-.app-main-wrapper {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  overflow: hidden;
-}
-
-.app-header {
-  height: 60px;
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--color-divisor);
-  background-color: var(--color-fondo);
-}
-
-.app-content {
-  flex-grow: 1;
-  overflow-y: auto; 
-  padding: 30px;
-}
-
-.app-footer {
-  height: 40px;
-  flex-shrink: 0;
-  border-top: 1px solid var(--color-divisor);
-  background-color: var(--color-fondo);
-}
-
-
-.sidebar-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 9;
-}
-
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgb(11 31 58 / .55); z-index: 9; }
 
 @media (max-width: 768px) {
-  .app-sidebar {
-    position: fixed;
-    top: 0;
-    left: -250px;
-    height: 100vh;
-    z-index: 10;
-    transition: left 0.3s ease; 
-  }
-
-
-  .app-shell.sidebar-active {
-    .app-sidebar {
-      left: 0;
-    }
-    .sidebar-overlay {
-      display: block; 
-    }
-  }
-
-  .app-content {
-    padding: 15px;
-  }
+  .app-sidebar { position: fixed; top: 0; left: -264px; height: 100vh; z-index: 10; transition: left .3s ease; }
+  .app-shell.sidebar-collapsed .app-sidebar { width: 264px; }
+  .app-shell.sidebar-active .app-sidebar { left: 0; }
+  .app-shell.sidebar-active .sidebar-overlay { display: block; }
+  .app-content { padding: 16px; }
 }

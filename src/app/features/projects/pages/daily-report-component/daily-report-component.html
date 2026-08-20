@@ -1,14 +1,16 @@
 <div class="report-layout">
   <div class="main-content">
 
-    <div style="margin-bottom: 24px;">
+    <div class="daily-back-nav">
       <button type="button" class="btn btn-outline" [routerLink]="['/portafolio/proyecto', project?.code]">
         <i class="fa-solid fa-arrow-left-long" style="margin-right: 6px;"></i> Volver al Resumen
       </button>
     </div>
     <div class="page-header">
-      <h1 class="page-title">Registro de Avance Diario</h1>
-      <p class="page-subtitle">Reporte técnico de actividades y evidencias en sitio.</p>
+      <div class="daily-title-copy">
+        <h1 class="page-title">Registro de Avance Diario</h1>
+        <p class="page-subtitle">Reporte técnico de actividades y evidencias en sitio.</p>
+      </div>
     </div>
 
     @if (isCompleted) {
@@ -20,7 +22,7 @@
 
     <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
       
-      <div class="card section-card">
+      <div class="card section-card daily-context-card">
         <h3 class="section-title"><i class="fa-solid fa-location-dot"></i> Ubicación y Proyecto</h3>
         <div class="form-grid">
           <div class="form-group">
@@ -29,22 +31,37 @@
           </div>
           <div class="form-group">
             <label>FECHA DEL REPORTE</label>
-            <input type="date" formControlName="reportDate" class="form-control" [min]="project?.startDate">
+            <p-datepicker
+              formControlName="reportDate"
+              [showIcon]="true"
+              iconDisplay="input"
+              dateFormat="yy-mm-dd"
+              dataType="string"
+              [minDate]="projectStartMinDate"
+              appendTo="body"
+              styleClass="daily-date-picker"
+              placeholder="Selecciona una fecha">
+            </p-datepicker>
           </div>
         </div>
       </div>
 
-      <div class="card section-card">
+      <div class="card section-card daily-progress-card">
         <h3 class="section-title"><i class="fa-regular fa-circle-check"></i> Registro de avance</h3>
         
         <div class="form-group mb-4">
           <label>SELECCIONE LA PARTIDA EJECUTADA HOY</label>
-          <select formControlName="projectItemId" class="form-control custom-select">
-            <option value="" disabled selected>Elija una partida del proyecto...</option>
-            @for (item of executableItems; track item.id) {
-              <option [value]="item.id">{{ item.code }} {{ item.description }} ({{ item.unit }})</option>
-            }
-          </select>
+          <p-select
+            formControlName="projectItemId"
+            [options]="projectItemOptions"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            filterBy="label"
+            placeholder="Elija una partida del proyecto..."
+            appendTo="body"
+            styleClass="daily-item-select">
+          </p-select>
         </div>
 
         @if (selectedItemInfo) {
@@ -68,9 +85,9 @@
             </div>
           </div>
 
-          <div class="resources-tracking-section" style="margin-top: 24px; padding-top: 24px; border-top: 1px dashed #CBD5E1;" formArrayName="usedResources">
-            <h4 style="font-size: 14px; color: var(--color-primario); margin-bottom: 16px; font-weight: 700;">
-              <i class="fa-solid fa-scale-balanced" style="margin-right: 6px;"></i> Consumo Real vs. Teórico (APU)
+          <div class="resources-tracking-section" formArrayName="usedResources">
+            <h4>
+              <i class="fa-solid fa-scale-balanced"></i> Consumo Real vs. Teórico (APU)
             </h4>
 
             @if (usedResourcesFormArray.length === 0) {
@@ -165,7 +182,7 @@
         }
       </div>
 
-      <div class="card section-card">
+      <div class="card section-card daily-evidence-card">
         <div class="section-header-row">
           <h3 class="section-title"><i class="fa-solid fa-camera"></i> Evidencias Fotográficas</h3>
           <button type="button" class="btn btn-outline btn-sm" (click)="fileInput.click()">

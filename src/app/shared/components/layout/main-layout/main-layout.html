@@ -1,7 +1,7 @@
 @if (isReady) {
-  <div class="app-shell" [class.sidebar-active]="isSidebarOpen">
+  <div class="app-shell" [class.sidebar-active]="isSidebarOpen" [class.sidebar-collapsed]="isSidebarCollapsed">
     
-    <app-sidebar class="app-sidebar"></app-sidebar>
+    <app-sidebar class="app-sidebar" [collapsed]="isSidebarCollapsed"></app-sidebar>
 
     <div class="sidebar-overlay" (click)="toggleSidebar()"></div>
 

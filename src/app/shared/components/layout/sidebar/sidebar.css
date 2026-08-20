@@ -1,84 +1,68 @@
-.sidebar-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
+.sidebar-container { display: flex; flex-direction: column; height: 100%; background: var(--rt-brand-950); }
 
 .brand-logo {
-  height: 60px;
+  min-height: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+  padding: 14px 22px;
+  border-bottom: 1px solid rgb(255 255 255 / 0.10);
+}
+
+.brand-logo img { height: 29px; width: auto; filter: brightness(0) invert(1); }
+.brand-logo span { color: rgb(255 255 255 / 0.46); font-size: 9px; font-weight: 800; letter-spacing: .16em; }
+
+.nav-menu { flex-grow: 1; padding: 24px 14px; overflow-y: auto; }
+.nav-menu .menu-label { font-size: 9px; font-weight: 800; color: rgb(255 255 255 / 0.38); margin: 0 0 10px; padding-left: 10px; letter-spacing: .14em; }
+.nav-menu ul { list-style: none; padding: 0; margin: 0 0 24px; }
+
+.nav-menu li a {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0 20px;
-  border-bottom: 1px solid var(--color-divisor);
-  
-  img { height: 35px; width: auto;}
+  gap: 12px;
+  padding: 10px 12px;
+  color: rgb(255 255 255 / 0.67);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
 }
 
-.nav-menu {
-  flex-grow: 1;
-  padding: 20px 15px;
-  overflow-y: auto;
+.nav-menu li a i { width: 16px; text-align: center; color: rgb(255 255 255 / .48); }
+.nav-menu li a:hover { background: rgb(255 255 255 / .07); color: #fff; }
+.nav-menu li a:hover i { color: #76d7d4; }
+.nav-menu li a.active { background: linear-gradient(90deg, rgb(14 165 168 / .22), rgb(14 165 168 / .07)); border-color: rgb(118 215 212 / .18); color: #fff; }
+.nav-menu li a.active i { color: #76d7d4; }
 
-  .menu-label {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--color-divisor);
-    margin-bottom: 10px;
-    padding-left: 10px;
-  }
+.logout-section { padding: 14px; border-top: 1px solid rgb(255 255 255 / 0.10); }
+.btn-logout { width: 100%; justify-content: flex-start; gap: 10px; color: #ff9e9e !important; font-size: 13px; font-weight: 700; }
+.btn-logout:hover { background: rgb(217 83 89 / .14) !important; }
 
-  ul {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 20px;
+.sidebar-container.is-collapsed .brand-logo { align-items: center; padding: 14px 8px; }
+.sidebar-container.is-collapsed .brand-logo img { width: 31px; height: auto; }
+.sidebar-container.is-collapsed .brand-logo span,
+.sidebar-container.is-collapsed .nav-menu .menu-label { display: none; }
+.sidebar-container.is-collapsed .nav-menu { padding: 20px 10px; }
+.sidebar-container.is-collapsed .nav-menu ul { margin-bottom: 14px; }
+.sidebar-container.is-collapsed .nav-menu li a { justify-content: center; gap: 0; padding: 12px; font-size: 0; }
+.sidebar-container.is-collapsed .nav-menu li a i { width: auto; font-size: 16px; }
+.sidebar-container.is-collapsed .logout-section { padding: 12px 10px; }
+.sidebar-container.is-collapsed .btn-logout { justify-content: center; gap: 0; font-size: 0; }
+.sidebar-container.is-collapsed .btn-logout i { font-size: 16px; }
 
-    li a {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 12px;
-      color: var(--color-texto);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      border-radius: 6px;
-      transition: all 0.2s ease;
-
-      i { width: 16px; text-align: center; }
-
-      &:hover {
-        background-color: var(--color-fondo-app);
-        color: var(--color-primario);
-      }
-
-      &.active {
-        background-color: var(--color-fondo-app);
-        color: var(--color-primario);
-        font-weight: 600;
-        box-shadow: inset 3px 0 0 var(--color-primario);
-      }
-    }
-  }
-}
-
-.logout-section {
-  padding: 15px;
-  border-top: 1px solid var(--color-divisor);
-  
-  .btn-logout {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    background: none;
-    border: none;
-    color: #e74c3c;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 6px;
-
-    &:hover { background-color: rgba(231, 76, 60, 0.1); }
-  }
+@media (max-width: 768px) {
+  .sidebar-container.is-collapsed .brand-logo { align-items: flex-start; padding: 14px 22px; }
+  .sidebar-container.is-collapsed .brand-logo img { width: auto; height: 29px; }
+  .sidebar-container.is-collapsed .brand-logo span,
+  .sidebar-container.is-collapsed .nav-menu .menu-label { display: block; }
+  .sidebar-container.is-collapsed .nav-menu { padding: 24px 14px; }
+  .sidebar-container.is-collapsed .nav-menu ul { margin-bottom: 24px; }
+  .sidebar-container.is-collapsed .nav-menu li a { justify-content: flex-start; gap: 12px; padding: 10px 12px; font-size: 13px; }
+  .sidebar-container.is-collapsed .nav-menu li a i { width: 16px; }
+  .sidebar-container.is-collapsed .logout-section { padding: 14px; }
+  .sidebar-container.is-collapsed .btn-logout { justify-content: flex-start; gap: 10px; font-size: 13px; }
 }

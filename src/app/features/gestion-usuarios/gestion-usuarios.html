@@ -147,18 +147,18 @@
                         </td>
                         <td class="col-actions">
                             <div class="action-buttons-group">
-                                <button class="action-btn view" title="Ver Detalle" (click)="openModal('view', user)">
+                                <button class="action-btn view rt-action-button rt-action-button--view" title="Ver Detalle" (click)="openModal('view', user)">
                                 <i class="fa-regular fa-eye"></i>
                                 </button>
-                                <button *appHasPermission="'USER_UPDATE'" class="action-btn edit" title="Editar" (click)="openModal('edit', user)">
+                                <button *appHasPermission="'USER_UPDATE'" class="action-btn edit rt-action-button rt-action-button--edit" title="Editar" (click)="openModal('edit', user)">
                                 <i class="fa-regular fa-pen-to-square"></i>
                                 </button>
                                 @if (user.active) {
-                                <button *appHasPermission="'USER_DELETE'" class="action-btn delete" title="Desactivar" (click)="openDeleteConfirm(user)">
+                                <button *appHasPermission="'USER_DELETE'" class="action-btn delete rt-action-button rt-action-button--delete" title="Desactivar" (click)="openDeleteConfirm(user)">
                                 <i class="fa-regular fa-trash-can"></i>
                                 </button>
                                 } @else {
-                                <button *appHasPermission="'USER_DELETE'" class="action-btn reactivate" title="Reactivar" (click)="openReactivateConfirm(user)" >
+                                <button *appHasPermission="'USER_DELETE'" class="action-btn reactivate rt-action-button rt-action-button--reactivate" title="Reactivar" (click)="openReactivateConfirm(user)" >
                                 <i class="fa-solid fa-arrow-rotate-left"></i>
                                 </button>
                                 }
@@ -187,4 +187,3 @@
         }
     </div>
 </div>
-

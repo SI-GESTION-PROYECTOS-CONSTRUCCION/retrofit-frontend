@@ -15,6 +15,7 @@ import { Skeleton } from '../../skeleton/skeleton';
 })
 export class MainLayout implements OnInit{
   isSidebarOpen = false; 
+  isSidebarCollapsed = localStorage.getItem('retrofit_sidebar_compact') === 'true';
   private authService = inject(AuthService);
   public isReady = false;
 
@@ -30,6 +31,12 @@ export class MainLayout implements OnInit{
   }
 
   toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      this.isSidebarOpen = !this.isSidebarOpen;
+      return;
+    }
+
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+    localStorage.setItem('retrofit_sidebar_compact', String(this.isSidebarCollapsed));
   }
 }

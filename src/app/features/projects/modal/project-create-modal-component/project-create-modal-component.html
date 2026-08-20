@@ -1,14 +1,14 @@
-<div class="modal-backdrop">
-  <div class="modal-container">
+<div class="modal-backdrop" (click)="closeModal()">
+  <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="project-modal-title" (click)="$event.stopPropagation()">
     
     <div class="modal-header">
-      <button class="btn-close" (click)="closeModal()">
+      <button pButton type="button" class="btn-close" [text]="true" [rounded]="true" (click)="closeModal()" aria-label="Cerrar modal">
         <i class="fa-solid fa-xmark"></i>
       </button>
       <div class="header-content">
         <div class="header-title">
           <i class="fa-regular fa-folder-open icon-title"></i>
-          <h2>{{ projectToEdit ? 'Editar Proyecto' : 'Registrar Nuevo Proyecto' }}</h2>
+          <h2 id="project-modal-title">{{ projectToEdit ? 'Editar Proyecto' : 'Registrar Nuevo Proyecto' }}</h2>
         </div>
         <p class="header-subtitle">
           Complete la información para habilitar el proyecto en el sistema Retrofit Manager.
@@ -22,7 +22,7 @@
         <div class="form-row">
           <div class="form-group">
             <label>CÓDIGO DEL PROYECTO</label>
-            <input type="text" formControlName="code" placeholder="Ej. PRJ-2024-001" 
+            <input pInputText type="text" formControlName="code" placeholder="Ej. PRJ-2024-001" 
                    [class.is-invalid]="hasError('code')">
             @if (backendErrors['code']) { <span class="error-text">{{ backendErrors['code'] }}</span> }
             @else if (projectForm.get('code')?.invalid && projectForm.get('code')?.touched) { <span class="error-text">Requerido</span> }
@@ -30,7 +30,7 @@
           
           <div class="form-group">
             <label>NOMBRE DEL PROYECTO</label>
-            <input type="text" formControlName="name" placeholder="Ej. Mantenimiento Subestación"
+            <input pInputText type="text" formControlName="name" placeholder="Ej. Mantenimiento Subestación"
                    [class.is-invalid]="hasError('name')">
             @if (backendErrors['name']) { <span class="error-text">{{ backendErrors['name'] }}</span> }
             @else if (projectForm.get('name')?.invalid && projectForm.get('name')?.touched) {
@@ -42,7 +42,7 @@
 
         <div class="form-group">
           <label>CLIENTE (EMPRESA)</label>
-          <input type="text" formControlName="client" placeholder="Ej. Engie Energía Perú"
+          <input pInputText type="text" formControlName="client" placeholder="Ej. Engie Energía Perú"
                  [class.is-invalid]="hasError('client')">
           @if (backendErrors['client']) { <span class="error-text">{{ backendErrors['client'] }}</span> }
           @else if (projectForm.get('client')?.invalid && projectForm.get('client')?.touched) {
@@ -55,7 +55,7 @@
         <div class="form-row">
           <div class="form-group">
             <label>UBICACIÓN / SEDE</label>
-            <input type="text" formControlName="location" placeholder="Ej. Planta Talara"
+            <input pInputText type="text" formControlName="location" placeholder="Ej. Planta Talara"
                    [class.is-invalid]="hasError('location')">
             @if (backendErrors['location']) { <span class="error-text">{{ backendErrors['location'] }}</span> }
             @else if (projectForm.get('location')?.invalid && projectForm.get('location')?.touched) {
@@ -65,8 +65,8 @@
           
           <div class="form-group">
             <label>FECHA DE INICIO</label>
-            <input type="date" formControlName="startDate"
-                   [class.is-invalid]="hasError('startDate')">
+            <p-datepicker formControlName="startDate" dateFormat="yy-mm-dd" dataType="string" [showIcon]="true" iconDisplay="input"
+              appendTo="body" [autoZIndex]="true" [baseZIndex]="1301" styleClass="project-date-picker" [class.is-invalid]="hasError('startDate')" ariaLabel="Fecha de inicio"></p-datepicker>
             @if (backendErrors['startDate']) { <span class="error-text">{{ backendErrors['startDate'] }}</span> }
             @else if (projectForm.get('startDate')?.invalid && projectForm.get('startDate')?.touched) { <span class="error-text">Requerido</span> }
           </div>
@@ -74,8 +74,7 @@
 
         <div class="form-group">
           <label>DESCRIPCIÓN GENERAL</label>
-          <textarea formControlName="description" rows="3" placeholder="Breve detalle de los trabajos a realizar..."
-                    style="width: 100%; padding: 12px 16px; border: 1px solid #E5E7EB; border-radius: 8px; resize: vertical; font-family: inherit;"
+          <textarea pTextarea formControlName="description" rows="3" placeholder="Breve detalle de los trabajos a realizar..."
                     [class.is-invalid]="hasError('description')"></textarea>
           @if (backendErrors['description']) { <span class="error-text">{{ backendErrors['description'] }}</span> }
         </div>
@@ -83,36 +82,23 @@
         <div class="form-row">
           <div class="form-group">
             <label>ESTADO INICIAL</label>
-            <select formControlName="status" [class.is-invalid]="hasError('status')">
-              <option value="PLANNING">Planeamiento</option>
-              <option value="IN_PROGRESS">En Ejecución</option>
-              <option value="ON_HOLD">Pausado</option>
-              <option value="COMPLETED">Completado</option>
-              <option value="CANCELLED">Cancelado</option>
-            </select>
+            <p-select formControlName="status" [options]="statusOptions" optionLabel="label" optionValue="value"
+              placeholder="Selecciona un estado" appendTo="body" [overlayOptions]="modalOverlayOptions" styleClass="project-form-select" [class.is-invalid]="hasError('status')"></p-select>
             @if (backendErrors['status']) { <span class="error-text">{{ backendErrors['status'] }}</span> }
           </div>
           
           <div class="form-group">
             <label>PRIORIDAD</label>
-            <select formControlName="priority" [class.is-invalid]="hasError('priority')">
-              <option value="LOW">Baja</option>
-              <option value="MEDIUM">Media</option>
-              <option value="HIGH">Alta</option>
-              <option value="CRITICAL">Crítica</option>
-            </select>
+            <p-select formControlName="priority" [options]="priorityOptions" optionLabel="label" optionValue="value"
+              placeholder="Selecciona una prioridad" appendTo="body" [overlayOptions]="modalOverlayOptions" styleClass="project-form-select" [class.is-invalid]="hasError('priority')"></p-select>
             @if (backendErrors['priority']) { <span class="error-text">{{ backendErrors['priority'] }}</span> }
           </div>
         </div>
 
         <div class="form-group">
           <label>RESPONSABLE DEL PROYECTO</label>
-          <select formControlName="managerId" [class.is-invalid]="hasError('managerId')">
-            <option [ngValue]="null" disabled selected>Seleccione un responsable...</option>
-            @for (manager of managers; track manager.id) {
-              <option [value]="manager.id">{{ manager.name }} {{ manager.lastName }}</option>
-            }
-          </select>
+          <p-select formControlName="managerId" [options]="managerOptions" optionLabel="label" optionValue="value" [filter]="true"
+            filterBy="label" placeholder="Seleccione un responsable..." appendTo="body" [overlayOptions]="modalOverlayOptions" styleClass="project-form-select" [class.is-invalid]="hasError('managerId')"></p-select>
           @if (backendErrors['managerId']) { <span class="error-text">{{ backendErrors['managerId'] }}</span> }
           @else if (projectForm.get('managerId')?.invalid && projectForm.get('managerId')?.touched) { <span class="error-text">Seleccione un responsable</span> }
         </div>
@@ -120,8 +106,8 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-cancel" (click)="closeModal()">Cancelar</button>
-        <button type="submit" class="btn btn-submit" [disabled]="isSubmitting">
+        <button pButton type="button" class="btn btn-cancel" [outlined]="true" severity="secondary" (click)="closeModal()">Cancelar</button>
+        <button pButton type="submit" class="btn btn-submit" [disabled]="isSubmitting">
           @if (isSubmitting) {
             <i class="fa-solid fa-circle-notch fa-spin"></i> Guardando...
           } @else {

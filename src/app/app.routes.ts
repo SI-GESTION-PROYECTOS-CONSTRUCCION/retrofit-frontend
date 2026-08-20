@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
 import { guestGuard } from './core/guards/guest-guard';
-import { DailyReportComponent } from './features/projects/pages/daily-report-component/daily-report-component';
 
 export const routes: Routes = [
 {
@@ -35,8 +34,8 @@ export const routes: Routes = [
         loadComponent: () => import('./features/projects/pages/project-detail-component/project-detail-component').then(m => m.ProjectDetailComponent)
       },
       { 
-        path: 'portafolio/proyecto/:id/daily-report', // <--- LA NUEVA RUTA APARTE
-        component: DailyReportComponent 
+        path: 'portafolio/proyecto/:id/daily-report',
+        loadComponent: () => import('./features/projects/pages/daily-report-component/daily-report-component').then(m => m.DailyReportComponent)
       },
       {
         path: 'gestionUsuarios',

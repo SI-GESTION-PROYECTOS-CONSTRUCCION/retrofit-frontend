@@ -1,43 +1,44 @@
-<div class="sidebar-container">
+<div class="sidebar-container" [class.is-collapsed]="collapsed">
   <div class="brand-logo">
     <img src="assets/login/retrofit.webp" alt="Retrofit Logo">
+    <span>CONTROL DE OBRA</span>
   </div>
 
   <nav class="nav-menu">
     <p class="menu-label">OPERACIONES</p>
     <ul>
       <li>
-        <a routerLink="/dashboard" routerLinkActive="active"><i class="fa-solid fa-border-all"></i> Dashboard</a>
+        <a routerLink="/dashboard" routerLinkActive="active" title="Dashboard"><i class="fa-solid fa-border-all"></i> Dashboard</a>
       </li>
       <li *appHasPermission="'PROJECT_READ'">
-        <a routerLink="/portafolio" routerLinkActive="active"><i class="fa-solid fa-suitcase"></i> Portafolio</a>
+        <a routerLink="/portafolio" routerLinkActive="active" title="Portafolio"><i class="fa-solid fa-suitcase"></i> Portafolio</a>
       </li>
       <li *appHasPermission="'WORKER_READ'">
-        <a routerLink="/asignacionProyectos" routerLinkActive="active"><i class="fa-solid fa-tasks"></i> Asignación a Proyectos</a>
+        <a routerLink="/asignacionProyectos" routerLinkActive="active" title="Asignación a Proyectos"><i class="fa-solid fa-tasks"></i> Asignación a Proyectos</a>
       </li>
       <li *appHasPermission="'RESOURCE_READ'">
-        <a routerLink="/recursos" routerLinkActive="active"><i class="fa-solid fa-helmet-safety"></i> Recursos</a>
+        <a routerLink="/recursos" routerLinkActive="active" title="Recursos"><i class="fa-solid fa-helmet-safety"></i> Recursos</a>
       </li>
     </ul>
 
     <p class="menu-label">ADMINISTRACIÓN</p>
     <ul>
       <li *appHasPermission="'USER_READ'">
-        <a routerLink="/gestionUsuarios" routerLinkActive="active"><i class="fa-solid fa-users"></i> Usuarios</a>
+        <a routerLink="/gestionUsuarios" routerLinkActive="active" title="Usuarios"><i class="fa-solid fa-users"></i> Usuarios</a>
       </li>
       <li *appHasPermission="'WORKER_READ'">
-        <a routerLink="/gestionTrabajadores" routerLinkActive="active"><i class="fa-solid fa-users-gear"></i> Trabajadores</a>
+        <a routerLink="/gestionTrabajadores" routerLinkActive="active" title="Trabajadores"><i class="fa-solid fa-users-gear"></i> Trabajadores</a>
       </li>
       <li *appHasPermission="'SECURITY_READ'">
-        <a routerLink="/roles" routerLinkActive="active"><i class="fa-solid fa-shield-halved"></i> Roles y permisos</a>
+        <a routerLink="/roles" routerLinkActive="active" title="Roles y permisos"><i class="fa-solid fa-shield-halved"></i> Roles y permisos</a>
       </li>
       <li *appHasPermission="'AUDIT_READ'">
-        <a routerLink="/auditLog" routerLinkActive="active"><i class="fa-solid fa-info-circle"></i> Auditoría</a>
+        <a routerLink="/auditLog" routerLinkActive="active" title="Auditoría"><i class="fa-solid fa-info-circle"></i> Auditoría</a>
       </li>
     </ul>
   </nav>
 
   <div class="logout-section">
-    <button class="btn-logout" (click)="onLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión</button>
+    <button pButton type="button" class="btn-logout" [text]="true" (click)="onLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión</button>
   </div>
 </div>
