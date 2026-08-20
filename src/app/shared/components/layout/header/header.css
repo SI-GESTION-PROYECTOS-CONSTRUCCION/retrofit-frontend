@@ -1,71 +1,46 @@
 .header-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   height: 100%;
-  padding: 0 30px;
+  padding: 0 28px;
+  background: rgb(255 255 255 / 82%);
+  backdrop-filter: blur(14px);
 }
 
-.search-bar {
-  display: flex;
-  align-items: center;
-  background-color: var(--color-fondo-app);
-  padding: 8px 15px;
-  border-radius: 20px;
-  width: 350px;
-  gap: 10px;
+.header-context, .user-actions, .profile-summary { display: flex; align-items: center; }
+.header-context { gap: 12px; }
 
-  i { color: var(--color-divisor); font-size: 14px; }
-  input {
-    border: none;
-    background: transparent;
-    width: 100%;
-    outline: none;
-    color: var(--color-texto);
-    font-size: 13px;
-  }
+.header-menu-button, .header-icon-button {
+  color: var(--rt-ink-muted) !important;
+  width: 38px;
+  height: 38px;
 }
 
-.user-actions {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-
-  .btn-notification {
-    background: none;
-    border: none;
-    color: var(--color-texto);
-    font-size: 18px;
-    cursor: pointer;
-    &:hover { color: var(--color-primario); }
-  }
-
-  .user-profile img {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
-  }
+.header-menu-button:hover, .header-icon-button:hover {
+  background: var(--rt-surface-soft) !important;
+  color: var(--rt-brand-700) !important;
 }
 
+.header-location { display: flex; flex-direction: column; line-height: 1.2; }
+.header-eyebrow { color: var(--rt-teal-600); font-size: 9px; font-weight: 800; letter-spacing: .14em; }
+.header-title { color: var(--rt-ink); font-size: 13px; font-weight: 700; }
 
+.user-actions { gap: 14px; }
+.header-date { padding-right: 14px; border-right: 1px solid var(--rt-line); color: var(--rt-ink-muted); font-size: 12px; font-weight: 600; }
+.profile-summary { gap: 9px; }
+.profile-copy { display: flex; flex-direction: column; text-align: right; }
+.profile-name { color: var(--rt-ink); font-size: 12px; font-weight: 700; }
+.profile-role { color: var(--rt-ink-muted); font-size: 10px; font-weight: 600; }
 
-.btn-mobile-menu {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: var(--color-primario);
-  cursor: pointer;
-  margin-right: 15px;
+:host ::ng-deep .header-avatar {
+  background: linear-gradient(135deg, var(--rt-brand-700), var(--rt-teal-600));
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
 }
-
 
 @media (max-width: 768px) {
-  .btn-mobile-menu {
-    display: block; 
-  }
-  .search-bar {
-    display: none;
-  }
+  .header-container { padding: 0 14px; }
+  .header-date, .profile-copy { display: none; }
 }

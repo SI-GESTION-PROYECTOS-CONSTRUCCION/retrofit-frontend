@@ -5,10 +5,11 @@ import { ProjectItemService } from '../../../../core/services/project-item.servi
 import { ToastService } from '../../../../core/services/toast-service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-apu-modal-component',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SelectModule],
   templateUrl: './apu-modal-component.html',
   styleUrl: './apu-modal-component.css',
 })
@@ -35,6 +36,22 @@ export class ApuModalComponent {
   selectedResourceType: string = 'LABOR';
   selectedResourceId: number | null = null;
   isLoading = false;
+  readonly resourceTypeOptions = [
+    { label: 'Mano de obra', value: 'LABOR' },
+    { label: 'Materiales', value: 'MATERIAL' },
+    { label: 'Maquinaria y equipos', value: 'EQUIPMENT' }
+  ];
+  readonly overlayOptions = { autoZIndex: true, baseZIndex: 1301 };
+
+  get resourceOptions() {
+    const catalog = this.selectedResourceType === 'LABOR' ? this.laborCatalog
+      : this.selectedResourceType === 'MATERIAL' ? this.materialCatalog : this.equipmentCatalog;
+    return catalog.map(resource => ({ label: `${resource.name} — S/ ${resource.basePrice}`, value: resource.id }));
+  }
+
+  onResourceTypeChange(): void {
+    this.selectedResourceId = null;
+  }
 
   preventNegative(event: KeyboardEvent) {
     if (event.key === '-' || event.key === 'e') {

@@ -1,5 +1,5 @@
-<div class="modal-backdrop">
-  <div class="modal-container">
+<div class="modal-backdrop worker-backdrop">
+  <div class="modal-container worker-modal" role="dialog" aria-modal="true" aria-labelledby="worker-modal-title">
     
     <div class="modal-header">
       <button class="btn-close" (click)="closeModal()">
@@ -8,7 +8,7 @@
       <div class="header-content">
         <div class="header-title">
           <i class="fa-solid fa-person-digging icon-title"></i>
-          <h2>{{ mode === 'create' ? 'Registrar Trabajador' : (mode === 'edit' ? 'Editar Trabajador' : 'Detalle del Personal') }}</h2>
+          <h2 id="worker-modal-title">{{ mode === 'create' ? 'Registrar Trabajador' : (mode === 'edit' ? 'Editar Trabajador' : 'Detalle del Personal') }}</h2>
         </div>
         <p class="header-subtitle">Gestión operativa del personal de Retrofit S.A.C.</p>
       </div>
@@ -70,7 +70,7 @@
         </div>
 
         @if (mode === 'create') {
-          <div class="info-alert">
+          <div class="info-alert access-toggle">
             <input type="checkbox" formControlName="createAccount" id="checkAcceso">
             <label for="checkAcceso">¿Habilitar acceso al sistema?</label>
           </div>
@@ -88,11 +88,9 @@
             
             <div class="form-group">
               <label>ROL</label>
-              <select formControlName="role" [class.is-invalid]="hasError('role')">
-                <option [ngValue]="null" disabled selected>Seleccione un rol...</option>
-                <option value="ALMACENERO">Almacenero</option>
-                <option value="INGENIERO_RESIDENTE">Residente</option>
-              </select>
+              <p-select formControlName="role" [options]="roleOptions" optionLabel="label" optionValue="value"
+                placeholder="Seleccione un rol..." appendTo="body" [overlayOptions]="roleOverlayOptions" styleClass="worker-role-select"
+                [class.is-invalid]="hasError('role')"></p-select>
               @if (backendErrors['role']) { <span class="error-text">{{ backendErrors['role'] }}</span> }
               @else if (workerForm.get('role')?.invalid && workerForm.get('role')?.touched) { <span class="error-text">Seleccione un rol válido</span> }
             </div>
@@ -112,13 +110,13 @@
           
           @if (mode === 'create') {
             
-            <div class="form-group" style="position: relative;">
+            <div class="form-group password-group">
               <label>CONTRASEÑA</label>
               <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Mín. 8 chars, 1 mayúscula, 1 número, 1 especial"
-                     [class.is-invalid]="hasError('password')">
-              <span class="toggle-password" (click)="togglePasswordVisibility()" style="position: absolute; right: 15px; top: 38px; cursor: pointer; color: #888;">
+                     class="password-input" [class.is-invalid]="hasError('password')">
+              <button type="button" class="toggle-password" (click)="togglePasswordVisibility()" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
                 <i class="fa-regular" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-              </span>
+              </button>
               @if (backendErrors['password']) { <span class="error-text">{{ backendErrors['password'] }}</span> }
               @else if (workerForm.get('password')?.invalid && workerForm.get('password')?.touched) { <span class="error-text">Debe tener al menos 8 caracteres, 1 mayúscula, 1 número y 1 carácter especial.</span> }
             </div>

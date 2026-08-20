@@ -1,12 +1,25 @@
 <header class="header-container">
-    <button class="btn-mobile-menu" (click)="onToggleMenu()">
-        <i class="fa-solid fa-bars"></i>
+  <div class="header-context">
+    <button pButton type="button" class="header-menu-button" [text]="true" aria-label="Abrir navegación" (click)="onToggleMenu()">
+      <i class="fa-solid fa-bars"></i>
     </button>
-
-    <div class="user-actions">
-        <!--<button class="btn-notification"><i class="fa-regular fa-bell"></i></button>-->
-        <div class="user-profile">
-            <img src="https://ui-avatars.com/api/?name=Admin&background=003B7E&color=fff" alt="Perfil">
-        </div>
+    <div class="header-location">
+      <span class="header-eyebrow">CENTRO DE CONTROL</span>
+      <span class="header-title">Visión general</span>
     </div>
+  </div>
+
+  <div class="user-actions">
+    <span class="header-date"><i class="fa-regular fa-calendar"></i> Agosto 2026</span>
+    <button pButton type="button" class="header-icon-button" [text]="true" [rounded]="true" aria-label="Notificaciones">
+      <i class="fa-regular fa-bell"></i>
+    </button>
+    <div class="profile-summary">
+      <div class="profile-copy">
+        <span class="profile-name">Sesión activa</span>
+        <span class="profile-role">Retrofit</span>
+      </div>
+      <p-avatar label="RI" shape="circle" styleClass="header-avatar"></p-avatar>
+    </div>
+  </div>
 </header>

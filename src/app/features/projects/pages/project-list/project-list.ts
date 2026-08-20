@@ -8,11 +8,14 @@ import { ProjectCreateModalComponent } from '../../modal/project-create-modal-co
 import { ConfirmModal } from '../../../../shared/components/confirm-modal/confirm-modal';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [RouterModule, CommonModule, ProjectCreateModalComponent, FormsModule, ConfirmModal, Skeleton, HasPermissionDirective],
+  imports: [RouterModule, CommonModule, ProjectCreateModalComponent, FormsModule, ConfirmModal, Skeleton, HasPermissionDirective, ButtonModule, InputTextModule, SelectModule],
   templateUrl: './project-list.html',
   styleUrl: './project-list.css',
 })
@@ -34,6 +37,8 @@ export class ProjectList implements OnInit {
 
   priorities: string[] = [];
   statuses: string[] = [];
+  priorityOptions: { label: string; value: string }[] = [{ label: 'Todas las prioridades', value: '' }];
+  statusOptions: { label: string; value: string }[] = [{ label: 'Todos los estados', value: '' }];
   selectedProject: ProjectResponseDto | null = null;
   activeMenuId: number | null = null;
   menuPosition = { top: '0px', left: '0px' };
@@ -52,6 +57,10 @@ export class ProjectList implements OnInit {
     this.projectService.getStatuses().subscribe({
       next: (data) => {
         this.statuses = data;
+        this.statusOptions = [
+          { label: 'Todos los estados', value: '' },
+          ...data.map(status => ({ label: this.formatEnum(status), value: status }))
+        ];
       },
       error: (err) => {
         console.error('Error al cargar los Estados desde el backend:', err);
@@ -61,6 +70,10 @@ export class ProjectList implements OnInit {
     this.projectService.getPriorities().subscribe({
       next: (data) => {
         this.priorities = data;
+        this.priorityOptions = [
+          { label: 'Todas las prioridades', value: '' },
+          ...data.map(priority => ({ label: this.formatEnum(priority), value: priority }))
+        ];
       },
       error: (err) => {
         console.error('Error al cargar las Prioridades desde el backend:', err);

@@ -7,17 +7,31 @@
   <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="filter-bar">
     <div class="filter-group">
       <label>Desde:</label>
-      <div class="input-wrapper">
-        <i class="fa-regular fa-calendar input-icon"></i>
-        <input type="date" formControlName="startDate" class="form-control-custom" [min]="projectStartDate">
-      </div>
+      <p-datepicker
+        formControlName="startDate"
+        [showIcon]="true"
+        iconDisplay="input"
+        dateFormat="yy-mm-dd"
+        dataType="string"
+        [minDate]="projectStartMinDate"
+        appendTo="body"
+        styleClass="progress-date-picker"
+        placeholder="Selecciona una fecha">
+      </p-datepicker>
     </div>
     <div class="filter-group">
       <label>Hasta:</label>
-      <div class="input-wrapper">
-        <i class="fa-regular fa-calendar input-icon"></i>
-        <input type="date" formControlName="endDate" class="form-control-custom" [min]="projectStartDate">
-      </div>
+      <p-datepicker
+        formControlName="endDate"
+        [showIcon]="true"
+        iconDisplay="input"
+        dateFormat="yy-mm-dd"
+        dataType="string"
+        [minDate]="projectStartMinDate"
+        appendTo="body"
+        styleClass="progress-date-picker"
+        placeholder="Selecciona una fecha">
+      </p-datepicker>
     </div>
     <div class="filter-group">
       <label>Partida:</label>

@@ -3,10 +3,11 @@ import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { WorkerDto } from '../../../core/models/worker.model';
 import { WorkerService } from '../../../core/services/worker.service';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-worker-form-modal',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SelectModule],
   templateUrl: './worker-form-modal.html',
   styleUrl: './worker-form-modal.css',
 })
@@ -24,6 +25,11 @@ export class WorkerFormModalComponent implements OnInit {
   backendErrors: { [key: string]: string } = {};
 
   showPassword = false;
+  readonly roleOptions = [
+    { label: 'Almacenero', value: 'ALMACENERO' },
+    { label: 'Residente', value: 'INGENIERO_RESIDENTE' }
+  ];
+  readonly roleOverlayOptions = { autoZIndex: true, baseZIndex: 1301 };
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;

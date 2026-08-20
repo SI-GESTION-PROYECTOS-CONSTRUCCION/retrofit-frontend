@@ -60,14 +60,16 @@
                 <span class="badge badge-secondary">{{ role.permissions.length }} Accesos</span>
               </td>
               <td style="text-align: center;">
-                <button class="btn btn-outline" style="padding: 6px 10px;" title="Configurar Matriz" (click)="openModal(role)">
+                <div class="rt-action-group">
+                <button class="rt-action-button rt-action-button--configure" title="Configurar Matriz" (click)="openModal(role)">
                   <i class="fa-solid fa-sliders"></i>
                 </button>
                 @if (role.name !== 'ADMIN') {
-                  <button class="btn btn-outline text-danger" style="padding: 6px 10px;" title="Eliminar" (click)="openDeleteModal(role)">
+                  <button class="rt-action-button rt-action-button--delete" title="Eliminar" (click)="openDeleteModal(role)">
                     <i class="fa-solid fa-trash-can"></i>
                   </button>
                 }
+                </div>
               </td>
             </tr>
           }

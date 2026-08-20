@@ -7,12 +7,12 @@ import { ProjectItemService } from '../../../../core/services/project-item.servi
 import { StockSummary, TransactionReason } from '../../../../core/models/inventory.model';
 import { ToastService } from '../../../../core/services/toast-service';
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-project-inventory',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, HasPermissionDirective, NgSelectModule],
+  imports: [ReactiveFormsModule, CommonModule, HasPermissionDirective, SelectModule],
   templateUrl: './project-inventory-component.html',
   styleUrls: ['./project-inventory-component.css']
 })
@@ -47,6 +47,23 @@ export class ProjectInventoryComponent implements OnInit {
   itemsPerPage = 10;
   totalElements = 0;
   totalPages = 0;
+  readonly modalOverlayOptions = { autoZIndex: true, baseZIndex: 1301 };
+  readonly inboundReasonOptions = [
+    { label: 'Compra a proveedor', value: TransactionReason.PURCHASE },
+    { label: 'Inventario inicial', value: TransactionReason.INITIAL_BALANCE }
+  ];
+  readonly outboundReasonOptions = [
+    { label: 'Consumo en obra', value: TransactionReason.CONSUMPTION },
+    { label: 'Pérdida / merma', value: TransactionReason.LOSS }
+  ];
+
+  get resourceOptions() {
+    return this.resources.map(resource => ({ label: `${resource.name} (${resource.unit})`, value: resource.id }));
+  }
+
+  get projectItemOptions() {
+    return this.filteredProjectItems.map(item => ({ label: `${item.code || ''} - ${item.description}`, value: item.id }));
+  }
 
   get startIndex(): number {
     if (this.totalElements === 0) return 0;

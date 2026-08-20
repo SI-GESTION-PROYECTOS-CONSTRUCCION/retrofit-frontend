@@ -3,10 +3,11 @@ import { ProgressReportService } from '../../../../core/services/progress-report
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
+import { DatePickerModule } from 'primeng/datepicker';
 
 @Component({
   selector: 'app-project-progress-list-component',
-  imports: [CommonModule, ReactiveFormsModule, Skeleton],
+  imports: [CommonModule, ReactiveFormsModule, Skeleton, DatePickerModule],
   templateUrl: './project-progress-list-component.html',
   styleUrl: './project-progress-list-component.css',
 })
@@ -27,6 +28,15 @@ export class ProjectProgressListComponent implements OnInit {
   openedResources: { [reportId: number]: boolean } = {};
 
   selectedPhotoUrl: string | null = null;
+
+  /** PrimeNG espera un Date para restringir el calendario, mientras que el API
+   * recibe los filtros como texto ISO (dataType="string" en la plantilla). */
+  get projectStartMinDate(): Date | undefined {
+    if (!this.projectStartDate) return undefined;
+
+    const [year, month, day] = this.projectStartDate.split('-').map(Number);
+    return year && month && day ? new Date(year, month - 1, day) : undefined;
+  }
 
   ngOnInit() {
     this.filterForm = this.fb.group({

@@ -67,7 +67,36 @@ export class ProjectDetailComponent implements OnInit {
 
   formatEnum(text: string): string {
     if (!text) return '';
-    return text.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+    const translations: Record<string, string> = {
+      'PLANNING': 'Planeamiento',
+      'IN_PROGRESS': 'En ejecución',
+      'ON_HOLD': 'Pausado',
+      'COMPLETED': 'Completado',
+      'CANCELLED': 'Cancelado',
+      'LOW': 'Baja',
+      'MEDIUM': 'Media',
+      'HIGH': 'Alta',
+      'CRITICAL': 'Crítica'
+    };
+    return translations[text.toUpperCase()] || text.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+  }
+
+  getPriorityBadgeClass(priority: string): string {
+    const map: Record<string, string> = {
+      'ALTA': 'badge-danger', 'HIGH': 'badge-danger', 'CRITICA': 'badge-danger', 'CRITICAL': 'badge-danger',
+      'MEDIA': 'badge-info', 'MEDIUM': 'badge-info', 'BAJA': 'badge-secondary', 'LOW': 'badge-secondary'
+    };
+    return map[priority] || 'badge-info';
+  }
+
+  getInitials(name: string): string {
+    if (!name) return 'RP';
+    const words = name.trim().split(/\s+/);
+    return words.length > 1 ? `${words[0][0]}${words[1][0]}`.toUpperCase() : name.slice(0, 2).toUpperCase();
+  }
+
+  selectTab(tab: string): void {
+    this.activeTab = tab;
   }
 
   formatDate(dateString: string): string {

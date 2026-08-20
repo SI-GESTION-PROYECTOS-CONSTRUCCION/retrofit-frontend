@@ -7,10 +7,11 @@ import { WorkerDto } from '../../core/models/worker.model';
 import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-modal';
 import { Skeleton } from '../../shared/components/skeleton/skeleton';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-gestion-workers',
-  imports: [CommonModule, FormsModule, WorkerFormModalComponent, ConfirmModal, Skeleton, HasPermissionDirective],
+  imports: [CommonModule, FormsModule, WorkerFormModalComponent, ConfirmModal, Skeleton, HasPermissionDirective, SelectModule],
   templateUrl: './gestion-workers.html',
   styleUrl: './gestion-workers.css',
 })
@@ -27,6 +28,11 @@ export class GestionWorkersComponent implements OnInit {
   totalPages = 0;
   searchTerm = '';
   activeFilter = '';
+  readonly statusOptions = [
+    { label: 'Todos los estados', value: '' },
+    { label: 'Solo activos', value: 'true' },
+    { label: 'Solo inactivos', value: 'false' }
+  ];
 
   // --- UI States ---
   isLoading = false;

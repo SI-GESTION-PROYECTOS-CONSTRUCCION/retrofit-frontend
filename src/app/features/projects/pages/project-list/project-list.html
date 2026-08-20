@@ -1,212 +1,147 @@
-<div class="page-container">
-  
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Portafolio de Proyectos</h1>
-      <p class="page-subtitle">Gestión centralizada de obras, servicios y mantenimientos industriales.</p>
+<div class="portfolio-page">
+  <header class="portfolio-hero">
+    <div class="portfolio-hero-copy">
+      <span class="portfolio-eyebrow"><i class="fa-solid fa-layer-group"></i> GESTIÓN DE CARTERA</span>
+      <h1>Portafolio de <em>proyectos</em></h1>
+      <p>Centraliza el estado, avance y responsables de cada obra en ejecución.</p>
     </div>
-    <div class="header-actions">
-     <!-- <button class="btn btn-outline"><i class="fa-solid fa-download"></i> Exportar</button>-->
-      <button *appHasPermission="'PROJECT_CREATE'" class="btn btn-primary" (click)="openNewProjectModal()">
-        <i class="fa-solid fa-folder-plus"></i> Nuevo Proyecto
-      </button>
 
-      @if (isModalOpen) {
-        <app-project-create-modal-component 
-          [projectToEdit]="selectedProject"
-          (close)="isModalOpen = false" 
-          (projectSaved)="onProjectSaved()">
-        </app-project-create-modal-component>
-      }
-
-
-      @if (isDeleteModalOpen && projectToDelete) {
-        <app-confirm-modal
-          title="Eliminar Proyecto"
-          [message]="'¿Estás seguro de que deseas eliminar el proyecto <strong>' + projectToDelete.code + '</strong>?<br>Esta acción no se puede deshacer.'"
-          confirmText="Eliminar"
-          [isProcessing]="isDeleting"
-          (confirm)="confirmDelete()"
-          (cancel)="closeDeleteModal()">
-        </app-confirm-modal>
-      }
+    <div class="portfolio-hero-meta">
+      <span class="meta-value">{{ totalElements }}</span>
+      <span class="meta-label">proyectos registrados</span>
     </div>
-  </div>
 
-  <div class="card table-card-container">
-    <div class="filters-toolbar">
-      <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Buscar por código o nombre..." 
-               [(ngModel)]="searchTerm" 
-               (input)="onSearchChange()">
+    <button *appHasPermission="'PROJECT_CREATE'" pButton type="button" class="new-project-button" (click)="openNewProjectModal()">
+      <i class="fa-solid fa-plus"></i> Nuevo proyecto
+    </button>
+  </header>
+
+  @if (isModalOpen) {
+    <app-project-create-modal-component
+      [projectToEdit]="selectedProject"
+      (close)="isModalOpen = false"
+      (projectSaved)="onProjectSaved()">
+    </app-project-create-modal-component>
+  }
+
+  @if (isDeleteModalOpen && projectToDelete) {
+    <app-confirm-modal
+      title="Eliminar Proyecto"
+      [message]="'¿Estás seguro de que deseas eliminar el proyecto <strong>' + projectToDelete.code + '</strong>?<br>Esta acción no se puede deshacer.'"
+      confirmText="Eliminar"
+      [isProcessing]="isDeleting"
+      (confirm)="confirmDelete()"
+      (cancel)="closeDeleteModal()">
+    </app-confirm-modal>
+  }
+
+  <section class="portfolio-filters" aria-label="Filtros de proyectos">
+    <div class="search-field">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input pInputText type="text" placeholder="Buscar por código, proyecto o cliente..."
+        [(ngModel)]="searchTerm" (input)="onSearchChange()">
+    </div>
+
+    <p-select [options]="priorityOptions" [(ngModel)]="selectedPriority" optionLabel="label" optionValue="value"
+      (onChange)="onFilterChange()" styleClass="portfolio-select" ariaLabel="Filtrar por prioridad"></p-select>
+
+    <p-select [options]="statusOptions" [(ngModel)]="selectedStatus" optionLabel="label" optionValue="value"
+      (onChange)="onFilterChange()" styleClass="portfolio-select" ariaLabel="Filtrar por estado"></p-select>
+  </section>
+
+  <section class="portfolio-table-card">
+    <div class="table-card-header">
+      <div>
+        <span class="table-eyebrow">VISTA GENERAL</span>
+        <h2>Obras y servicios activos</h2>
       </div>
-      
-      <select class="btn btn-outline filter-select" 
-              [(ngModel)]="selectedPriority" 
-              (change)="onFilterChange()">
-        <option value="">Todas las Prioridades</option> 
-        @for (p of priorities; track p) {
-          <option [value]="p">{{ formatEnum(p) }}</option>
-        }
-      </select>
-
-      <!-- Selector Dinámico de Estado -->
-      <select class="btn btn-outline filter-select" 
-              [(ngModel)]="selectedStatus" 
-              (change)="onFilterChange()">
-        <option value="">Todos los Estados</option>
-        @for (s of statuses; track s) {
-          <option [value]="s">{{ formatEnum(s) }}</option>
-        }
-      </select>
+      <span class="table-count">{{ projects.length }} visibles</span>
     </div>
-</div>
 
-
-<div class="card table-card-container">
     @if (isLoading) {
       <div class="table-responsive">
-        <table class="retrofit-table">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Nombre del Proyecto</th>
-              <th>Cliente</th>
-              <th>Progreso</th>
-              <th>Prioridad</th>
-              <th>Estado</th>
-              <th>Responsable</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
+        <table class="portfolio-table" aria-label="Cargando proyectos">
+          <thead><tr><th>Proyecto</th><th>Cliente</th><th>Avance</th><th>Prioridad</th><th>Estado</th><th>Responsable</th><th></th></tr></thead>
           <tbody>
             @for (i of [1, 2, 3, 4, 5]; track i) {
               <tr>
-                <td><app-skeleton width="60px" height="16px" marginBottom="0"></app-skeleton></td>
-                
-                <td><app-skeleton width="180px" height="16px" marginBottom="0"></app-skeleton></td>
-                
+                <td><app-skeleton width="190px" height="30px" marginBottom="0"></app-skeleton></td>
                 <td><app-skeleton width="120px" height="16px" marginBottom="0"></app-skeleton></td>
-                
-                <td>
-                  <app-skeleton width="30px" height="12px" marginBottom="6px"></app-skeleton>
-                  <app-skeleton width="100%" height="8px" borderRadius="10px" marginBottom="0"></app-skeleton>
-                </td>
-                
-                <td><app-skeleton width="80px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton></td>
-                
-                <td><app-skeleton width="80px" height="24px" borderRadius="12px" marginBottom="0"></app-skeleton></td>
-                
-                <td>
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <app-skeleton width="28px" height="28px" borderRadius="50%" marginBottom="0"></app-skeleton>
-                    <app-skeleton width="100px" height="16px" marginBottom="0"></app-skeleton>
-                  </div>
-                </td>
-                
-                <td class="col-actions">
-                  <div style="display: flex; gap: 8px;">
-                    <app-skeleton width="32px" height="32px" borderRadius="6px" marginBottom="0"></app-skeleton>
-                    <app-skeleton width="32px" height="32px" borderRadius="6px" marginBottom="0"></app-skeleton>
-                  </div>
-                </td>
+                <td><app-skeleton width="120px" height="28px" borderRadius="10px" marginBottom="0"></app-skeleton></td>
+                <td><app-skeleton width="75px" height="24px" borderRadius="20px" marginBottom="0"></app-skeleton></td>
+                <td><app-skeleton width="90px" height="24px" borderRadius="20px" marginBottom="0"></app-skeleton></td>
+                <td><app-skeleton width="110px" height="28px" borderRadius="20px" marginBottom="0"></app-skeleton></td>
+                <td><app-skeleton width="32px" height="32px" borderRadius="8px" marginBottom="0"></app-skeleton></td>
               </tr>
             }
           </tbody>
         </table>
       </div>
     } @else if (errorMessage) {
-      <div class="error-state text-danger">{{ errorMessage }}</div>
+      <div class="portfolio-message portfolio-message--error"><i class="fa-solid fa-circle-exclamation"></i>{{ errorMessage }}</div>
     } @else {
       <div class="table-responsive">
-        <table class="retrofit-table">
+        <table class="portfolio-table">
           <thead>
-            <tr>
-              <th>Código</th>
-              <th>Nombre del Proyecto</th>
-              <th>Cliente</th>
-              <th>Progreso</th>
-              <th>Prioridad</th>
-              <th>Estado</th>
-              <th>Responsable</th>
-              <th>Acciones</th>
-            </tr>
+            <tr><th>Proyecto</th><th>Cliente</th><th>Avance físico</th><th>Prioridad</th><th>Estado</th><th>Responsable</th><th aria-label="Acciones"></th></tr>
           </thead>
           <tbody>
             @for (project of projects; track project.id) {
               <tr>
-                <td class="col-code">{{ project.code }}</td>
-                <td class="col-name">{{ project.name }}</td>
-                <td>{{ project.client }}</td>
-                
                 <td>
-                  <div class="progress-container">
-                    <span class="progress-percent">{{ project.currentProgress | number:'1.2-2'}}%</span>
-                    <div class="progress-track">
-                      <div class="progress-fill" [style.width.%]="project.currentProgress"></div>
-                    </div>
+                  <a class="project-identity" [routerLink]="['/portafolio/proyecto', project.code]">
+                    <span class="project-code">{{ project.code }}</span>
+                    <span class="project-name">{{ project.name }}</span>
+                    @if (project.location) { <span class="project-location"><i class="fa-solid fa-location-dot"></i>{{ project.location }}</span> }
+                  </a>
+                </td>
+                <td><span class="client-name">{{ project.client || 'Sin cliente' }}</span></td>
+                <td>
+                  <div class="project-progress">
+                    <div class="progress-caption"><span>{{ project.currentProgress | number:'1.0-1' }}%</span><small>completado</small></div>
+                    <div class="progress-track"><div class="progress-fill" [style.width.%]="project.currentProgress"></div></div>
                   </div>
                 </td>
-                
-                <td><span class="badge" [ngClass]="getPriorityBadgeClass(project.priority)">{{ formatEnum(project.priority) }}</span></td>
-                <td><span class="badge" [ngClass]="getStatusBadgeClass(project.status)">{{ formatEnum(project.status) }}</span></td>
-                
+                <td><span class="portfolio-chip priority" [ngClass]="getPriorityBadgeClass(project.priority)">{{ formatEnum(project.priority) }}</span></td>
+                <td><span class="portfolio-chip status" [ngClass]="getStatusBadgeClass(project.status)"><i class="fa-solid fa-circle"></i>{{ formatEnum(project.status) }}</span></td>
                 <td>
-                  <div class="user-info">
-                    <div class="user-avatar">{{ getInitials(project.managerFullName) }}</div>
-                    <span class="user-name">{{ project.managerFullName }}</span>
+                  <div class="manager-info">
+                    <div class="manager-avatar">{{ getInitials(project.managerFullName) }}</div>
+                    <span>{{ project.managerFullName || 'Sin asignar' }}</span>
                   </div>
                 </td>
-                
-                <td class="col-actions">
-                  <!-- Botón Principal (Ver) -->
-                  <button class="action-btn" title="Ver Detalle" [routerLink]="['/portafolio/proyecto', project.code]">
+                <td class="project-actions">
+                  <button pButton type="button" class="action-button action-button--view rt-action-button rt-action-button--view" [text]="true" [rounded]="true" title="Ver proyecto" [routerLink]="['/portafolio/proyecto', project.code]">
                     <i class="fa-regular fa-eye"></i>
                   </button>
-
-                  <!-- Contenedor Relativo para el Menú -->
-                  <div class="dropdown-container" style="position: relative; display: inline-block;">
-                    
-                    <!-- Botón 3 puntos -->
-                    <button class="action-btn" title="Opciones" (click)="toggleMenu(project.id, $event)">
-                      <i class="fa-solid fa-ellipsis-vertical"></i>
+                  <div class="action-menu-wrapper">
+                    <button pButton type="button" class="action-button rt-action-button rt-action-button--configure" [text]="true" [rounded]="true" title="Más opciones" (click)="toggleMenu(project.id, $event)">
+                      <i class="fa-solid fa-ellipsis"></i>
                     </button>
-
-                    <!-- El Menú Desplegable (Solo se muestra si su ID coincide) -->
                     @if (activeMenuId === project.id) {
                       <ul class="dropdown-menu" [ngStyle]="{'position': 'fixed', 'top': menuPosition.top, 'left': menuPosition.left, 'right': 'auto', 'margin': '0'}">
-                        <li>
-                        <button *appHasPermission="'PROJECT_UPDATE'" class="dropdown-item" (click)="openEditModal(project)">
-                          <i class="fa-solid fa-pen" style="margin-right: 8px;"></i> Editar Info.
-                        </button>
-                        </li>
-                        <li>
-                        <button *appHasPermission="'PROJECT_DELETE'" class="dropdown-item text-danger" (click)="openDeleteModal(project)">
-                          <i class="fa-solid fa-trash" style="margin-right: 8px;"></i> Eliminar Proyecto
-                        </button>
-                        </li>
-                      </ul>}
-
+                        <li><button *appHasPermission="'PROJECT_UPDATE'" class="dropdown-item" (click)="openEditModal(project)"><i class="fa-solid fa-pen"></i> Editar información</button></li>
+                        <li><button *appHasPermission="'PROJECT_DELETE'" class="dropdown-item text-danger" (click)="openDeleteModal(project)"><i class="fa-solid fa-trash"></i> Eliminar proyecto</button></li>
+                      </ul>
+                    }
                   </div>
                 </td>
               </tr>
             } @empty {
-              <tr><td colspan="8" class="empty-state">No se encontraron proyectos.</td></tr>
+              <tr><td colspan="7"><div class="portfolio-message"><i class="fa-regular fa-folder-open"></i><strong>No encontramos proyectos</strong><span>Prueba ajustando tus filtros o crea un proyecto nuevo.</span></div></td></tr>
             }
           </tbody>
         </table>
       </div>
 
-      <!-- Paginación Real Dinámica -->
-      <div class="pagination-footer">
+      <footer class="portfolio-pagination">
         <span>Mostrando {{ projects.length }} de {{ totalElements }} proyectos</span>
-        <div class="pagination-controls">
-          <button class="btn btn-outline" [disabled]="currentPage === 0" (click)="previousPage()">Anterior</button>
-          <button class="btn btn-primary">{{ currentPage + 1 }}</button>
-          <button class="btn btn-outline" [disabled]="currentPage >= totalPages - 1" (click)="nextPage()">Siguiente</button>
+        <div class="pagination-actions">
+          <button pButton type="button" [outlined]="true" severity="secondary" [disabled]="currentPage === 0" (click)="previousPage()">Anterior</button>
+          <span class="page-indicator">{{ currentPage + 1 }} <small>de {{ totalPages || 1 }}</small></span>
+          <button pButton type="button" [outlined]="true" severity="secondary" [disabled]="currentPage >= totalPages - 1" (click)="nextPage()">Siguiente</button>
         </div>
-      </div>
+      </footer>
     }
-  </div>
+  </section>
 </div>

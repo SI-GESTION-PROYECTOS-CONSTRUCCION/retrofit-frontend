@@ -6,11 +6,16 @@ import { UserService } from '../../../../core/services/user.service';
 import { UserDto } from '../../../../core/models/user.model';
 import { ProjectResponseDto } from '../../../../core/models/project.model';
 import { ToastService } from '../../../../core/services/toast-service';
+import { ButtonModule } from 'primeng/button';
+import { DatePickerModule } from 'primeng/datepicker';
+import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
+import { TextareaModule } from 'primeng/textarea';
 
 @Component({
   selector: 'app-project-create-modal-component',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ButtonModule, DatePickerModule, InputTextModule, SelectModule, TextareaModule],
   templateUrl: './project-create-modal-component.html',
   styleUrl: './project-create-modal-component.css',
 })
@@ -26,6 +31,21 @@ export class ProjectCreateModalComponent implements OnInit {
   projectForm: FormGroup;
   isSubmitting = false;
   managers: UserDto[] = [];
+  readonly statusOptions = [
+    { label: 'Planeamiento', value: 'PLANNING' },
+    { label: 'En ejecución', value: 'IN_PROGRESS' },
+    { label: 'Pausado', value: 'ON_HOLD' },
+    { label: 'Completado', value: 'COMPLETED' },
+    { label: 'Cancelado', value: 'CANCELLED' }
+  ];
+  readonly priorityOptions = [
+    { label: 'Baja', value: 'LOW' },
+    { label: 'Media', value: 'MEDIUM' },
+    { label: 'Alta', value: 'HIGH' },
+    { label: 'Crítica', value: 'CRITICAL' }
+  ];
+  // Los paneles se montan fuera del contenedor con scroll del modal.
+  readonly modalOverlayOptions = { autoZIndex: true, baseZIndex: 1301 };
   
   backendErrors: { [key: string]: string } = {};
 
@@ -75,6 +95,13 @@ export class ProjectCreateModalComponent implements OnInit {
       },
       error: (err) => console.error('Error al cargar responsables', err)
     });
+  }
+
+  get managerOptions() {
+    return this.managers.map(manager => ({
+      label: `${manager.name} ${manager.lastName}`,
+      value: manager.id
+    }));
   }
 
   onSubmit() {

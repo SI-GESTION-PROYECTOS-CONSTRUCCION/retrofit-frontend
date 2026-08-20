@@ -9,12 +9,14 @@ import { FormsModule } from '@angular/forms';
 import { ProjectResponseDto, ProjectItemDto } from '../../../../core/models/project.model';
 import { ProjectItemService } from '../../../../core/services/project-item.service';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
+import { SelectModule } from 'primeng/select';
+import { TooltipModule } from 'primeng/tooltip';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, FormsModule, Skeleton, RouterModule],
+  imports: [CommonModule, FormsModule, Skeleton, RouterModule, SelectModule, TooltipModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })

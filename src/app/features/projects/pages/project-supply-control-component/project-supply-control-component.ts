@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { InventoryService } from '../../../../core/services/inventory.service';
 import { SupplyControl } from '../../../../core/models/supply-control.model';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-project-supply-control',
   standalone: true,
-  imports: [CommonModule, FormsModule, Skeleton],
+  imports: [CommonModule, FormsModule, Skeleton, SelectModule],
   templateUrl: './project-supply-control-component.html',
   styleUrl: './project-supply-control-component.css'
 })
@@ -23,6 +24,12 @@ export class ProjectSupplyControlComponent implements OnInit {
 
   filterStatus: string = '';
   filterName: string = '';
+  readonly statusOptions = [
+    { label: 'Todos los estados', value: '' },
+    { label: 'Completo', value: 'OK' },
+    { label: 'Pendiente', value: 'PENDING' },
+    { label: 'Excedido', value: 'EXCESS' }
+  ];
 
   ngOnInit(): void {
     this.loadSupplyControl();

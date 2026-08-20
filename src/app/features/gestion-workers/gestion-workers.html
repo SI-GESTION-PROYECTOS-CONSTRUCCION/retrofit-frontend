@@ -1,6 +1,7 @@
-<div class="page-container">
+<div class="page-container workers-page">
   <div class="page-header">
     <div>
+      <span class="workers-eyebrow"><i class="fa-solid fa-helmet-safety"></i> Equipo operativo</span>
       <h1 class="page-title">Personal de Obra</h1>
       <p class="page-subtitle">Gestión de operarios, técnicos y especialistas de Retrofit S.A.C.</p>
     </div>
@@ -38,11 +39,13 @@
         <input type="text" placeholder="Buscar por DNI o nombre..." 
                [(ngModel)]="searchTerm" (input)="onSearchChange()">
       </div>
-      <select class="btn btn-outline filter-select" [(ngModel)]="activeFilter" (change)="onSearchChange()">
-        <option value="">Todos los Estados</option>
-        <option value="true">Solo Activos</option>
-        <option value="false">Solo Inactivos</option>
-      </select>
+      <p-select [(ngModel)]="activeFilter" [options]="statusOptions" optionLabel="label" optionValue="value"
+        appendTo="body" styleClass="worker-status-filter" (onChange)="onSearchChange()"></p-select>
+    </div>
+
+    <div class="workers-table-heading">
+      <div><span>Directorio de personal</span><h3>Trabajadores registrados</h3></div>
+      <span class="worker-count">{{ totalElements }} personas</span>
     </div>
 
     @if (isLoading) {
@@ -135,9 +138,9 @@
                 </td>
                 <td class="col-actions">
                   <div class="action-buttons-group">
-                    <button class="action-btn view" (click)="openModal('view', worker)"><i class="fa-regular fa-eye"></i></button>
-                    <button *appHasPermission="'WORKER_UPDATE'" class="action-btn edit" (click)="openModal('edit', worker)"><i class="fa-regular fa-pen-to-square"></i></button>
-                    <button *appHasPermission="'WORKER_DELETE'" class="action-btn delete" (click)="openDeleteConfirm(worker)"><i class="fa-regular fa-trash-can"></i></button>
+                    <button class="action-btn view rt-action-button rt-action-button--view" (click)="openModal('view', worker)"><i class="fa-regular fa-eye"></i></button>
+                    <button *appHasPermission="'WORKER_UPDATE'" class="action-btn edit rt-action-button rt-action-button--edit" (click)="openModal('edit', worker)"><i class="fa-regular fa-pen-to-square"></i></button>
+                    <button *appHasPermission="'WORKER_DELETE'" class="action-btn delete rt-action-button rt-action-button--delete" (click)="openDeleteConfirm(worker)"><i class="fa-regular fa-trash-can"></i></button>
                   </div>
                 </td>
               </tr>
