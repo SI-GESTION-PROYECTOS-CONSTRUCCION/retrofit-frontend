@@ -1,8 +1,10 @@
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ToastService } from '../../../../core/services/toast-service';
-import { RoleService } from '../../../../core/services/role.service';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { PermissionDto, RoleRequestDto, RoleResponseDto } from '../../../../core/models/role.model';
+import { RoleService } from '../../../../core/services/role.service';
+import { ToastService } from '../../../../core/services/toast-service';
 import { ConfirmModal } from '../../../../shared/components/confirm-modal/confirm-modal';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 
@@ -12,16 +14,16 @@ import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
   templateUrl: './role-list-component.html',
   styleUrl: './role-list-component.css',
 })
-export class RoleListComponent {
+export class RoleListComponent implements OnInit {
   private roleService = inject(RoleService);
   private fb = inject(FormBuilder);
   private toastService = inject(ToastService);
 
-  roles: any[] = [];
+  roles: RoleResponseDto[] = [];
   isLoading = false;
 
   // --- LÓGICA DE LA MATRIZ DE PERMISOS ---
-  allPermissions: any[] = [];
+  allPermissions: PermissionDto[] = [];
   permissionMap: { [key: string]: number } = {}; // Ej: { 'PROJECT_CREATE': 1, 'PROJECT_READ': 2 }
   selectedPermissionIds = new Set<number>(); 
   modules: { prefix: string, label: string }[] = [];
@@ -44,7 +46,7 @@ export class RoleListComponent {
   editingId: number | null = null;
 
   isDeleteModalOpen = false;
-  roleToDelete: any = null;
+  roleToDelete: RoleResponseDto | null = null;
   isDeleting = false;
 
   ngOnInit() {
@@ -62,21 +64,21 @@ export class RoleListComponent {
 
   loadPermissions() {
     this.roleService.getAllPermissions().subscribe({
-      next: (res: any[]) => {
+      next: (res: PermissionDto[]) => {
         this.allPermissions = res;
         this.permissionMap = {};
-        res.forEach(p => {
+        res.forEach((p) => {
           this.permissionMap[p.name] = p.id;
         });
         this.buildDynamicMatrix(res);
       },
-      error: (err) => {
+      error: (_err: HttpErrorResponse) => {
         this.toastService.show('Error al cargar diccionario de permisos', 'error');
       }
     });
   }
 
-  buildDynamicMatrix(perms: any[]) {
+  buildDynamicMatrix(perms: PermissionDto[]) {
     const prefixSet = new Set<string>();
     const actionSet = new Set<string>();
 
@@ -120,7 +122,7 @@ export class RoleListComponent {
         this.roles = data;
         this.isLoading = false;
       },
-      error: () => {
+      error: (_err: HttpErrorResponse) => {
         this.toastService.show('Error al cargar los roles', 'error');
         this.isLoading = false;
       }
@@ -152,7 +154,7 @@ export class RoleListComponent {
 
 
   // --- MODAL CREAR / EDITAR ---
-  openModal(role?: any) {
+  openModal(role?: RoleResponseDto) {
     this.isModalOpen = true;
     this.selectedPermissionIds.clear(); // Limpiamos la matriz
 
@@ -163,7 +165,7 @@ export class RoleListComponent {
         description: role.description
       });
       // Marcamos los checkboxes que ya tiene este rol
-      role.permissions.forEach((p: any) => this.selectedPermissionIds.add(p.id));
+      role.permissions.forEach((p: PermissionDto) => { this.selectedPermissionIds.add(p.id); });
     } else {
       this.editingId = null;
       this.roleForm.reset();
@@ -185,7 +187,7 @@ export class RoleListComponent {
     }
 
     // Empaquetamos la data como la espera el backend
-    const dataToSend = {
+    const dataToSend: RoleRequestDto = {
       name: this.roleForm.value.name.toUpperCase(),
       description: this.roleForm.value.description,
       permissionIds: Array.from(this.selectedPermissionIds) // Convertimos el Set a Array
@@ -201,14 +203,14 @@ export class RoleListComponent {
         this.closeModal();
         this.loadRoles();
       },
-      error: (err: any) => {
+      error: (err: HttpErrorResponse) => {
         this.toastService.showApiError(err, 'Error al guardar');
       }
     });
   }
 
   // --- ELIMINAR ---
-  openDeleteModal(role: any) {
+  openDeleteModal(role: RoleResponseDto) {
     this.roleToDelete = role;
     this.isDeleteModalOpen = true;
   }
@@ -229,7 +231,7 @@ export class RoleListComponent {
         this.closeDeleteModal();
         this.loadRoles();
       },
-      error: (err: any) => {
+      error: (err: HttpErrorResponse) => {
         this.toastService.showApiError(err, 'Error al eliminar');
         this.closeDeleteModal();
       }

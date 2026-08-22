@@ -36,16 +36,16 @@
   <!-- Filters Section -->
   <section class="filters-row">
     <div class="filter-group flex-2">
-      <label>BÚSQUEDA RÁPIDA</label>
+      <label for="search">BÚSQUEDA RÁPIDA</label>
       <div class="input-icon">
         <i class="fa-solid fa-search"></i>
-        <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()" placeholder="Buscar por Usuario">
+        <input id="search" type="text" [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()" placeholder="Buscar por Usuario">
       </div>
     </div>
 
     <div class="filter-group">
-      <label>MÓDULO</label>
-      <select [(ngModel)]="selectedModule" (change)="applyFilters()">
+      <label for="module">MÓDULO</label>
+      <select id="module" [(ngModel)]="selectedModule" (change)="applyFilters()">
         <option value="Todos">Todos</option>
         <option value="Trabajadores">Trabajadores</option>
         <option value="Usuarios">Usuarios</option>
@@ -61,8 +61,8 @@
     </div>
 
     <div class="filter-group">
-      <label>ACCIÓN</label>
-      <select [(ngModel)]="selectedAction" (change)="applyFilters()">
+      <label for="action">ACCIÓN</label>
+      <select id="action" [(ngModel)]="selectedAction" (change)="applyFilters()">
         <option value="Todas">Todas las Acciones</option>
         <option value="CREATE">CREATE</option>
         <option value="UPDATE">UPDATE</option>
@@ -71,8 +71,8 @@
     </div>
 
     <div class="filter-group">
-      <label>FECHA</label>
-      <input type="date" [(ngModel)]="selectedDate" (change)="applyFilters()">
+      <label for="date">FECHA</label>
+      <input id="date" type="date" [(ngModel)]="selectedDate" (change)="applyFilters()">
     </div>
 
     <div class="filter-group button-group">

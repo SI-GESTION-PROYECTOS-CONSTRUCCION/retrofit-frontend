@@ -34,7 +34,7 @@
               min="0">
             <span class="text-muted" style="font-size: 13px; font-weight: 600;">{{ itemData.unit }} / Día</span>
           </div>
-          @if (itemData.laborYield < 0) {
+          @if (itemData.laborYield !== undefined && itemData.laborYield < 0) {
             <div class="error-text" style="color: #EF4444; font-size: 12px; margin-top: 4px;">El rendimiento no puede ser negativo</div>
           }
         </div>
@@ -45,7 +45,7 @@
               min="0">
             <span class="text-muted" style="font-size: 13px; font-weight: 600;">{{ itemData.unit }} / Día</span>
           </div>
-          @if (itemData.equipmentYield < 0) {
+          @if (itemData.equipmentYield !== undefined && itemData.equipmentYield < 0) {
             <div class="error-text" style="color: #EF4444; font-size: 12px; margin-top: 4px;">El rendimiento no puede ser negativo</div>
           }
         </div>

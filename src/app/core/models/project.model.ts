@@ -75,6 +75,15 @@ export interface ProgressReportRequestDto{
 }
 
 
+export interface ReportUsedResource {
+  resourceId: number;
+  resourceName: string;
+  resourceUnit: string;
+  resourceType: string;
+  theoreticalQuantity: number;
+  realQuantity: number;
+}
+
 export interface ProgressReportResponseDto {
   id: number;
   itemCode: string;
@@ -84,6 +93,7 @@ export interface ProgressReportResponseDto {
   unit: string;
   observations: string;
   photoUrls: string[];
+  usedResources?: ReportUsedResource[];
 }
 
 
@@ -111,4 +121,10 @@ export interface GanttUpdateDto {
   startDate: string;
   endDate: string;
   predecessorId: number | null;
+}
+
+export interface ProgressReportFilters {
+  startDate?: string;
+  endDate?: string;
+  itemCode?: string;
 }

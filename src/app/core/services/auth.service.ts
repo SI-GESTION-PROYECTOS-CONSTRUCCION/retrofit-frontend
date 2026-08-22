@@ -1,7 +1,11 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, of, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { AuthResponse, LoginCredentials, UserProfile } from '../models/auth.model';
+
+const JWT_KEY = 'retrofit_jwt';
+const REFRESH_JWT_KEY = 'retrofit_refresh_jwt';
 
 @Injectable({
   providedIn: 'root',
@@ -11,20 +15,22 @@ export class AuthService {
   private userPermissions = new Set<string>();
   private requirePasswordChange = false;
   private isLoaded = false;
-  constructor(private http: HttpClient) { }
+  private cachedProfile: UserProfile | null = null;
 
+  constructor(private http: HttpClient) {}
 
-  loadUserProfile(): Observable<any> {
-    if (this.isLoaded) {
-      return of({ permissions: Array.from(this.userPermissions), requirePasswordChange: this.requirePasswordChange });
+  loadUserProfile(): Observable<UserProfile> {
+    if (this.isLoaded && this.cachedProfile) {
+      return of(this.cachedProfile);
     }
 
-    return this.http.get<any>(`${this.apiUrl}/profile`).pipe(
-      tap(profile => {
+    return this.http.get<UserProfile>(`${this.apiUrl}/profile`).pipe(
+      tap((profile) => {
         this.userPermissions = new Set(profile.permissions);
         this.requirePasswordChange = profile.requirePasswordChange;
-        this.isLoaded = true; 
-      })
+        this.cachedProfile = profile;
+        this.isLoaded = true;
+      }),
     );
   }
 
@@ -32,49 +38,52 @@ export class AuthService {
     return this.userPermissions.has(permission);
   }
 
-  login(credenciales: { username: string; password: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, credenciales);
+  login(credenciales: LoginCredentials): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credenciales);
   }
 
-  changePassword(newPassword: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/change-password`, { newPassword }).pipe(
+  changePassword(newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/change-password`, { newPassword }).pipe(
       tap(() => {
         this.requirePasswordChange = false;
-      })
+        if (this.cachedProfile) {
+          this.cachedProfile.requirePasswordChange = false;
+        }
+      }),
     );
   }
 
-  refreshToken(): Observable<any> {
+  refreshToken(): Observable<AuthResponse | null> {
     const refreshToken = this.getRefreshToken();
     if (!refreshToken) {
       return of(null);
     }
-    return this.http.post<any>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
-      tap(res => {
-        if (res && res.jwt) {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
+      tap((res) => {
+        if (res?.jwt) {
           this.saveToken(res.jwt);
-          if (res.refreshToken) {
+          if (res?.refreshToken) {
             this.saveRefreshToken(res.refreshToken);
           }
         }
-      })
+      }),
     );
   }
 
   saveToken(token: string): void {
-    localStorage.setItem('retrofit_jwt', token);
+    localStorage.setItem(JWT_KEY, token);
   }
 
   saveRefreshToken(token: string): void {
-    localStorage.setItem('retrofit_refresh_jwt', token);
+    localStorage.setItem(REFRESH_JWT_KEY, token);
   }
 
   getToken(): string | null {
-    return localStorage.getItem('retrofit_jwt');
+    return localStorage.getItem(JWT_KEY);
   }
 
   getRefreshToken(): string | null {
-    return localStorage.getItem('retrofit_refresh_jwt');
+    return localStorage.getItem(REFRESH_JWT_KEY);
   }
 
   isAutenticated(): boolean {
@@ -83,10 +92,11 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('retrofit_jwt');
-    localStorage.removeItem('retrofit_refresh_jwt');
+    localStorage.removeItem(JWT_KEY);
+    localStorage.removeItem(REFRESH_JWT_KEY);
     this.userPermissions.clear();
     this.requirePasswordChange = false;
     this.isLoaded = false;
+    this.cachedProfile = null;
   }
 }

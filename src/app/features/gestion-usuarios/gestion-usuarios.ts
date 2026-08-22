@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { UserService } from '../../core/services/user.service';
-import { UserDto } from '../../core/models/user.model';
-import { ConfirmModal } from "../../shared/components/confirm-modal/confirm-modal";
-import { UserFormModalComponent } from "./user-form-modal/user-form-modal";
-import { Skeleton } from '../../shared/components/skeleton/skeleton';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
+import { UserDto } from '../../core/models/user.model';
+import { ToastService } from '../../core/services/toast-service';
+import { UserService } from '../../core/services/user.service';
+import { ConfirmModal } from "../../shared/components/confirm-modal/confirm-modal";
+import { Skeleton } from '../../shared/components/skeleton/skeleton';
+import { UserFormModalComponent } from "./user-form-modal/user-form-modal";
 
 @Component({
   selector: 'app-gestion-usuarios',
@@ -16,6 +18,7 @@ import { HasPermissionDirective } from '../../core/directives/has-permission.dir
 })
 export class GestionUsuariosComponent implements OnInit {
   private userService = inject(UserService);
+  private toastService = inject(ToastService);
 
   // Datos
   users: UserDto[] = [];
@@ -60,8 +63,8 @@ export class GestionUsuariosComponent implements OnInit {
           this.totalPages = response.totalPages;
           this.isLoading = false;
         },
-        error: (err) => {
-          console.error('Error al cargar usuarios', err);
+        error: (_err: HttpErrorResponse) => {
+          this.toastService.show('Error al cargar usuarios', 'error');
           this.isLoading = false;
         }
       });
@@ -140,8 +143,8 @@ export class GestionUsuariosComponent implements OnInit {
         this.closeDeleteModal();
         this.loadUsers();
       },
-      error: (err) => {
-        console.error('Error al eliminar:', err);
+      error: (_err: HttpErrorResponse) => {
+        this.toastService.show('Error al eliminar el usuario', 'error');
         this.isDeleting = false;
       }
     });
@@ -168,8 +171,8 @@ export class GestionUsuariosComponent implements OnInit {
         this.closeReactivateModal();
         this.loadUsers();
       },
-      error: (err) => {
-        console.error('Error al reactivar:', err);
+      error: (_err: HttpErrorResponse) => {
+        this.toastService.show('Error al reactivar el usuario', 'error');
         this.isReactivating = false;
       }
     });

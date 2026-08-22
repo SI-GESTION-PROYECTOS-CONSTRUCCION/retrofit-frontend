@@ -77,13 +77,13 @@ export class LoginComponent implements OnInit {
       this.authService.login(credenciales).subscribe({
         next: (response) => {
           this.isLoading = false;
-          if (response && response.jwt) {
+          if (response?.jwt) {
             this.authService.saveToken(response.jwt);
             if (response.refreshToken) {
               this.authService.saveRefreshToken(response.refreshToken);
             }
             
-            this.router.navigate(['/dashboard']).then(success => {
+            this.router.navigate(['/dashboard']).then((_success) => {
               // Si el guard bloquea la navegación (redirecciona a /login), 
               // debemos cargar el perfil localmente para mostrar el form
               if (this.router.url === '/login') {
@@ -100,12 +100,11 @@ export class LoginComponent implements OnInit {
         },
         error: (errorResponse) => {
           this.isLoading = false;
-          if (errorResponse.error && errorResponse.error.message) {
+          if (errorResponse.error?.message) {
             this.errorMessage = errorResponse.error.message; 
           } else {
             this.errorMessage = 'Error de conexión con el servidor.';
           }
-          console.error('Detalle del error:', errorResponse);
         }
       });
     } else {
@@ -126,12 +125,11 @@ export class LoginComponent implements OnInit {
         },
         error: (errorResponse) => {
           this.isLoading = false;
-          if (errorResponse.error && errorResponse.error.message) {
+          if (errorResponse.error?.message) {
             this.errorMessage = errorResponse.error.message; 
           } else {
             this.errorMessage = 'Error al cambiar la contraseña.';
           }
-          console.error('Detalle del error:', errorResponse);
         }
       });
     } else {

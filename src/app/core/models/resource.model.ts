@@ -1,3 +1,5 @@
+import { ProjectItemResourceResponseDto } from './project.model';
+
 export interface ResourceResponseDto {
   id: number;
   name: string;
@@ -9,4 +11,11 @@ export interface ResourceRequestDto {
   name: string;
   unit: string;
   basePrice: number;
+}
+
+export interface ResourcePageResponseDto {
+  content: ProjectItemResourceResponseDto[];
+  totalPages: number;
+  totalElements: number;
+  currentPage: number;
 }

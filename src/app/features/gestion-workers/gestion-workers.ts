@@ -1,145 +1,157 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { WorkerFormModalComponent } from './worker-form-modal/worker-form-modal';
-import { WorkerService } from '../../core/services/worker.service';
+import { SelectModule } from 'primeng/select';
+import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 import { WorkerDto } from '../../core/models/worker.model';
+import { ToastService } from '../../core/services/toast-service';
+import { WorkerService } from '../../core/services/worker.service';
 import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-modal';
 import { Skeleton } from '../../shared/components/skeleton/skeleton';
-import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
-import { SelectModule } from 'primeng/select';
+import { WorkerFormModalComponent } from './worker-form-modal/worker-form-modal';
 
 @Component({
-  selector: 'app-gestion-workers',
-  imports: [CommonModule, FormsModule, WorkerFormModalComponent, ConfirmModal, Skeleton, HasPermissionDirective, SelectModule],
-  templateUrl: './gestion-workers.html',
-  styleUrl: './gestion-workers.css',
+	selector: 'app-gestion-workers',
+	imports: [
+		CommonModule,
+		FormsModule,
+		WorkerFormModalComponent,
+		ConfirmModal,
+		Skeleton,
+		HasPermissionDirective,
+		SelectModule,
+	],
+	templateUrl: './gestion-workers.html',
+	styleUrl: './gestion-workers.css',
 })
 export class GestionWorkersComponent implements OnInit {
-  private workerService = inject(WorkerService);
+	private workerService = inject(WorkerService);
+	private toastService = inject(ToastService);
 
-  // --- Datos ---
-  workers: WorkerDto[] = [];
-  
-  // --- Paginación y Filtros ---
-  currentPage = 0;
-  pageSize = 5;
-  totalElements = 0;
-  totalPages = 0;
-  searchTerm = '';
-  activeFilter = '';
-  readonly statusOptions = [
-    { label: 'Todos los estados', value: '' },
-    { label: 'Solo activos', value: 'true' },
-    { label: 'Solo inactivos', value: 'false' }
-  ];
+	// --- Datos ---
+	workers: WorkerDto[] = [];
 
-  // --- UI States ---
-  isLoading = false;
-  isModalOpen = false;
-  modalMode: 'create' | 'edit' | 'view' = 'create';
-  selectedWorker: WorkerDto | null = null;
+	// --- Paginación y Filtros ---
+	currentPage = 0;
+	pageSize = 5;
+	totalElements = 0;
+	totalPages = 0;
+	searchTerm = '';
+	activeFilter = '';
+	readonly statusOptions = [
+		{ label: 'Todos los estados', value: '' },
+		{ label: 'Solo activos', value: 'true' },
+		{ label: 'Solo inactivos', value: 'false' },
+	];
 
-  // --- Modal de Eliminación ---
-  isDeleteModalOpen = false;
-  workerToDelete: WorkerDto | null = null;
-  isDeleting = false;
+	// --- UI States ---
+	isLoading = false;
+	isModalOpen = false;
+	modalMode: 'create' | 'edit' | 'view' = 'create';
+	selectedWorker: WorkerDto | null = null;
 
-  ngOnInit() {
-    this.loadWorkers();
-  }
+	// --- Modal de Eliminación ---
+	isDeleteModalOpen = false;
+	workerToDelete: WorkerDto | null = null;
+	isDeleting = false;
 
-  loadWorkers() {
-    this.isLoading = true;
-    this.workerService.getWorkers(this.currentPage, this.pageSize, this.searchTerm, this.activeFilter)
-      .subscribe({
-        next: (response) => {
-          this.workers = response.content;
-          this.totalElements = response.totalElements;
-          this.totalPages = response.totalPages;
-          this.isLoading = false;
-        },
-        error: (err) => {
-          console.error('Error al cargar trabajadores', err);
-          this.isLoading = false;
-        }
-      });
-  }
+	ngOnInit() {
+		this.loadWorkers();
+	}
 
-  // --- Filtros ---
-  onSearchChange() {
-    this.currentPage = 0;
-    this.loadWorkers();
-  }
+	loadWorkers() {
+		this.isLoading = true;
+		this.workerService
+			.getWorkers(this.currentPage, this.pageSize, this.searchTerm, this.activeFilter)
+			.subscribe({
+				next: (response) => {
+					this.workers = response.content;
+					this.totalElements = response.totalElements;
+					this.totalPages = response.totalPages;
+					this.isLoading = false;
+				},
+				error: (_err: HttpErrorResponse) => {
+					this.toastService.show('Error al cargar trabajadores', 'error');
+					this.isLoading = false;
+				},
+			});
+	}
 
-  // --- Navegación ---
-  nextPage() {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
-      this.loadWorkers();
-    }
-  }
+	// --- Filtros ---
+	onSearchChange() {
+		this.currentPage = 0;
+		this.loadWorkers();
+	}
 
-  previousPage() {
-    if (this.currentPage > 0) {
-      this.currentPage--;
-      this.loadWorkers();
-    }
-  }
+	// --- Navegación ---
+	nextPage() {
+		if (this.currentPage < this.totalPages - 1) {
+			this.currentPage++;
+			this.loadWorkers();
+		}
+	}
 
-  // --- Gestión de Modales ---
-  openModal(mode: 'create' | 'edit' | 'view', worker: WorkerDto | null = null) {
-    this.isModalOpen = false;
-    this.selectedWorker = null; 
+	previousPage() {
+		if (this.currentPage > 0) {
+			this.currentPage--;
+			this.loadWorkers();
+		}
+	}
 
-    setTimeout(() => {
-      this.modalMode = mode;
-      this.selectedWorker = worker ? { ...worker } : null;
-      this.isModalOpen = true;
-    }, 10); 
-  }
+	// --- Gestión de Modales ---
+	openModal(mode: 'create' | 'edit' | 'view', worker: WorkerDto | null = null) {
+		this.isModalOpen = false;
+		this.selectedWorker = null;
 
-  closeModal() {
-    this.isModalOpen = false;
-    this.selectedWorker = null;
-  }
+		setTimeout(() => {
+			this.modalMode = mode;
+			this.selectedWorker = worker ? { ...worker } : null;
+			this.isModalOpen = true;
+		}, 10);
+	}
 
-  onWorkerSaved() {
-    this.loadWorkers();
-  }
+	closeModal() {
+		this.isModalOpen = false;
+		this.selectedWorker = null;
+	}
 
-  // --- Eliminación (Confirmación) ---
-  openDeleteConfirm(worker: WorkerDto) {
-    this.workerToDelete = worker;
-    this.isDeleteModalOpen = true;
-  }
+	onWorkerSaved() {
+		this.loadWorkers();
+	}
 
-  closeDeleteModal() {
-    this.isDeleteModalOpen = false;
-    this.workerToDelete = null;
-  }
+	// --- Eliminación (Confirmación) ---
+	openDeleteConfirm(worker: WorkerDto) {
+		this.workerToDelete = worker;
+		this.isDeleteModalOpen = true;
+	}
 
-  confirmDelete() {
-    if (!this.workerToDelete) return;
-    
-    this.isDeleting = true;
-    this.workerService.deleteWorker(this.workerToDelete.id).subscribe({
-      next: () => {
-        this.isDeleting = false;
-        this.closeDeleteModal();
-        this.loadWorkers();
-      },
-      error: (err) => {
-        console.error('Error al eliminar trabajador:', err);
-        this.isDeleting = false;
-      }
-    });
-  }
+	closeDeleteModal() {
+		this.isDeleteModalOpen = false;
+		this.workerToDelete = null;
+	}
 
-  // --- Helpers UI ---
-  getInitials(name: string, lastName: string): string {
-    const first = (name && name.length > 0) ? name.charAt(0) : '?';
-    const last = (lastName && lastName.length > 0) ? lastName.charAt(0) : '?';
-    return (first + last).toUpperCase();
-  }
+	confirmDelete() {
+		if (!this.workerToDelete) return;
+
+		this.isDeleting = true;
+		this.workerService.deleteWorker(this.workerToDelete.id).subscribe({
+			next: () => {
+				this.isDeleting = false;
+				this.closeDeleteModal();
+				this.loadWorkers();
+			},
+			error: (_err: HttpErrorResponse) => {
+				this.toastService.show('Error al eliminar trabajador', 'error');
+				this.isDeleting = false;
+			},
+		});
+	}
+
+	// --- Helpers UI ---
+	getInitials(name: string, lastName: string): string {
+		const first = name && name.length > 0 ? name.charAt(0) : '?';
+		const last = lastName && lastName.length > 0 ? lastName.charAt(0) : '?';
+		return (first + last).toUpperCase();
+	}
 }

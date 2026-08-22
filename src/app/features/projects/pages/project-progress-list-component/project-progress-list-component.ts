@@ -1,132 +1,141 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { ProgressReportService } from '../../../../core/services/progress-report.service';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, Input, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 import { DatePickerModule } from 'primeng/datepicker';
+import {
+	GroupedProgressReportDto,
+	ReportUsedResource,
+} from '../../../../core/models/project.model';
+import { ProgressReportService } from '../../../../core/services/progress-report.service';
+import { ToastService } from '../../../../core/services/toast-service';
+import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 
 @Component({
-  selector: 'app-project-progress-list-component',
-  imports: [CommonModule, ReactiveFormsModule, Skeleton, DatePickerModule],
-  templateUrl: './project-progress-list-component.html',
-  styleUrl: './project-progress-list-component.css',
+	selector: 'app-project-progress-list-component',
+	imports: [CommonModule, ReactiveFormsModule, Skeleton, DatePickerModule],
+	templateUrl: './project-progress-list-component.html',
+	styleUrl: './project-progress-list-component.css',
 })
 export class ProjectProgressListComponent implements OnInit {
-  @Input({ required: true }) projectId!: number;
-  @Input() projectStartDate!: string;
-  
-  private reportService = inject(ProgressReportService);
-  private fb = inject(FormBuilder);
+	@Input({ required: true }) projectId!: number;
+	@Input() projectStartDate!: string;
 
-  groupedReports: any[] = [];
-  isLoading = true;
-  isDownloadingPdf = false;
-  filterForm!: FormGroup;
-  
-  openPeriods: Set<string> = new Set();
-  
-  openedResources: { [reportId: number]: boolean } = {};
+	private reportService = inject(ProgressReportService);
+	private fb = inject(FormBuilder);
+	private toastService = inject(ToastService);
 
-  selectedPhotoUrl: string | null = null;
+	groupedReports: GroupedProgressReportDto[] = [];
+	isLoading = true;
+	isDownloadingPdf = false;
+	filterForm!: FormGroup;
 
-  /** PrimeNG espera un Date para restringir el calendario, mientras que el API
-   * recibe los filtros como texto ISO (dataType="string" en la plantilla). */
-  get projectStartMinDate(): Date | undefined {
-    if (!this.projectStartDate) return undefined;
+	openPeriods: Set<string> = new Set();
 
-    const [year, month, day] = this.projectStartDate.split('-').map(Number);
-    return year && month && day ? new Date(year, month - 1, day) : undefined;
-  }
+	openedResources: { [reportId: number]: boolean } = {};
 
-  ngOnInit() {
-    this.filterForm = this.fb.group({
-      startDate: [''],
-      endDate: [''],
-      itemCode: ['']
-    });
+	selectedPhotoUrl: string | null = null;
 
-    this.loadHistory();
-  }
+	/** PrimeNG espera un Date para restringir el calendario, mientras que el API
+	 * recibe los filtros como texto ISO (dataType="string" en la plantilla). */
+	get projectStartMinDate(): Date | undefined {
+		if (!this.projectStartDate) return undefined;
 
-  loadHistory() {
-    this.isLoading = true;
-    const filters = this.filterForm.value;
+		const [year, month, day] = this.projectStartDate.split('-').map(Number);
+		return year && month && day ? new Date(year, month - 1, day) : undefined;
+	}
 
-    this.reportService.getReportsByProject(this.projectId, filters).subscribe({
-      next: (data) => {
-        this.groupedReports = data;
-        this.isLoading = false;
-        
-        if (this.groupedReports.length > 0) {
-          this.openPeriods.add(this.groupedReports[0].period);
-        }
-      },
-      error: () => this.isLoading = false
-    });
-  }
+	ngOnInit() {
+		this.filterForm = this.fb.group({
+			startDate: [''],
+			endDate: [''],
+			itemCode: [''],
+		});
 
-  togglePeriod(period: string) {
-    if (this.openPeriods.has(period)) {
-      this.openPeriods.delete(period); 
-    } else {
-      this.openPeriods.add(period); 
-    }
-  }
+		this.loadHistory();
+	}
 
-  isPeriodOpen(period: string): boolean {
-    return this.openPeriods.has(period);
-  }
+	loadHistory() {
+		this.isLoading = true;
+		const filters = this.filterForm.value;
 
-  toggleResources(reportId: number) {
-    this.openedResources[reportId] = !this.openedResources[reportId];
-  }
+		this.reportService.getReportsByProject(this.projectId, filters).subscribe({
+			next: (data) => {
+				this.groupedReports = data;
+				this.isLoading = false;
 
-  isResourcesOpen(reportId: number): boolean {
-    return !!this.openedResources[reportId];
-  }
+				if (this.groupedReports.length > 0) {
+					this.openPeriods.add(this.groupedReports[0].period);
+				}
+			},
+			error: () => (this.isLoading = false),
+		});
+	}
 
-  getResourceGroup(resources: any[], type: string): any[] {
-    if (!resources) return [];
-    return resources.filter(r => r.resourceType === type);
-  }
+	togglePeriod(period: string) {
+		if (this.openPeriods.has(period)) {
+			this.openPeriods.delete(period);
+		} else {
+			this.openPeriods.add(period);
+		}
+	}
 
-  applyFilters() {
-    this.loadHistory();
-  }
+	isPeriodOpen(period: string): boolean {
+		return this.openPeriods.has(period);
+	}
 
-  clearFilters() {
-    this.filterForm.reset();
-    this.loadHistory();
-  }
+	toggleResources(reportId: number) {
+		this.openedResources[reportId] = !this.openedResources[reportId];
+	}
 
-  openPhoto(url: string) {
-    this.selectedPhotoUrl = url;
-  }
+	isResourcesOpen(reportId: number): boolean {
+		return !!this.openedResources[reportId];
+	}
 
-  closePhoto() {
-    this.selectedPhotoUrl = null;
-  }
+	getResourceGroup(
+		resources: ReportUsedResource[] | undefined,
+		type: string,
+	): ReportUsedResource[] {
+		if (!resources) return [];
+		return resources.filter((r) => r.resourceType === type);
+	}
 
-  printReport() {
-    this.isDownloadingPdf = true;
-    const filters = this.filterForm.value;
-    this.reportService.downloadProgressReport(this.projectId, filters).subscribe({
-      next: (blob: Blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `reporte_avances_proyecto_${this.projectId}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        a.remove();
-        this.isDownloadingPdf = false;
-      },
-      error: (err) => {
-        console.error('Error descargando el reporte', err);
-        alert('Hubo un error al generar el reporte.');
-        this.isDownloadingPdf = false;
-      }
-    });
-  }
+	applyFilters() {
+		this.loadHistory();
+	}
+
+	clearFilters() {
+		this.filterForm.reset();
+		this.loadHistory();
+	}
+
+	openPhoto(url: string) {
+		this.selectedPhotoUrl = url;
+	}
+
+	closePhoto() {
+		this.selectedPhotoUrl = null;
+	}
+
+	printReport() {
+		this.isDownloadingPdf = true;
+		const filters = this.filterForm.value;
+		this.reportService.downloadProgressReport(this.projectId, filters).subscribe({
+			next: (blob: Blob) => {
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.href = url;
+				a.download = `reporte_avances_proyecto_${this.projectId}.pdf`;
+				document.body.appendChild(a);
+				a.click();
+				window.URL.revokeObjectURL(url);
+				a.remove();
+				this.isDownloadingPdf = false;
+			},
+			error: (err: HttpErrorResponse) => {
+				this.toastService.showApiError(err, 'Error descargando el reporte');
+				this.isDownloadingPdf = false;
+			},
+		});
+	}
 }

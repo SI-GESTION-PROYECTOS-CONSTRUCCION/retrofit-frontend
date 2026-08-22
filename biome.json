@@ -28,7 +28,15 @@
 		}
 	},
 	"files": {
-		"includes": ["**", "!**/node_modules", "!**/dist", "!**/.angular", "!**/coverage"]
+		"includes": [
+			"**",
+			"!**/node_modules",
+			"!**/dist",
+			"!**/.angular",
+			"!**/coverage",
+			"!**/*.html",
+			"!**/*.css"
+		]
 	},
 	"formatter": {
 		"enabled": true,

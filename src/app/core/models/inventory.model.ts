@@ -49,3 +49,9 @@ export interface StockSummary {
   resourceUnit: string;
   currentStock: number;
 }
+
+export interface PlannedResource {
+  id: number;
+  name: string;
+  unit: string;
+}
