@@ -7,6 +7,7 @@ import {
 	GroupedProgressReportDto,
 	ReportUsedResource,
 } from '../../../../core/models/project.model';
+import { ResourceType } from '../../../../core/models/resource.model';
 import { ProgressReportService } from '../../../../core/services/progress-report.service';
 import { ToastService } from '../../../../core/services/toast-service';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
@@ -29,6 +30,8 @@ export class ProjectProgressListComponent implements OnInit {
 	isLoading = true;
 	isDownloadingPdf = false;
 	filterForm!: FormGroup;
+	public ResourceType = ResourceType;
+	public resourceTypes = [ResourceType.LABOR, ResourceType.MATERIAL, ResourceType.EQUIPMENT];
 
 	openPeriods: Set<string> = new Set();
 

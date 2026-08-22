@@ -8,7 +8,7 @@ import {
 	ProjectItemResourceRequestDto,
 	ProjectItemResourceResponseDto,
 } from '../../../../core/models/project.model';
-import { ResourceResponseDto } from '../../../../core/models/resource.model';
+import { ResourceResponseDto, ResourceType } from '../../../../core/models/resource.model';
 import { ProjectItemService } from '../../../../core/services/project-item.service';
 import { ResourceService } from '../../../../core/services/resource.service';
 import { ToastService } from '../../../../core/services/toast-service';
@@ -21,6 +21,7 @@ import { ToastService } from '../../../../core/services/toast-service';
 })
 export class ApuModalComponent {
 	@Input({ required: true }) projectId!: number;
+	public ResourceType = ResourceType;
 
 	// Recibimos un clon de los datos de la fila actual (para no mutar la tabla principal hasta guardar)
 	@Input({ required: true }) itemData!: ProjectItemDto;
@@ -39,7 +40,7 @@ export class ApuModalComponent {
 	apuItems: ProjectItemResourceResponseDto[] = [];
 	calculatedUnitPrice: number = 0;
 
-	selectedResourceType: string = 'LABOR';
+	selectedResourceType: ResourceType | string = ResourceType.LABOR;
 	selectedResourceId: number | null = null;
 	isLoading = false;
 	readonly resourceTypeOptions = [
@@ -51,9 +52,9 @@ export class ApuModalComponent {
 
 	get resourceOptions() {
 		const catalog =
-			this.selectedResourceType === 'LABOR'
+			this.selectedResourceType === ResourceType.LABOR
 				? this.laborCatalog
-				: this.selectedResourceType === 'MATERIAL'
+				: this.selectedResourceType === ResourceType.MATERIAL
 					? this.materialCatalog
 					: this.equipmentCatalog;
 		return catalog.map((resource) => ({
@@ -93,16 +94,16 @@ export class ApuModalComponent {
 		if (!this.selectedResourceId) return;
 
 		let catalog: ResourceResponseDto[];
-		let typeStr: string;
-		if (this.selectedResourceType === 'LABOR') {
+		let typeStr: ResourceType;
+		if (this.selectedResourceType === ResourceType.LABOR) {
 			catalog = this.laborCatalog;
-			typeStr = 'LABOR';
-		} else if (this.selectedResourceType === 'MATERIAL') {
+			typeStr = ResourceType.LABOR;
+		} else if (this.selectedResourceType === ResourceType.MATERIAL) {
 			catalog = this.materialCatalog;
-			typeStr = 'MATERIAL';
+			typeStr = ResourceType.MATERIAL;
 		} else {
 			catalog = this.equipmentCatalog;
-			typeStr = 'EQUIPMENT';
+			typeStr = ResourceType.EQUIPMENT;
 		}
 
 		const resource = catalog.find((r) => r.id === Number(this.selectedResourceId));
@@ -120,7 +121,7 @@ export class ApuModalComponent {
 			resourceUnit: resource.unit,
 			resourceBasePrice: resource.basePrice,
 			resourceType: typeStr,
-			squad: typeStr === 'MATERIAL' ? 0 : 1.0,
+			squad: typeStr === ResourceType.MATERIAL ? 0 : 1.0,
 			quantity: 0,
 			partialPrice: 0,
 		});

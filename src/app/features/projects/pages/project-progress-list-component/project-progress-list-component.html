@@ -201,20 +201,20 @@
                               </thead>
                               <tbody>
 
-                                @for (type of ['LABOR', 'MATERIAL', 'EQUIPMENT']; track type) {
+                                @for (type of resourceTypes; track type) {
                                   @if (getResourceGroup(report.usedResources, type).length > 0) {
                                     <tr>
                                       <td colspan="5" style="padding: 6px 10px; font-size: 11px; font-weight: 700; background: #F8FAFC;"
-                                          [ngStyle]="{'color': type === 'LABOR' ? '#0097A7' : type === 'MATERIAL' ? '#F59E0B' : '#10B981'}">
-                                        {{ type === 'LABOR' ? 'MANO DE OBRA' : type === 'MATERIAL' ? 'MATERIALES' : 'MAQUINARIA Y EQUIPOS' }}
+                                          [ngStyle]="{'color': type === ResourceType.LABOR ? '#0097A7' : type === ResourceType.MATERIAL ? '#F59E0B' : '#10B981'}">
+                                        {{ type === ResourceType.LABOR ? 'MANO DE OBRA' : type === ResourceType.MATERIAL ? 'MATERIALES' : 'MAQUINARIA Y EQUIPOS' }}
                                       </td>
                                     </tr>
                                     
                                     @for (resource of getResourceGroup(report.usedResources, type); track resource.resourceId) {
                                       <tr style="border-bottom: 1px solid #F1F5F9; background: white;">
                                         <td style="padding: 8px 10px; font-size: 13px; font-weight: 500; color: #334155;">
-                                          <span class="badge" [ngClass]="type === 'LABOR' ? 'badge-info' : type === 'MATERIAL' ? 'badge-warning' : 'badge-success'" style="font-size: 10px; margin-right: 6px;">
-                                            {{ type === 'LABOR' ? 'MO' : type === 'MATERIAL' ? 'MAT' : 'EQ' }}
+                                          <span class="badge" [ngClass]="type === ResourceType.LABOR ? 'badge-info' : type === ResourceType.MATERIAL ? 'badge-warning' : 'badge-success'" style="font-size: 10px; margin-right: 6px;">
+                                            {{ type === ResourceType.LABOR ? 'MO' : type === ResourceType.MATERIAL ? 'MAT' : 'EQ' }}
                                           </span> 
                                           {{ resource.resourceName }}
                                         </td>

@@ -108,9 +108,9 @@
                   </thead>
                   <tbody>
 
-                    @if (getResourceControls('LABOR').length > 0) {
+                    @if (getResourceControls(ResourceType.LABOR).length > 0) {
                       <tr><td colspan="5" style="padding: 6px 10px; font-size: 11px; font-weight: 700; color: #0097A7; background: #F8FAFC;">MANO DE OBRA</td></tr>
-                      @for (control of getResourceControls('LABOR'); track control.get('resourceId')?.value) {
+                      @for (control of getResourceControls(ResourceType.LABOR); track control.get('resourceId')?.value) {
                         <tr [formGroup]="$any(control)" style="border-bottom: 1px solid #F1F5F9;">
                           <td style="padding: 8px 10px; font-size: 13px; font-weight: 500; color: #334155;">
                             <span class="badge badge-info" style="font-size: 10px; margin-right: 6px;">MO</span> {{ control.get('resourceName')?.value }}
@@ -129,9 +129,9 @@
                       }
                     }
 
-                    @if (getResourceControls('MATERIAL').length > 0) {
+                    @if (getResourceControls(ResourceType.MATERIAL).length > 0) {
                       <tr><td colspan="5" style="padding: 6px 10px; font-size: 11px; font-weight: 700; color: #F59E0B; background: #F8FAFC;">MATERIALES</td></tr>
-                      @for (control of getResourceControls('MATERIAL'); track control.get('resourceId')?.value) {
+                      @for (control of getResourceControls(ResourceType.MATERIAL); track control.get('resourceId')?.value) {
                         <tr [formGroup]="$any(control)" style="border-bottom: 1px solid #F1F5F9;">
                           <td style="padding: 8px 10px; font-size: 13px; font-weight: 500; color: #334155;">
                             <span class="badge badge-warning" style="font-size: 10px; margin-right: 6px;">MAT</span> {{ control.get('resourceName')?.value }}
@@ -153,9 +153,9 @@
                       }
                     }
 
-                    @if (getResourceControls('EQUIPMENT').length > 0) {
+                    @if (getResourceControls(ResourceType.EQUIPMENT).length > 0) {
                       <tr><td colspan="5" style="padding: 6px 10px; font-size: 11px; font-weight: 700; color: #10B981; background: #F8FAFC;">MAQUINARIA Y EQUIPOS</td></tr>
-                      @for (control of getResourceControls('EQUIPMENT'); track control.get('resourceId')?.value) {
+                      @for (control of getResourceControls(ResourceType.EQUIPMENT); track control.get('resourceId')?.value) {
                         <tr [formGroup]="$any(control)" style="border-bottom: 1px solid #F1F5F9;">
                           <td style="padding: 8px 10px; font-size: 13px; font-weight: 500; color: #334155;">
                             <span class="badge badge-success" style="font-size: 10px; margin-right: 6px;">EQ</span> {{ control.get('resourceName')?.value }}

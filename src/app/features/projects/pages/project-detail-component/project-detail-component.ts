@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
@@ -6,7 +7,6 @@ import { ProjectResponseDto } from '../../../../core/models/project.model';
 import { ProjectService } from '../../../../core/services/project.service';
 import { ToastService } from '../../../../core/services/toast-service';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ProjectBudgetComponent } from '../project-budget-component/project-budget-component';
 import { ProjectGanttComponent } from '../project-gantt-component/project-gantt-component';
 import { ProjectInventoryComponent } from '../project-inventory-component/project-inventory-component';

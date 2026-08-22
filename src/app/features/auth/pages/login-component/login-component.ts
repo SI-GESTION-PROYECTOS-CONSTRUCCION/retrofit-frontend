@@ -1,139 +1,158 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Router } from '@angular/router'; 
+import {
+	AbstractControl,
+	FormBuilder,
+	FormGroup,
+	ReactiveFormsModule,
+	ValidationErrors,
+	ValidatorFn,
+	Validators,
+} from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-login-component',
-  imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './login-component.html',
-  styleUrl: './login-component.css',
+	selector: 'app-login-component',
+	imports: [CommonModule, ReactiveFormsModule],
+	templateUrl: './login-component.html',
+	styleUrl: './login-component.css',
 })
-export class LoginComponent implements OnInit { 
-  loginForm!: FormGroup;
-  changePasswordForm!: FormGroup;
-  isLoading = false;
-  errorMessage = '';
-  requirePasswordChange = false;
+export class LoginComponent implements OnInit {
+	loginForm!: FormGroup;
+	changePasswordForm!: FormGroup;
+	isLoading = false;
+	errorMessage = '';
+	requirePasswordChange = false;
 
-  showPassword = false;
-  showNewPassword = false;
-  showConfirmPassword = false;
+	showPassword = false;
+	showNewPassword = false;
+	showConfirmPassword = false;
 
-  togglePasswordVisibility(field: 'password' | 'newPassword' | 'confirmPassword') {
-    if (field === 'password') this.showPassword = !this.showPassword;
-    else if (field === 'newPassword') this.showNewPassword = !this.showNewPassword;
-    else if (field === 'confirmPassword') this.showConfirmPassword = !this.showConfirmPassword;
-  }
+	togglePasswordVisibility(field: 'password' | 'newPassword' | 'confirmPassword') {
+		if (field === 'password') this.showPassword = !this.showPassword;
+		else if (field === 'newPassword') this.showNewPassword = !this.showNewPassword;
+		else if (field === 'confirmPassword') this.showConfirmPassword = !this.showConfirmPassword;
+	}
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router
-  ) { }
+	constructor(
+		private fb: FormBuilder,
+		private authService: AuthService,
+		private router: Router,
+	) {}
 
-  ngOnInit(): void {
-    this.loginForm = this.fb.group({
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required]],
-      rememberMe: [false]
-    });
+	ngOnInit(): void {
+		this.loginForm = this.fb.group({
+			username: ['', [Validators.required]],
+			password: ['', [Validators.required]],
+			rememberMe: [false],
+		});
 
-    this.changePasswordForm = this.fb.group({
-      newPassword: ['', [Validators.required, Validators.minLength(8), Validators.pattern('^(?=.*[0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$')]],
-      confirmPassword: ['', [Validators.required]]
-    }, { validators: this.passwordMatchValidator });
+		this.changePasswordForm = this.fb.group(
+			{
+				newPassword: [
+					'',
+					[
+						Validators.required,
+						Validators.minLength(8),
+						Validators.pattern('^(?=.*[0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$'),
+					],
+				],
+				confirmPassword: ['', [Validators.required]],
+			},
+			{ validators: this.passwordMatchValidator },
+		);
 
-    if (this.authService.isAutenticated()) {
-      this.authService.loadUserProfile().subscribe(profile => {
-        if (profile.requirePasswordChange) {
-          this.requirePasswordChange = true;
-        }
-      });
-    }
-  }
+		if (this.authService.isAutenticated()) {
+			this.authService.loadUserProfile().subscribe((profile) => {
+				if (profile.requirePasswordChange) {
+					this.requirePasswordChange = true;
+				}
+			});
+		}
+	}
 
-  private passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    const newPassword = control.get('newPassword');
-    const confirmPassword = control.get('confirmPassword');
-    if (newPassword && confirmPassword && newPassword.value !== confirmPassword.value) {
-      return { passwordMismatch: true };
-    }
-    return null;
-  };
+	private passwordMatchValidator: ValidatorFn = (
+		control: AbstractControl,
+	): ValidationErrors | null => {
+		const newPassword = control.get('newPassword');
+		const confirmPassword = control.get('confirmPassword');
+		if (newPassword && confirmPassword && newPassword.value !== confirmPassword.value) {
+			return { passwordMismatch: true };
+		}
+		return null;
+	};
 
-  onSubmit(): void {
-    if (this.loginForm.valid) {
-      this.isLoading = true;
-      this.errorMessage = '';
+	onSubmit(): void {
+		if (this.loginForm.valid) {
+			this.isLoading = true;
+			this.errorMessage = '';
 
-      const credenciales = {
-        username: this.loginForm.value.username,
-        password: this.loginForm.value.password
-      };
+			const credenciales = {
+				username: this.loginForm.value.username,
+				password: this.loginForm.value.password,
+			};
 
-      
-      this.authService.login(credenciales).subscribe({
-        next: (response) => {
-          this.isLoading = false;
-          if (response?.jwt) {
-            this.authService.saveToken(response.jwt);
-            if (response.refreshToken) {
-              this.authService.saveRefreshToken(response.refreshToken);
-            }
-            
-            this.router.navigate(['/dashboard']).then((_success) => {
-              // Si el guard bloquea la navegación (redirecciona a /login), 
-              // debemos cargar el perfil localmente para mostrar el form
-              if (this.router.url === '/login') {
-                this.authService.loadUserProfile().subscribe(profile => {
-                  if (profile.requirePasswordChange) {
-                    this.requirePasswordChange = true;
-                  }
-                });
-              }
-            });
-          } else {
-            this.errorMessage = 'Respuesta inesperada del servidor.';
-          }
-        },
-        error: (errorResponse) => {
-          this.isLoading = false;
-          if (errorResponse.error?.message) {
-            this.errorMessage = errorResponse.error.message; 
-          } else {
-            this.errorMessage = 'Error de conexión con el servidor.';
-          }
-        }
-      });
-    } else {
-      this.loginForm.markAllAsTouched();
-    }
-  }
+			this.authService.login(credenciales).subscribe({
+				next: (response) => {
+					this.isLoading = false;
+					if (response?.jwt) {
+						this.authService.saveToken(response.jwt);
+						if (response.refreshToken) {
+							this.authService.saveRefreshToken(response.refreshToken);
+						}
 
-  onChangePasswordSubmit(): void {
-    if (this.changePasswordForm.valid) {
-      this.isLoading = true;
-      this.errorMessage = '';
-      const newPassword = this.changePasswordForm.value.newPassword;
-      
-      this.authService.changePassword(newPassword).subscribe({
-        next: () => {
-          this.isLoading = false;
-          this.router.navigate(['/dashboard']);
-        },
-        error: (errorResponse) => {
-          this.isLoading = false;
-          if (errorResponse.error?.message) {
-            this.errorMessage = errorResponse.error.message; 
-          } else {
-            this.errorMessage = 'Error al cambiar la contraseña.';
-          }
-        }
-      });
-    } else {
-      this.changePasswordForm.markAllAsTouched();
-    }
-  }
+						this.router.navigate(['/dashboard']).then((_success) => {
+							// Si el guard bloquea la navegación (redirecciona a /login),
+							// debemos cargar el perfil localmente para mostrar el form
+							if (this.router.url === '/login') {
+								this.authService.loadUserProfile().subscribe((profile) => {
+									if (profile.requirePasswordChange) {
+										this.requirePasswordChange = true;
+									}
+								});
+							}
+						});
+					} else {
+						this.errorMessage = 'Respuesta inesperada del servidor.';
+					}
+				},
+				error: (errorResponse) => {
+					this.isLoading = false;
+					if (errorResponse.error?.message) {
+						this.errorMessage = errorResponse.error.message;
+					} else {
+						this.errorMessage = 'Error de conexión con el servidor.';
+					}
+				},
+			});
+		} else {
+			this.loginForm.markAllAsTouched();
+		}
+	}
+
+	onChangePasswordSubmit(): void {
+		if (this.changePasswordForm.valid) {
+			this.isLoading = true;
+			this.errorMessage = '';
+			const newPassword = this.changePasswordForm.value.newPassword;
+
+			this.authService.changePassword(newPassword).subscribe({
+				next: () => {
+					this.isLoading = false;
+					this.router.navigate(['/dashboard']);
+				},
+				error: (errorResponse) => {
+					this.isLoading = false;
+					if (errorResponse.error?.message) {
+						this.errorMessage = errorResponse.error.message;
+					} else {
+						this.errorMessage = 'Error al cambiar la contraseña.';
+					}
+				},
+			});
+		} else {
+			this.changePasswordForm.markAllAsTouched();
+		}
+	}
 }

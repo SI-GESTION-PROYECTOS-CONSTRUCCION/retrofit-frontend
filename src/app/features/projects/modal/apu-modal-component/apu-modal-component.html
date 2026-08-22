@@ -91,19 +91,19 @@
             <tr>
               <td class="col-name">
                 <span class="badge"
-                  [ngClass]="{'badge-info': apu.resourceType === 'LABOR', 'badge-warning': apu.resourceType === 'MATERIAL', 'badge-success': apu.resourceType === 'EQUIPMENT'}"
+                  [ngClass]="{'badge-info': apu.resourceType === ResourceType.LABOR, 'badge-warning': apu.resourceType === ResourceType.MATERIAL, 'badge-success': apu.resourceType === ResourceType.EQUIPMENT}"
                   style="margin-right: 8px; font-size: 10px;">
-                  {{ apu.resourceType === 'LABOR' ? 'MO' : apu.resourceType === 'MATERIAL' ? 'MAT' : 'EQ' }}
+                  {{ apu.resourceType === ResourceType.LABOR ? 'MO' : apu.resourceType === ResourceType.MATERIAL ? 'MAT' : 'EQ' }}
                 </span>
                 {{ apu.resourceName }}
               </td>
               <td class="text-center">{{ apu.resourceUnit }}</td>
               <td><input type="number" [(ngModel)]="apu.squad" (input)="recalculateApu()" (keypress)="preventNegative($event)" class="cell-input text-right"
-                  [disabled]="apu.resourceType === 'MATERIAL'"
-                  [ngStyle]="{'background-color': apu.resourceType === 'MATERIAL' ? '#F3F4F6' : '#FFFFFF'}"></td>
+                  [disabled]="apu.resourceType === ResourceType.MATERIAL"
+                  [ngStyle]="{'background-color': apu.resourceType === ResourceType.MATERIAL ? '#F3F4F6' : '#FFFFFF'}"></td>
               <td><input type="number" [(ngModel)]="apu.quantity" (input)="recalculateApu()" (keypress)="preventNegative($event)"
-                  class="cell-input text-right" [disabled]="apu.resourceType !== 'MATERIAL'"
-                  [ngStyle]="{'background-color': apu.resourceType !== 'MATERIAL' ? '#F3F4F6' : '#FFFFFF'}"></td>
+                  class="cell-input text-right" [disabled]="apu.resourceType !== ResourceType.MATERIAL"
+                  [ngStyle]="{'background-color': apu.resourceType !== ResourceType.MATERIAL ? '#F3F4F6' : '#FFFFFF'}"></td>
               <td class="text-right text-muted">S/ {{ apu.resourceBasePrice | number:'1.2-2' }}</td>
               <td class="text-right" style="font-weight: 600;">S/ {{ apu.partialPrice | number:'1.2-2' }}</td>
               <td class="text-center"><button class="btn-icon text-danger" (click)="removeApuItem(i)"><i

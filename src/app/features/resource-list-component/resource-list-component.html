@@ -93,13 +93,11 @@
           @for (resource of resources; track resource.resourceId) {
             <tr>
               <td>
-                <span class="badge" 
-                      [ngClass]="{
-                        'badge-info': resource.resourceType === 'LABOR',
-                        'badge-warning': resource.resourceType === 'MATERIAL',
-                        'badge-success': resource.resourceType === 'EQUIPMENT'
-                      }">
-                  {{ resource.resourceType === 'LABOR' ? 'MO' : resource.resourceType === 'MATERIAL' ? 'MAT' : 'EQ' }}
+                <span class="badge" [ngClass]="{'badge-info': resource.resourceType === ResourceType.LABOR,
+                        'badge-warning': resource.resourceType === ResourceType.MATERIAL,
+                        'badge-success': resource.resourceType === ResourceType.EQUIPMENT}"
+                  style="margin-right: 12px; font-size: 11px;">
+                  {{ resource.resourceType === ResourceType.LABOR ? 'MO' : resource.resourceType === ResourceType.MATERIAL ? 'MAT' : 'EQ' }}
                 </span>
               </td>
               <td class="col-name">{{ resource.resourceName }}</td>

@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { StorageKeys } from '../../../../core/constants/storage.constants';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ResponsiveService } from '../../../../core/services/responsive.service';
 import { Skeleton } from '../../skeleton/skeleton';
 import { Footer } from '../footer/footer';
 import { Header } from '../header/header';
@@ -15,8 +17,9 @@ import { Sidebar } from '../sidebar/sidebar';
 })
 export class MainLayout implements OnInit {
 	isSidebarOpen = false;
-	isSidebarCollapsed = localStorage.getItem('retrofit_sidebar_compact') === 'true';
+	isSidebarCollapsed = localStorage.getItem(StorageKeys.SIDEBAR_COMPACT) === 'true';
 	private authService = inject(AuthService);
+	private responsiveService = inject(ResponsiveService);
 	public isReady = false;
 
 	ngOnInit() {
@@ -31,12 +34,12 @@ export class MainLayout implements OnInit {
 	}
 
 	toggleSidebar() {
-		if (window.matchMedia('(max-width: 768px)').matches) {
+		if (this.responsiveService.isMobile) {
 			this.isSidebarOpen = !this.isSidebarOpen;
 			return;
 		}
 
 		this.isSidebarCollapsed = !this.isSidebarCollapsed;
-		localStorage.setItem('retrofit_sidebar_compact', String(this.isSidebarCollapsed));
+		localStorage.setItem(StorageKeys.SIDEBAR_COMPACT, String(this.isSidebarCollapsed));
 	}
 }

@@ -6,179 +6,193 @@ import { HasPermissionDirective } from '../../core/directives/has-permission.dir
 import { UserDto } from '../../core/models/user.model';
 import { ToastService } from '../../core/services/toast-service';
 import { UserService } from '../../core/services/user.service';
-import { ConfirmModal } from "../../shared/components/confirm-modal/confirm-modal";
+import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-modal';
 import { Skeleton } from '../../shared/components/skeleton/skeleton';
-import { UserFormModalComponent } from "./user-form-modal/user-form-modal";
+import { UserFormModalComponent } from './user-form-modal/user-form-modal';
 
 @Component({
-  selector: 'app-gestion-usuarios',
-  imports: [CommonModule, FormsModule, ConfirmModal, UserFormModalComponent, Skeleton, HasPermissionDirective],
-  templateUrl: './gestion-usuarios.html',
-  styleUrl: './gestion-usuarios.css',
+	selector: 'app-gestion-usuarios',
+	imports: [
+		CommonModule,
+		FormsModule,
+		ConfirmModal,
+		UserFormModalComponent,
+		Skeleton,
+		HasPermissionDirective,
+	],
+	templateUrl: './gestion-usuarios.html',
+	styleUrl: './gestion-usuarios.css',
 })
 export class GestionUsuariosComponent implements OnInit {
-  private userService = inject(UserService);
-  private toastService = inject(ToastService);
+	private userService = inject(UserService);
+	private toastService = inject(ToastService);
 
-  // Datos
-  users: UserDto[] = [];
-  
-  // Paginación y Filtros
-  currentPage = 0;
-  pageSize = 5;
-  totalElements = 0;
-  totalPages = 0;
-  searchTerm = '';
-  selectedRole = 'ALL';
-  activeFilter = '';
+	// Datos
+	users: UserDto[] = [];
 
-  // UI States
-  isLoading = false;
-  activeMenuId: number | null = null;
-  isModalOpen = false;
-  modalMode: 'create' | 'edit' | 'view' = 'create';
-  selectedUser: UserDto | null = null;
+	// Paginación y Filtros
+	currentPage = 0;
+	pageSize = 5;
+	totalElements = 0;
+	totalPages = 0;
+	searchTerm = '';
+	selectedRole = 'ALL';
+	activeFilter = '';
 
-  // Variables para el modal de eliminación
-  isDeleteModalOpen = false;
-  userToDelete: UserDto | null = null;
-  isDeleting = false;
+	// UI States
+	isLoading = false;
+	activeMenuId: number | null = null;
+	isModalOpen = false;
+	modalMode: 'create' | 'edit' | 'view' = 'create';
+	selectedUser: UserDto | null = null;
 
-  // Variables para el modal de reactivación
-  isReactivateModalOpen = false;
-  userToReactivate: UserDto | null = null;
-  isReactivating = false;
+	// Variables para el modal de eliminación
+	isDeleteModalOpen = false;
+	userToDelete: UserDto | null = null;
+	isDeleting = false;
 
-  ngOnInit() {
-    this.loadUsers();
-  }
+	// Variables para el modal de reactivación
+	isReactivateModalOpen = false;
+	userToReactivate: UserDto | null = null;
+	isReactivating = false;
 
-  loadUsers() {
-    this.isLoading = true;
-    this.userService.getUsers(this.currentPage, this.pageSize, this.searchTerm, this.selectedRole, this.activeFilter)
-      .subscribe({
-        next: (response) => {
-          this.users = response.content;
-          this.totalElements = response.totalElements;
-          this.totalPages = response.totalPages;
-          this.isLoading = false;
-        },
-        error: (_err: HttpErrorResponse) => {
-          this.toastService.show('Error al cargar usuarios', 'error');
-          this.isLoading = false;
-        }
-      });
-  }
+	ngOnInit() {
+		this.loadUsers();
+	}
 
-  onSearchChange() {
-    this.currentPage = 0;
-    this.loadUsers();
-  }
+	loadUsers() {
+		this.isLoading = true;
+		this.userService
+			.getUsers(
+				this.currentPage,
+				this.pageSize,
+				this.searchTerm,
+				this.selectedRole,
+				this.activeFilter,
+			)
+			.subscribe({
+				next: (response) => {
+					this.users = response.content;
+					this.totalElements = response.totalElements;
+					this.totalPages = response.totalPages;
+					this.isLoading = false;
+				},
+				error: (_err: HttpErrorResponse) => {
+					this.toastService.show('Error al cargar usuarios', 'error');
+					this.isLoading = false;
+				},
+			});
+	}
 
-  onFilterChange() {
-    this.currentPage = 0;
-    this.loadUsers();
-  }
+	onSearchChange() {
+		this.currentPage = 0;
+		this.loadUsers();
+	}
 
-  // Métodos de navegación
-  nextPage() {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
-      this.loadUsers();
-    }
-  }
+	onFilterChange() {
+		this.currentPage = 0;
+		this.loadUsers();
+	}
 
-  previousPage() {
-    if (this.currentPage > 0) {
-      this.currentPage--;
-      this.loadUsers();
-    }
-  }
+	// Métodos de navegación
+	nextPage() {
+		if (this.currentPage < this.totalPages - 1) {
+			this.currentPage++;
+			this.loadUsers();
+		}
+	}
 
-  toggleMenu(userId: number, event: Event) {
-    event.stopPropagation();
-    this.activeMenuId = this.activeMenuId === userId ? null : userId;
-  }
+	previousPage() {
+		if (this.currentPage > 0) {
+			this.currentPage--;
+			this.loadUsers();
+		}
+	}
 
-  getInitials(name: string, lastName: string): string {
-    const first = name ? name.charAt(0) : '?';
-    const last = lastName ? lastName.charAt(0) : '?';
-    return (first + last).toUpperCase();
-  }
+	toggleMenu(userId: number, event: Event) {
+		event.stopPropagation();
+		this.activeMenuId = this.activeMenuId === userId ? null : userId;
+	}
 
-  openModal(mode: 'create' | 'edit' | 'view', user: UserDto | null = null) {
-    this.isModalOpen = false;
-    this.selectedUser = null; 
+	getInitials(name: string, lastName: string): string {
+		const first = name ? name.charAt(0) : '?';
+		const last = lastName ? lastName.charAt(0) : '?';
+		return (first + last).toUpperCase();
+	}
 
-    setTimeout(() => {
-      this.modalMode = mode;
-      this.selectedUser = user ? { ...user } : null;
-      this.isModalOpen = true;
-    }, 10);
-  }
+	openModal(mode: 'create' | 'edit' | 'view', user: UserDto | null = null) {
+		this.isModalOpen = false;
+		this.selectedUser = null;
 
-  closeModal() {
-    this.isModalOpen = false;
-    this.selectedUser = null;
-  }
+		setTimeout(() => {
+			this.modalMode = mode;
+			this.selectedUser = user ? { ...user } : null;
+			this.isModalOpen = true;
+		}, 10);
+	}
 
-  // Lógica para la eliminación (Confirmación)
-  openDeleteConfirm(user: UserDto) {
-    this.userToDelete = user;
-    this.isDeleteModalOpen = true;
-  }
+	closeModal() {
+		this.isModalOpen = false;
+		this.selectedUser = null;
+	}
 
-  closeDeleteModal() {
-    this.isDeleteModalOpen = false;
-    this.userToDelete = null;
-  }
+	// Lógica para la eliminación (Confirmación)
+	openDeleteConfirm(user: UserDto) {
+		this.userToDelete = user;
+		this.isDeleteModalOpen = true;
+	}
 
-  confirmDelete() {
-    if (!this.userToDelete) return;
-    
-    this.isDeleting = true;
-    this.userService.deleteUser(this.userToDelete.id).subscribe({
-      next: () => {
-        this.isDeleting = false;
-        this.closeDeleteModal();
-        this.loadUsers();
-      },
-      error: (_err: HttpErrorResponse) => {
-        this.toastService.show('Error al eliminar el usuario', 'error');
-        this.isDeleting = false;
-      }
-    });
-  }
+	closeDeleteModal() {
+		this.isDeleteModalOpen = false;
+		this.userToDelete = null;
+	}
 
-  // Lógica para la reactivación
-  openReactivateConfirm(user: UserDto) {
-    this.userToReactivate = user;
-    this.isReactivateModalOpen = true;
-  }
+	confirmDelete() {
+		if (!this.userToDelete) return;
 
-  closeReactivateModal() {
-    this.isReactivateModalOpen = false;
-    this.userToReactivate = null;
-  }
+		this.isDeleting = true;
+		this.userService.deleteUser(this.userToDelete.id).subscribe({
+			next: () => {
+				this.isDeleting = false;
+				this.closeDeleteModal();
+				this.loadUsers();
+			},
+			error: (_err: HttpErrorResponse) => {
+				this.toastService.show('Error al eliminar el usuario', 'error');
+				this.isDeleting = false;
+			},
+		});
+	}
 
-  confirmReactivate() {
-    if (!this.userToReactivate) return;
-    
-    this.isReactivating = true;
-    this.userService.reactivateUser(this.userToReactivate.id).subscribe({
-      next: () => {
-        this.isReactivating = false;
-        this.closeReactivateModal();
-        this.loadUsers();
-      },
-      error: (_err: HttpErrorResponse) => {
-        this.toastService.show('Error al reactivar el usuario', 'error');
-        this.isReactivating = false;
-      }
-    });
-  }
+	// Lógica para la reactivación
+	openReactivateConfirm(user: UserDto) {
+		this.userToReactivate = user;
+		this.isReactivateModalOpen = true;
+	}
 
-  onUserSaved() {
-    this.loadUsers();
-  }
+	closeReactivateModal() {
+		this.isReactivateModalOpen = false;
+		this.userToReactivate = null;
+	}
+
+	confirmReactivate() {
+		if (!this.userToReactivate) return;
+
+		this.isReactivating = true;
+		this.userService.reactivateUser(this.userToReactivate.id).subscribe({
+			next: () => {
+				this.isReactivating = false;
+				this.closeReactivateModal();
+				this.loadUsers();
+			},
+			error: (_err: HttpErrorResponse) => {
+				this.toastService.show('Error al reactivar el usuario', 'error');
+				this.isReactivating = false;
+			},
+		});
+	}
+
+	onUserSaved() {
+		this.loadUsers();
+	}
 }

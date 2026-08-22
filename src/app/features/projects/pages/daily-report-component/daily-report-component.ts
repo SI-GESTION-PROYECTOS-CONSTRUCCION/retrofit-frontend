@@ -10,6 +10,7 @@ import {
 	ProjectItemDto,
 	ProjectResponseDto,
 } from '../../../../core/models/project.model';
+import { ResourceType } from '../../../../core/models/resource.model';
 import { InventoryService } from '../../../../core/services/inventory.service';
 import { ProgressReportService } from '../../../../core/services/progress-report.service';
 import { ProjectService } from '../../../../core/services/project.service';
@@ -32,6 +33,7 @@ import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 })
 export class DailyReportComponent implements OnInit {
 	projectId!: number;
+	public ResourceType = ResourceType;
 	private toastService = inject(ToastService);
 	private fb = inject(FormBuilder);
 	private reportService = inject(ProgressReportService);
@@ -104,7 +106,7 @@ export class DailyReportComponent implements OnInit {
 		if (!this.selectedItemInfo?.apuDetails) return;
 
 		this.selectedItemInfo.apuDetails.forEach((apu) => {
-			const isMaterial = apu.resourceType === 'MATERIAL';
+			const isMaterial = apu.resourceType === ResourceType.MATERIAL;
 			const rowGroup = this.fb.group({
 				resourceId: [apu.resourceId],
 				resourceName: [apu.resourceName],
@@ -145,7 +147,7 @@ export class DailyReportComponent implements OnInit {
 
 	updateMaterialQuantities(date: string) {
 		this.usedResourcesFormArray.controls.forEach((rowGroup) => {
-			if (rowGroup.get('resourceType')?.value === 'MATERIAL') {
+			if (rowGroup.get('resourceType')?.value === ResourceType.MATERIAL) {
 				this.inventoryService
 					.getConsumedQuantity(
 						Number(this.selectedItemInfo?.id),
@@ -172,7 +174,7 @@ export class DailyReportComponent implements OnInit {
 			row.get('theoreticalQuantity')?.setValue(theoretical);
 
 			// Solo copiamos el teórico al real si NO es material (los materiales vienen de almacén)
-			if (row.get('resourceType')?.value !== 'MATERIAL') {
+			if (row.get('resourceType')?.value !== ResourceType.MATERIAL) {
 				row.get('realQuantity')?.setValue(theoretical);
 			}
 		});
@@ -216,7 +218,8 @@ export class DailyReportComponent implements OnInit {
 				const file = files[i];
 				this.selectedFiles.push(file);
 				const reader = new FileReader();
-				reader.onload = (e: ProgressEvent<FileReader>) => this.previewUrls.push(e.target?.result as string);
+				reader.onload = (e: ProgressEvent<FileReader>) =>
+					this.previewUrls.push(e.target?.result as string);
 				reader.readAsDataURL(file);
 			}
 		}

@@ -9,232 +9,236 @@ import { ConfirmModal } from '../../../../shared/components/confirm-modal/confir
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 
 @Component({
-  selector: 'app-role-list-component',
-  imports: [CommonModule, ReactiveFormsModule, ConfirmModal, Skeleton],
-  templateUrl: './role-list-component.html',
-  styleUrl: './role-list-component.css',
+	selector: 'app-role-list-component',
+	imports: [CommonModule, ReactiveFormsModule, ConfirmModal, Skeleton],
+	templateUrl: './role-list-component.html',
+	styleUrl: './role-list-component.css',
 })
 export class RoleListComponent implements OnInit {
-  private roleService = inject(RoleService);
-  private fb = inject(FormBuilder);
-  private toastService = inject(ToastService);
+	private roleService = inject(RoleService);
+	private fb = inject(FormBuilder);
+	private toastService = inject(ToastService);
 
-  roles: RoleResponseDto[] = [];
-  isLoading = false;
+	roles: RoleResponseDto[] = [];
+	isLoading = false;
 
-  // --- LÓGICA DE LA MATRIZ DE PERMISOS ---
-  allPermissions: PermissionDto[] = [];
-  permissionMap: { [key: string]: number } = {}; // Ej: { 'PROJECT_CREATE': 1, 'PROJECT_READ': 2 }
-  selectedPermissionIds = new Set<number>(); 
-  modules: { prefix: string, label: string }[] = [];
-  actions: string[] = [];
-  
-  labelMap: Record<string, string> = {
-    'PROJECT': 'Proyectos y APUs',
-    'RESOURCE': 'Catálogo de Recursos',
-    'REPORT': 'Reportes de Avance',
-    'WORKER': 'Trabajadores y Asignaciones',
-    'USER': 'Usuarios del Sistema',
-    'SECURITY': 'Roles y Seguridad',
-    'INVENTORY': 'Inventario (Almacén)',
-    'AUDIT': 'Auditoría'
-  };
+	// --- LÓGICA DE LA MATRIZ DE PERMISOS ---
+	allPermissions: PermissionDto[] = [];
+	permissionMap: { [key: string]: number } = {}; // Ej: { 'PROJECT_CREATE': 1, 'PROJECT_READ': 2 }
+	selectedPermissionIds = new Set<number>();
+	modules: { prefix: string; label: string }[] = [];
+	actions: string[] = [];
 
-  // --- MODALES ---
-  isModalOpen = false;
-  roleForm!: FormGroup;
-  editingId: number | null = null;
+	labelMap: Record<string, string> = {
+		PROJECT: 'Proyectos y APUs',
+		RESOURCE: 'Catálogo de Recursos',
+		REPORT: 'Reportes de Avance',
+		WORKER: 'Trabajadores y Asignaciones',
+		USER: 'Usuarios del Sistema',
+		SECURITY: 'Roles y Seguridad',
+		INVENTORY: 'Inventario (Almacén)',
+		AUDIT: 'Auditoría',
+	};
 
-  isDeleteModalOpen = false;
-  roleToDelete: RoleResponseDto | null = null;
-  isDeleting = false;
+	// --- MODALES ---
+	isModalOpen = false;
+	roleForm!: FormGroup;
+	editingId: number | null = null;
 
-  ngOnInit() {
-    this.initForm();
-    this.loadPermissions(); // Cargamos el diccionario primero
-    this.loadRoles();
-  }
+	isDeleteModalOpen = false;
+	roleToDelete: RoleResponseDto | null = null;
+	isDeleting = false;
 
-  initForm() {
-    this.roleForm = this.fb.group({
-      name: ['', Validators.required],
-      description: ['', Validators.required]
-    });
-  }
+	ngOnInit() {
+		this.initForm();
+		this.loadPermissions(); // Cargamos el diccionario primero
+		this.loadRoles();
+	}
 
-  loadPermissions() {
-    this.roleService.getAllPermissions().subscribe({
-      next: (res: PermissionDto[]) => {
-        this.allPermissions = res;
-        this.permissionMap = {};
-        res.forEach((p) => {
-          this.permissionMap[p.name] = p.id;
-        });
-        this.buildDynamicMatrix(res);
-      },
-      error: (_err: HttpErrorResponse) => {
-        this.toastService.show('Error al cargar diccionario de permisos', 'error');
-      }
-    });
-  }
+	initForm() {
+		this.roleForm = this.fb.group({
+			name: ['', Validators.required],
+			description: ['', Validators.required],
+		});
+	}
 
-  buildDynamicMatrix(perms: PermissionDto[]) {
-    const prefixSet = new Set<string>();
-    const actionSet = new Set<string>();
+	loadPermissions() {
+		this.roleService.getAllPermissions().subscribe({
+			next: (res: PermissionDto[]) => {
+				this.allPermissions = res;
+				this.permissionMap = {};
+				res.forEach((p) => {
+					this.permissionMap[p.name] = p.id;
+				});
+				this.buildDynamicMatrix(res);
+			},
+			error: (_err: HttpErrorResponse) => {
+				this.toastService.show('Error al cargar diccionario de permisos', 'error');
+			},
+		});
+	}
 
-    perms.forEach(p => {
-      const parts = p.name.split('_');
-      if (parts.length >= 2) {
-        const action = parts.pop();
-        const prefix = parts.join('_');
-        if (prefix) prefixSet.add(prefix);
-        if (action) actionSet.add(action);
-      } else {
-        prefixSet.add(p.name);
-        actionSet.add('ACCESS');
-      }
-    });
+	buildDynamicMatrix(perms: PermissionDto[]) {
+		const prefixSet = new Set<string>();
+		const actionSet = new Set<string>();
 
-    const standardActions = ['CREATE', 'READ', 'UPDATE', 'DELETE', 'EXPORT'];
-    this.actions = Array.from(actionSet).sort((a, b) => {
-      const idxA = standardActions.indexOf(a);
-      const idxB = standardActions.indexOf(b);
-      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
-      if (idxA !== -1) return -1;
-      if (idxB !== -1) return 1;
-      return a.localeCompare(b);
-    });
+		perms.forEach((p) => {
+			const parts = p.name.split('_');
+			if (parts.length >= 2) {
+				const action = parts.pop();
+				const prefix = parts.join('_');
+				if (prefix) prefixSet.add(prefix);
+				if (action) actionSet.add(action);
+			} else {
+				prefixSet.add(p.name);
+				actionSet.add('ACCESS');
+			}
+		});
 
-    this.modules = Array.from(prefixSet).map(prefix => ({
-      prefix,
-      label: this.labelMap[prefix] || prefix
-    }));
-  }
+		const standardActions = ['CREATE', 'READ', 'UPDATE', 'DELETE', 'EXPORT'];
+		this.actions = Array.from(actionSet).sort((a, b) => {
+			const idxA = standardActions.indexOf(a);
+			const idxB = standardActions.indexOf(b);
+			if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+			if (idxA !== -1) return -1;
+			if (idxB !== -1) return 1;
+			return a.localeCompare(b);
+		});
 
-  isPermissionApplicable(prefix: string, action: string): boolean {
-    return this.permissionMap[`${prefix}_${action}`] !== undefined;
-  }
+		this.modules = Array.from(prefixSet).map((prefix) => ({
+			prefix,
+			label: this.labelMap[prefix] || prefix,
+		}));
+	}
 
-  loadRoles() {
-    this.isLoading = true;
-    this.roleService.getAllRoles().subscribe({
-      next: (data) => {
-        this.roles = data;
-        this.isLoading = false;
-      },
-      error: (_err: HttpErrorResponse) => {
-        this.toastService.show('Error al cargar los roles', 'error');
-        this.isLoading = false;
-      }
-    });
-  }
+	isPermissionApplicable(prefix: string, action: string): boolean {
+		return this.permissionMap[`${prefix}_${action}`] !== undefined;
+	}
 
-  // --- FUNCIONES DEL CHECKBOX (LA MAGIA) ---
-  
-  // Verifica si un permiso (ej. 'PROJECT_CREATE') está en los seleccionados
-  hasPermission(prefix: string, action: string): boolean {
-    const permName = `${prefix}_${action}`;
-    const permId = this.permissionMap[permName];
-    return permId ? this.selectedPermissionIds.has(permId) : false;
-  }
+	loadRoles() {
+		this.isLoading = true;
+		this.roleService.getAllRoles().subscribe({
+			next: (data) => {
+				this.roles = data;
+				this.isLoading = false;
+			},
+			error: (_err: HttpErrorResponse) => {
+				this.toastService.show('Error al cargar los roles', 'error');
+				this.isLoading = false;
+			},
+		});
+	}
 
-  // Se activa al hacer clic en un checkbox
-  togglePermission(prefix: string, action: string) {
-    const permName = `${prefix}_${action}`;
-    const permId = this.permissionMap[permName];
-    
-    if (!permId) return; // Si por alguna razón el permiso no existe en la BD
+	// --- FUNCIONES DEL CHECKBOX (LA MAGIA) ---
 
-    if (this.selectedPermissionIds.has(permId)) {
-      this.selectedPermissionIds.delete(permId);
-    } else {
-      this.selectedPermissionIds.add(permId);
-    }
-  }
+	// Verifica si un permiso (ej. 'PROJECT_CREATE') está en los seleccionados
+	hasPermission(prefix: string, action: string): boolean {
+		const permName = `${prefix}_${action}`;
+		const permId = this.permissionMap[permName];
+		return permId ? this.selectedPermissionIds.has(permId) : false;
+	}
 
+	// Se activa al hacer clic en un checkbox
+	togglePermission(prefix: string, action: string) {
+		const permName = `${prefix}_${action}`;
+		const permId = this.permissionMap[permName];
 
-  // --- MODAL CREAR / EDITAR ---
-  openModal(role?: RoleResponseDto) {
-    this.isModalOpen = true;
-    this.selectedPermissionIds.clear(); // Limpiamos la matriz
+		if (!permId) return; // Si por alguna razón el permiso no existe en la BD
 
-    if (role) {
-      this.editingId = role.id;
-      this.roleForm.patchValue({
-        name: role.name,
-        description: role.description
-      });
-      // Marcamos los checkboxes que ya tiene este rol
-      role.permissions.forEach((p: PermissionDto) => { this.selectedPermissionIds.add(p.id); });
-    } else {
-      this.editingId = null;
-      this.roleForm.reset();
-    }
-  }
+		if (this.selectedPermissionIds.has(permId)) {
+			this.selectedPermissionIds.delete(permId);
+		} else {
+			this.selectedPermissionIds.add(permId);
+		}
+	}
 
-  closeModal() {
-    this.isModalOpen = false;
-    this.editingId = null;
-    this.roleForm.reset();
-  }
+	// --- MODAL CREAR / EDITAR ---
+	openModal(role?: RoleResponseDto) {
+		this.isModalOpen = true;
+		this.selectedPermissionIds.clear(); // Limpiamos la matriz
 
-  saveRole() {
-    if (this.roleForm.invalid) return;
-    
-    if (this.selectedPermissionIds.size === 0) {
-      this.toastService.show('Debe seleccionar al menos un permiso en la matriz de accesos.', 'error');
-      return;
-    }
+		if (role) {
+			this.editingId = role.id;
+			this.roleForm.patchValue({
+				name: role.name,
+				description: role.description,
+			});
+			// Marcamos los checkboxes que ya tiene este rol
+			role.permissions.forEach((p: PermissionDto) => {
+				this.selectedPermissionIds.add(p.id);
+			});
+		} else {
+			this.editingId = null;
+			this.roleForm.reset();
+		}
+	}
 
-    // Empaquetamos la data como la espera el backend
-    const dataToSend: RoleRequestDto = {
-      name: this.roleForm.value.name.toUpperCase(),
-      description: this.roleForm.value.description,
-      permissionIds: Array.from(this.selectedPermissionIds) // Convertimos el Set a Array
-    };
+	closeModal() {
+		this.isModalOpen = false;
+		this.editingId = null;
+		this.roleForm.reset();
+	}
 
-    const request$ = this.editingId
-      ? this.roleService.updateRole(this.editingId, dataToSend)
-      : this.roleService.createRole(dataToSend);
+	saveRole() {
+		if (this.roleForm.invalid) return;
 
-    request$.subscribe({
-      next: () => {
-        this.toastService.show('Rol guardado correctamente', 'success');
-        this.closeModal();
-        this.loadRoles();
-      },
-      error: (err: HttpErrorResponse) => {
-        this.toastService.showApiError(err, 'Error al guardar');
-      }
-    });
-  }
+		if (this.selectedPermissionIds.size === 0) {
+			this.toastService.show(
+				'Debe seleccionar al menos un permiso en la matriz de accesos.',
+				'error',
+			);
+			return;
+		}
 
-  // --- ELIMINAR ---
-  openDeleteModal(role: RoleResponseDto) {
-    this.roleToDelete = role;
-    this.isDeleteModalOpen = true;
-  }
+		// Empaquetamos la data como la espera el backend
+		const dataToSend: RoleRequestDto = {
+			name: this.roleForm.value.name.toUpperCase(),
+			description: this.roleForm.value.description,
+			permissionIds: Array.from(this.selectedPermissionIds), // Convertimos el Set a Array
+		};
 
-  closeDeleteModal() {
-    this.isDeleteModalOpen = false;
-    this.roleToDelete = null;
-    this.isDeleting = false;
-  }
+		const request$ = this.editingId
+			? this.roleService.updateRole(this.editingId, dataToSend)
+			: this.roleService.createRole(dataToSend);
 
-  confirmDelete() {
-    if (!this.roleToDelete) return;
-    this.isDeleting = true;
+		request$.subscribe({
+			next: () => {
+				this.toastService.show('Rol guardado correctamente', 'success');
+				this.closeModal();
+				this.loadRoles();
+			},
+			error: (err: HttpErrorResponse) => {
+				this.toastService.showApiError(err, 'Error al guardar');
+			},
+		});
+	}
 
-    this.roleService.deleteRole(this.roleToDelete.id).subscribe({
-      next: () => {
-        this.toastService.show('Rol eliminado correctamente', 'success');
-        this.closeDeleteModal();
-        this.loadRoles();
-      },
-      error: (err: HttpErrorResponse) => {
-        this.toastService.showApiError(err, 'Error al eliminar');
-        this.closeDeleteModal();
-      }
-    });
-  }
+	// --- ELIMINAR ---
+	openDeleteModal(role: RoleResponseDto) {
+		this.roleToDelete = role;
+		this.isDeleteModalOpen = true;
+	}
+
+	closeDeleteModal() {
+		this.isDeleteModalOpen = false;
+		this.roleToDelete = null;
+		this.isDeleting = false;
+	}
+
+	confirmDelete() {
+		if (!this.roleToDelete) return;
+		this.isDeleting = true;
+
+		this.roleService.deleteRole(this.roleToDelete.id).subscribe({
+			next: () => {
+				this.toastService.show('Rol eliminado correctamente', 'success');
+				this.closeDeleteModal();
+				this.loadRoles();
+			},
+			error: (err: HttpErrorResponse) => {
+				this.toastService.showApiError(err, 'Error al eliminar');
+				this.closeDeleteModal();
+			},
+		});
+	}
 }

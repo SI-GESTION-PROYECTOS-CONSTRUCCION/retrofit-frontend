@@ -24,6 +24,7 @@ import {
 	ProjectItemResourceResponseDto,
 	ProjectResponseDto,
 } from '../../../../core/models/project.model';
+import { ResourceType } from '../../../../core/models/resource.model';
 import { ProjectService } from '../../../../core/services/project.service';
 import { ProjectItemService } from '../../../../core/services/project-item.service';
 import { ToastService } from '../../../../core/services/toast-service';
@@ -46,6 +47,9 @@ import { ApuModalComponent } from '../../modal/apu-modal-component/apu-modal-com
 })
 export class ProjectBudgetComponent implements OnInit {
 	@Input({ required: true }) projectId!: number;
+	@Input() projectInfo: ProjectResponseDto | null = null;
+
+	public ResourceType = ResourceType;
 
 	private fb = inject(FormBuilder);
 	private itemService = inject(ProjectItemService);
@@ -542,7 +546,10 @@ export class ProjectBudgetComponent implements OnInit {
 		this.toastService.show('Vista de presupuesto actualizada.', 'success');
 	}
 
-	getApuGroup(apuDetails: ProjectItemResourceResponseDto[], type: string): ProjectItemResourceResponseDto[] {
+	getApuGroup(
+		apuDetails: ProjectItemResourceResponseDto[],
+		type: string,
+	): ProjectItemResourceResponseDto[] {
 		if (!apuDetails) return [];
 		return apuDetails.filter((apu) => apu.resourceType === type);
 	}
@@ -554,7 +561,10 @@ export class ProjectBudgetComponent implements OnInit {
 
 	get directCost(): number {
 		const rows = this.itemsFormArray.getRawValue();
-		const validRows = rows.filter((item: { description?: string; level?: number }) => item.description?.trim() !== '' || Number(item.level) > 0);
+		const validRows = rows.filter(
+			(item: { description?: string; level?: number }) =>
+				item.description?.trim() !== '' || Number(item.level) > 0,
+		);
 
 		let minLevel = 0;
 		if (validRows.length > 0) {

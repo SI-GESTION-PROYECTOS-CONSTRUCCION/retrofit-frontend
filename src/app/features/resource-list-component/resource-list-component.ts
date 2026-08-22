@@ -12,7 +12,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { HasPermissionDirective } from '../../core/directives/has-permission.directive';
 import { ProjectItemResourceResponseDto } from '../../core/models/project.model';
-import { ResourceRequestDto } from '../../core/models/resource.model';
+import { ResourceRequestDto, ResourceType } from '../../core/models/resource.model';
 import { ResourceService } from '../../core/services/resource.service';
 import { ToastService } from '../../core/services/toast-service';
 import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-modal';
@@ -44,24 +44,25 @@ export class ResourceListComponent implements OnInit {
 	private catalogService = inject(ResourceService);
 	private fb = inject(FormBuilder);
 	private toastService = inject(ToastService);
+	public ResourceType = ResourceType;
 
 	tabs: ResourceTab[] = [
 		{
-			type: 'MATERIAL',
+			type: ResourceType.MATERIAL,
 			apiPath: 'materials',
 			label: 'Materiales',
 			icon: 'fa-box',
 			defaultUnit: 'und',
 		},
 		{
-			type: 'LABOR',
+			type: ResourceType.LABOR,
 			apiPath: 'labor-categories',
 			label: 'Mano de Obra',
 			icon: 'fa-hard-hat',
 			defaultUnit: 'hh',
 		},
 		{
-			type: 'EQUIPMENT',
+			type: ResourceType.EQUIPMENT,
 			apiPath: 'equipment',
 			label: 'Maquinaria y Equipos',
 			icon: 'fa-truck-pickup',

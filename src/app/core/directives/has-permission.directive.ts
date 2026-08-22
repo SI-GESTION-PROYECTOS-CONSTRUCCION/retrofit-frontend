@@ -1,4 +1,5 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, inject } from '@angular/core';
+import { Directive, Input, inject, TemplateRef, ViewContainerRef } from '@angular/core';
+import { AppPermission } from '../constants/permissions.constants';
 import { AuthService } from '../services/auth.service';
 
 @Directive({
@@ -9,7 +10,7 @@ export class HasPermissionDirective {
 	private templateRef = inject(TemplateRef<unknown>);
 	private viewContainer = inject(ViewContainerRef);
 
-	@Input() set appHasPermission(permission: string) {
+	@Input() set appHasPermission(permission: keyof typeof AppPermission) {
 		if (this.authService.hasPermission(permission)) {
 			this.viewContainer.createEmbeddedView(this.templateRef);
 		} else {

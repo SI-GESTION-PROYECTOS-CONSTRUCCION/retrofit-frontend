@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
 	ChangeDetectionStrategy,
 	ChangeDetectorRef,
@@ -10,7 +11,6 @@ import {
 import { gantt } from 'dhtmlx-gantt';
 import { ProjectItemService } from '../../../../core/services/project-item.service';
 import { ToastService } from '../../../../core/services/toast-service';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
 	selector: 'app-project-gantt-component',
@@ -29,7 +29,7 @@ export class ProjectGanttComponent {
 	constructor(
 		private projectService: ProjectItemService,
 		private cdr: ChangeDetectorRef,
-		private toastService: ToastService
+		private toastService: ToastService,
 	) {}
 
 	ngOnInit(): void {}
@@ -62,17 +62,27 @@ export class ProjectGanttComponent {
 		});
 
 		// EVENTO 2: Cuando el usuario conecta una flecha (crea dependencia)
-		gantt.attachEvent('onAfterLinkAdd', (_id: string | number, link: { target: string | number }) => {
-			// link.source es el padre, link.target es el hijo
-			this.saveTaskChanges(link.target);
-		});
+		gantt.attachEvent(
+			'onAfterLinkAdd',
+			(_id: string | number, link: { target: string | number }) => {
+				// link.source es el padre, link.target es el hijo
+				this.saveTaskChanges(link.target);
+			},
+		);
 
 		// EVENTO 3: Cuando el usuario borra una flecha
-		gantt.attachEvent('onAfterLinkDelete', (_id: string | number, link: { target: string | number }) => {
-			this.saveTaskChanges(link.target);
-		});
+		gantt.attachEvent(
+			'onAfterLinkDelete',
+			(_id: string | number, link: { target: string | number }) => {
+				this.saveTaskChanges(link.target);
+			},
+		);
 
-		gantt.templates.task_class = (_start: Date, _end: Date, task: { type?: string, id: string | number }) => {
+		gantt.templates.task_class = (
+			_start: Date,
+			_end: Date,
+			task: { type?: string; id: string | number },
+		) => {
 			if (task.type === 'project' || gantt.hasChild(task.id)) {
 				return 'mi-barra-padre';
 			}
