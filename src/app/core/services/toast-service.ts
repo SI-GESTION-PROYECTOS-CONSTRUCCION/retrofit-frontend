@@ -28,7 +28,18 @@ export class ToastService {
 		if (err instanceof HttpErrorResponse) {
 			if (err.error) {
 				if (typeof err.error === 'string') {
-					msg = err.error;
+					try {
+						const parsed = JSON.parse(err.error);
+						if (parsed.general && typeof parsed.general === 'string') {
+							msg = parsed.general;
+						} else if (parsed.message && typeof parsed.message === 'string') {
+							msg = parsed.message;
+						} else {
+							msg = err.error;
+						}
+					} catch {
+						msg = err.error;
+					}
 				} else if (typeof err.error === 'object') {
 					// Narrowing for custom error shapes from the backend
 					const errorObj = err.error as {
