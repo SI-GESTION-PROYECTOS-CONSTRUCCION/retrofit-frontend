@@ -35,7 +35,12 @@ export class ToastService {
 						} else if (parsed.message && typeof parsed.message === 'string') {
 							msg = parsed.message;
 						} else {
-							msg = err.error;
+							const values = Object.values(parsed);
+							if (values.length > 0 && typeof values[0] === 'string') {
+								msg = values[0];
+							} else {
+								msg = err.error;
+							}
 						}
 					} catch {
 						msg = err.error;

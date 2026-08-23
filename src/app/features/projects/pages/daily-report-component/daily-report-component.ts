@@ -236,7 +236,23 @@ export class DailyReportComponent implements OnInit {
 			return;
 		}
 
-		const dto: ProgressReportRequestDto = this.reportForm.getRawValue();
+		const rawForm = this.reportForm.getRawValue();
+		const dateValue = rawForm.reportDate;
+		const formattedDate = dateValue instanceof Date 
+			? `${dateValue.getFullYear()}-${String(dateValue.getMonth() + 1).padStart(2, '0')}-${String(dateValue.getDate()).padStart(2, '0')}`
+			: dateValue;
+
+		const dto: ProgressReportRequestDto = {
+			...rawForm,
+			reportDate: formattedDate,
+			usedResources: rawForm.usedResources.map(
+				(res: { resourceId: number; theoreticalQuantity: number; realQuantity: number }) => ({
+					resourceId: res.resourceId,
+					theoreticalQuantity: res.theoreticalQuantity,
+					realQuantity: res.realQuantity,
+				}),
+			),
+		};
 		const maxAllowed =
 			this.selectedItemInfo.totalQuantity - (this.selectedItemInfo.executedQuantity || 0);
 
