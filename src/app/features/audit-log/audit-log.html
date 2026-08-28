@@ -1,8 +1,9 @@
-<div class="audit-container">
+<div class="audit-container audit-page">
 
   <!-- Header Section -->
   <header class="audit-header">
     <div class="header-titles">
+      <span class="audit-eyebrow"><i class="fa-solid fa-fingerprint"></i> Control y trazabilidad</span>
       <h2>Registro de Auditoría</h2>
       <p>Trazabilidad inmutable de todas las acciones ejecutadas en el sistema.</p>
     </div>
@@ -18,15 +19,15 @@
     </div>
     }
     } @else {
-    <div class="stat-card">
+    <div class="stat-card"><i class="fa-solid fa-calendar-day stat-icon"></i>
       <span class="stat-label">EVENTOS HOY</span>
       <span class="stat-value">{{ stats.todayEvents }}</span>
     </div>
-    <div class="stat-card">
+    <div class="stat-card"><i class="fa-solid fa-pen-to-square stat-icon"></i>
       <span class="stat-label">MODIFICACIONES</span>
       <span class="stat-value text-muted">{{ stats.modifications }}</span>
     </div>
-    <div class="stat-card">
+    <div class="stat-card stat-alert"><i class="fa-solid fa-triangle-exclamation stat-icon"></i>
       <span class="stat-label">ALERTAS SISTEMA</span>
       <span class="stat-value text-danger">{{ stats.alerts }}</span>
     </div>
@@ -39,40 +40,23 @@
       <label for="search">BÚSQUEDA RÁPIDA</label>
       <div class="input-icon">
         <i class="fa-solid fa-search"></i>
-        <input id="search" type="text" [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()" placeholder="Buscar por Usuario">
+        <input id="search" type="search" [(ngModel)]="searchTerm" (input)="onSearchInput()" (keyup.enter)="applyFilters()" placeholder="Buscar por usuario o cuenta">
       </div>
     </div>
 
     <div class="filter-group">
       <label for="module">MÓDULO</label>
-      <select id="module" [(ngModel)]="selectedModule" (change)="applyFilters()">
-        <option value="Todos">Todos</option>
-        <option value="Trabajadores">Trabajadores</option>
-        <option value="Usuarios">Usuarios</option>
-        <option value="Proyectos">Proyectos</option>
-        <option value="Recursos">Recursos</option>
-        <option value="Roles">Roles</option>
-        <option value="Asignaciones">Asignaciones</option>
-        <option value="Presupuestos">Presupuestos</option>
-        <option value="Gantt">Cronograma (Gantt)</option>
-        <option value="Avances de Obra">Avances</option>
-        <option value="Inventario">Inventario</option>
-      </select>
+      <p-select id="module" [(ngModel)]="selectedModule" [options]="moduleOptions" optionLabel="label" optionValue="value" appendTo="body" styleClass="audit-filter" (onChange)="applyFilters()"></p-select>
     </div>
 
     <div class="filter-group">
       <label for="action">ACCIÓN</label>
-      <select id="action" [(ngModel)]="selectedAction" (change)="applyFilters()">
-        <option value="Todas">Todas las Acciones</option>
-        <option value="CREATE">CREATE</option>
-        <option value="UPDATE">UPDATE</option>
-        <option value="DELETE">DELETE</option>
-      </select>
+      <p-select id="action" [(ngModel)]="selectedAction" [options]="actionOptions" optionLabel="label" optionValue="value" appendTo="body" styleClass="audit-filter" (onChange)="applyFilters()"></p-select>
     </div>
 
     <div class="filter-group">
       <label for="date">FECHA</label>
-      <input id="date" type="date" [(ngModel)]="selectedDate" (change)="applyFilters()">
+      <p-datepicker id="date" [(ngModel)]="selectedDate" dateFormat="yy-mm-dd" [showIcon]="true" appendTo="body" styleClass="audit-date" (onSelect)="applyFilters()"></p-datepicker>
     </div>
 
     <div class="filter-group button-group">

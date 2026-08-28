@@ -1,6 +1,7 @@
-<div class="page-container">
+<div class="page-container users-page">
     <div class="page-header">
         <div>
+            <span class="users-eyebrow"><i class="fa-solid fa-shield-halved"></i> Seguridad y accesos</span>
             <h1 class="page-title">Gestión de Usuarios y Roles</h1>
             <p class="page-subtitle">Configura los niveles de acceso y permisos para cada perfil del sistema.</p>
         </div>
@@ -50,19 +51,11 @@
                     (input)="onSearchChange()">
             </div>
 
-            <select class="btn btn-outline filter-select" [(ngModel)]="selectedRole" (change)="onFilterChange()">
-                <option value="ALL">Todos los Roles</option>
-                <option value="ADMIN">Administrador</option>
-                <option value="INGENIERO_RESIDENTE">Ingeniero Residente</option>
-                <option value="ALMACENERO">Almacenero</option>
-            </select>
-
-            <select class="btn btn-outline filter-select" [(ngModel)]="activeFilter" (change)="onFilterChange()">
-                <option value="">Todos los Estados</option>
-                <option value="true">Solo Activos</option>
-                <option value="false">Solo Inactivos</option>
-            </select>
+            <p-select [(ngModel)]="selectedRole" [options]="roleOptions" optionLabel="label" optionValue="value" appendTo="body" styleClass="user-filter" (onChange)="onFilterChange()"></p-select>
+            <p-select [(ngModel)]="activeFilter" [options]="statusOptions" optionLabel="label" optionValue="value" appendTo="body" styleClass="user-filter" (onChange)="onFilterChange()"></p-select>
         </div>
+
+        <div class="users-table-heading"><div><span>Directorio de cuentas</span><h3>Usuarios registrados</h3></div><span class="user-count">{{ totalElements }} cuentas</span></div>
 
         @if (isLoading) {
         <div class="table-responsive">

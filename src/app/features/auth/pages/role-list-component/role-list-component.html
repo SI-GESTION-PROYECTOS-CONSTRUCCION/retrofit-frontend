@@ -1,7 +1,8 @@
-<div class="page-container">
+<div class="page-container roles-page">
   
   <div class="page-header mb-4">
     <div>
+      <span class="roles-eyebrow"><i class="fa-solid fa-lock"></i> Gobierno de acceso</span>
       <h2 class="page-title">Roles y Permisos</h2>
       <p class="page-subtitle">Gestione los niveles de acceso dinámicos del sistema.</p>
     </div>
@@ -11,6 +12,7 @@
   </div>
 
   <div class="table-card-container">
+    <div class="roles-table-heading"><div><span>Perfiles de seguridad</span><h3>Roles configurados</h3></div><span>{{ roles.length }} roles</span></div>
     <div class="table-responsive">
     <table class="retrofit-table">
       <thead>
@@ -81,8 +83,8 @@
 </div>
 
 @if (isModalOpen) {
-  <div class="modal-backdrop">
-    <div class="modal-container" style="max-width: 750px;">
+  <div class="modal-backdrop role-backdrop">
+    <div class="modal-container role-modal">
       
       <div class="modal-header">
         <button type="button" class="btn-close" (click)="closeModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -98,7 +100,7 @@
       <form [formGroup]="roleForm" (ngSubmit)="saveRole()">
         <div class="modal-body" style="padding: 24px 32px;">
           
-          <div class="form-row" style="margin-bottom: 24px;">
+          <div class="form-row role-form-row">
             <div class="form-group">
               <label>Código / Nombre del Rol</label>
               <input type="text" formControlName="name" placeholder="Ej: AUDITOR_EXTERNO" style="text-transform: uppercase;">
@@ -117,7 +119,7 @@
 
           <div class="form-group">
             <label style="margin-bottom: 8px;">Matriz de Accesos (CRUD)</label>
-            <div style="border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden;">
+            <div class="permission-matrix">
               <div class="table-responsive">
               <table class="retrofit-table" style="margin: 0;">
                 <thead>

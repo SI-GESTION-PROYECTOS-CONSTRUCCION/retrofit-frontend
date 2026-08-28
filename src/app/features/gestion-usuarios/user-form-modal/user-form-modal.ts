@@ -7,10 +7,11 @@ import { UserCreateDto, UserDto } from '../../../core/models/user.model';
 import { RoleService } from '../../../core/services/role.service';
 import { ToastService } from '../../../core/services/toast-service';
 import { UserService } from '../../../core/services/user.service';
+import { SelectModule } from 'primeng/select';
 
 @Component({
 	selector: 'app-user-form-modal',
-	imports: [CommonModule, ReactiveFormsModule],
+	imports: [CommonModule, ReactiveFormsModule, SelectModule],
 	templateUrl: './user-form-modal.html',
 	styleUrl: './user-form-modal.css',
 })
@@ -29,6 +30,7 @@ export class UserFormModalComponent implements OnInit {
 	isSubmitting = false;
 	backendErrors: { [key: string]: string } = {};
 	roles: RoleResponseDto[] = [];
+	readonly roleOverlayOptions = { autoZIndex: true, baseZIndex: 1301 };
 
 	showPassword = false;
 

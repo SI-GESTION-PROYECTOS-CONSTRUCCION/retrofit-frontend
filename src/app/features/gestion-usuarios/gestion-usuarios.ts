@@ -9,6 +9,7 @@ import { UserService } from '../../core/services/user.service';
 import { ConfirmModal } from '../../shared/components/confirm-modal/confirm-modal';
 import { Skeleton } from '../../shared/components/skeleton/skeleton';
 import { UserFormModalComponent } from './user-form-modal/user-form-modal';
+import { SelectModule } from 'primeng/select';
 
 @Component({
 	selector: 'app-gestion-usuarios',
@@ -19,6 +20,7 @@ import { UserFormModalComponent } from './user-form-modal/user-form-modal';
 		UserFormModalComponent,
 		Skeleton,
 		HasPermissionDirective,
+		SelectModule,
 	],
 	templateUrl: './gestion-usuarios.html',
 	styleUrl: './gestion-usuarios.css',
@@ -38,6 +40,8 @@ export class GestionUsuariosComponent implements OnInit {
 	searchTerm = '';
 	selectedRole = 'ALL';
 	activeFilter = '';
+	readonly roleOptions = [{label:'Todos los roles',value:'ALL'},{label:'Administrador',value:'ADMIN'},{label:'Ingeniero residente',value:'INGENIERO_RESIDENTE'},{label:'Almacenero',value:'ALMACENERO'}];
+	readonly statusOptions = [{label:'Todos los estados',value:''},{label:'Solo activos',value:'true'},{label:'Solo inactivos',value:'false'}];
 
 	// UI States
 	isLoading = false;

@@ -5,10 +5,12 @@ import { AuditLog } from '../../core/models/auditLog.model';
 import { AuditService } from '../../core/services/audit.service';
 import { ToastService } from '../../core/services/toast-service';
 import { Skeleton } from '../../shared/components/skeleton/skeleton';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 
 @Component({
 	selector: 'app-audit-log',
-	imports: [CommonModule, FormsModule, Skeleton],
+	imports: [CommonModule, FormsModule, Skeleton, SelectModule, DatePickerModule],
 	templateUrl: './audit-log.html',
 	styleUrl: './audit-log.css',
 })
@@ -29,6 +31,9 @@ export class AuditLogComponent implements OnInit {
 	selectedModule: string = 'Todos';
 	selectedAction: string = 'Todas';
 	selectedDate: string = '';
+	readonly moduleOptions = ['Todos','Trabajadores','Usuarios','Proyectos','Recursos','Roles','Asignaciones','Presupuestos','Gantt','Avances de Obra','Inventario'].map(label => ({ label, value: label }));
+	readonly actionOptions = [{label:'Todas las acciones',value:'Todas'},{label:'Crear',value:'CREATE'},{label:'Actualizar',value:'UPDATE'},{label:'Eliminar',value:'DELETE'}];
+	private searchDebounce?: ReturnType<typeof setTimeout>;
 
 	stats = {
 		todayEvents: 0,
@@ -128,8 +133,14 @@ export class AuditLogComponent implements OnInit {
 	}
 
 	applyFilters(): void {
+		if (this.searchDebounce) clearTimeout(this.searchDebounce);
 		this.currentPage = 0;
 		this.loadLogs();
+	}
+
+	onSearchInput(): void {
+		if (this.searchDebounce) clearTimeout(this.searchDebounce);
+		this.searchDebounce = setTimeout(() => this.applyFilters(), 350);
 	}
 
 	// Devuelve true si el registro cumple las condiciones de alerta

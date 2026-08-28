@@ -1,5 +1,5 @@
-<div class="modal-backdrop">
-  <div class="modal-container">
+<div class="modal-backdrop user-modal-backdrop">
+  <div class="modal-container user-modal">
     <div class="modal-header">
       <button class="btn-close" (click)="closeModal()">
         <i class="fa-solid fa-xmark"></i>
@@ -14,10 +14,10 @@
     </div>
 
     <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-      <div class="modal-body">
+      <div class="modal-body user-modal-body">
 
         @if (backendErrors['general']) {
-          <div class="info-alert" style="background-color: #fef2f2; border-color: #fca5a5; color: #ef4444; margin-bottom: 15px; padding: 12px; border-radius: 8px;">
+          <div class="info-alert user-error-alert">
             <i class="fa-solid fa-circle-exclamation"></i> {{ backendErrors['general'] }}
           </div>
         }
@@ -59,24 +59,21 @@
 
           <div class="form-group">
             <label>ROL DEL SISTEMA</label>
-            <select formControlName="role" [class.is-invalid]="hasError('role')">
-              <option value="" disabled>Seleccione un rol</option>
-              @for (role of roles; track role.id) {
-                <option [value]="role.name">{{ role.name }}</option>
-              }
-            </select>
+            <p-select formControlName="role" [options]="roles" optionLabel="name" optionValue="name"
+              placeholder="Seleccione un rol" appendTo="body" [overlayOptions]="roleOverlayOptions" styleClass="user-role-select"
+              [class.is-invalid]="hasError('role')"></p-select>
             @if (backendErrors['role']) { <span class="error-text">{{ backendErrors['role'] }}</span> }
             @else if (userForm.get('role')?.invalid && userForm.get('role')?.touched) { <span class="error-text">Seleccione un rol</span> }
           </div>
         </div>
 
         @if (mode === 'create') {
-          <div class="form-group" style="position: relative;">
+          <div class="form-group password-group">
             <label>CONTRASEÑA INICIAL</label>
             <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Mín. 8 chars, 1 mayúscula, 1 número, 1 especial" [class.is-invalid]="hasError('password')">
-            <span class="toggle-password" (click)="togglePasswordVisibility()" style="position: absolute; right: 15px; top: 38px; cursor: pointer; color: #888;">
+            <button type="button" class="toggle-password" (click)="togglePasswordVisibility()" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
               <i class="fa-regular" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-            </span>
+            </button>
             @if (backendErrors['password']) { <span class="error-text">{{ backendErrors['password'] }}</span> }
             @else if (userForm.get('password')?.invalid && userForm.get('password')?.touched) { <span class="error-text">Debe tener al menos 8 caracteres, 1 mayúscula, 1 número y 1 carácter especial.</span> }
           </div>
