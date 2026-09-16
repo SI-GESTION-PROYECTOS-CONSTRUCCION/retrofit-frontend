@@ -69,6 +69,10 @@ export class ProjectService {
 		return this.http.get(`${this.apiUrl}/${projectId}/reports/apu`, { responseType: 'blob' });
 	}
 
+	downloadGanttReport(projectId: number): Observable<Blob> {
+		return this.http.get(`${this.apiUrl}/${projectId}/reports/cronograma`, { responseType: 'blob' });
+	}
+
 	deleteProject(id: number): Observable<void> {
 		return this.http.delete<void>(`${this.apiUrl}/${id}`);
 	}

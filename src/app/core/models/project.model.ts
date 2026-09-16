@@ -114,6 +114,7 @@ export interface GanttItemResponseDto {
 	baseDurationDays: number;
 	currentProgressPercentage: number;
 	parentId: number | null;
+	level?: number;
 	type: string;
 }
 

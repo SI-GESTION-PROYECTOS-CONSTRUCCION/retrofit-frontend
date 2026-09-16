@@ -1,4 +1,92 @@
-<section class="gantt-module-heading"><div><span>PLANIFICACIÓN OPERATIVA</span><h3>Cronograma de ejecución</h3><p>Organiza dependencias y fechas directamente sobre la línea de tiempo.</p></div><i class="fa-solid fa-timeline"></i></section>
-<div class="gantt-wrapper">
-  <div #ganttContainer class="gantt-chart"></div>
-</div>
+<section class="gantt-module-heading">
+  <div>
+    <span>PLANIFICACIÓN OPERATIVA</span>
+    <h3>Cronograma de ejecución</h3>
+    <p>Visualiza la secuencia de partidas, dependencias y avance físico del proyecto.</p>
+  </div>
+  <div class="gantt-heading-actions">
+    <button type="button" class="gantt-export-button" (click)="exportToPdf()" [disabled]="isDownloadingPdf || isLoading || !items.length">
+      <i class="fa-solid" [class.fa-spinner]="isDownloadingPdf" [class.fa-spin]="isDownloadingPdf" [class.fa-file-pdf]="!isDownloadingPdf"></i>
+      {{ isDownloadingPdf ? 'Generando...' : 'Exportar PDF' }}
+    </button>
+    <i class="fa-solid fa-chart-gantt gantt-heading-icon"></i>
+  </div>
+</section>
+
+@if (isLoading) {
+  <div class="gantt-state-card">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    <span>Cargando cronograma...</span>
+  </div>
+} @else if (errorMessage) {
+  <div class="gantt-state-card gantt-state-error">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <span>{{ errorMessage }}</span>
+    <button type="button" class="gantt-retry-button" (click)="loadGanttData()">Reintentar</button>
+  </div>
+} @else if (!items.length) {
+  <div class="gantt-state-card">
+    <i class="fa-regular fa-calendar-xmark"></i>
+    <span>Aún no hay partidas disponibles para construir el cronograma.</span>
+  </div>
+} @else {
+  <div class="gantt-toolbar">
+    <div class="gantt-view-switcher" aria-label="Escala del cronograma">
+      <span class="gantt-toolbar-label">ESCALA</span>
+      @for (view of viewModes; track view) {
+        <button type="button" [class.active]="activeView === view" (click)="changeViewMode(view)">
+          {{ view === 'Day' ? 'Día' : view === 'Week' ? 'Semana' : view === 'Month' ? 'Mes' : 'Año' }}
+        </button>
+      }
+    </div>
+    <div class="gantt-toolbar-actions">
+      <button type="button" class="gantt-dependency-button" [class.active]="isDependencyEditorOpen" (click)="toggleDependencyEditor()">
+        <i class="fa-solid fa-link"></i>
+        Relaciones
+      </button>
+      <div class="gantt-legend" aria-label="Leyenda">
+        <span><i class="legend-dot legend-dot-parent"></i>Grupo</span>
+        <span><i class="legend-dot legend-dot-task"></i>Partida</span>
+        <span><i class="legend-dot legend-dot-progress"></i>Avance</span>
+      </div>
+    </div>
+  </div>
+
+  @if (isDependencyEditorOpen) {
+    <section class="dependency-editor" aria-label="Editor de relaciones entre actividades">
+      <div class="dependency-editor-heading">
+        <i class="fa-solid fa-diagram-project"></i>
+        <div>
+          <strong>Relaciones entre actividades</strong>
+          <span>Define qué partida debe finalizar antes de iniciar otra.</span>
+        </div>
+      </div>
+      <label>
+        Actividad
+        <select [value]="selectedDependencyItemId ?? ''" (change)="onDependencyItemChange($any($event.target).value)">
+          <option value="">Selecciona una actividad</option>
+          @for (item of dependencyItems; track item.id) {
+            <option [value]="item.id">{{ item.code }} · {{ item.name }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Predecesora
+        <select [disabled]="!selectedDependencyItemId" [value]="selectedPredecessorId ?? ''" (change)="onPredecessorChange($any($event.target).value)">
+          <option value="">Sin dependencia</option>
+          @for (item of predecessorCandidates; track item.id) {
+            <option [value]="item.id">{{ item.code }} · {{ item.name }}</option>
+          }
+        </select>
+      </label>
+      <button type="button" class="gantt-save-dependency-button" [disabled]="!selectedDependencyItemId || isSavingDependency" (click)="saveDependency()">
+        <i class="fa-solid" [class.fa-floppy-disk]="!isSavingDependency" [class.fa-spinner]="isSavingDependency" [class.fa-spin]="isSavingDependency"></i>
+        {{ isSavingDependency ? 'Guardando...' : 'Guardar relación' }}
+      </button>
+    </section>
+  }
+
+  <div class="gantt-wrapper">
+    <div #ganttContainer class="gantt-chart"></div>
+  </div>
+}
