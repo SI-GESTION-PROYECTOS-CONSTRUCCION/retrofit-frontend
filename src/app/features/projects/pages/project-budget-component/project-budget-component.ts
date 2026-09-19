@@ -33,6 +33,13 @@ import { ToastService } from '../../../../core/services/toast-service';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 import { ApuModalComponent } from '../../modal/apu-modal-component/apu-modal-component';
 
+export type CellColumn = 'description' | 'unit' | 'totalQuantity' | 'unitPrice';
+
+export interface ActiveCell {
+	rowIdx: number;
+	col: CellColumn;
+}
+
 @Component({
 	selector: 'app-project-budget',
 	standalone: true,
@@ -64,6 +71,9 @@ export class ProjectBudgetComponent implements OnInit {
 	project: ProjectResponseDto | null = null;
 	budgetForm!: FormGroup;
 	isLoading = false;
+
+	activeCell: ActiveCell | null = null;
+	private blurTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	private readonly MIN_EMPTY_ROWS = 5;
 	isApuModalOpen = false;
@@ -255,7 +265,59 @@ export class ProjectBudgetComponent implements OnInit {
 		this.expandedRows[index] = !this.expandedRows[index];
 	}
 
+	isCellActive(rowIdx: number, col: CellColumn): boolean {
+		return !this.isLocked && this.activeCell?.rowIdx === rowIdx && this.activeCell?.col === col;
+	}
+
+	activateCell(rowIdx: number, col: CellColumn) {
+		if (this.isLocked) return;
+		if (rowIdx < 0 || rowIdx >= this.itemsFormArray.length) return;
+		if (this.isParent(rowIdx) && col !== 'description') return;
+
+		if (this.blurTimeout) {
+			clearTimeout(this.blurTimeout);
+			this.blurTimeout = null;
+		}
+
+		if (this.isCellActive(rowIdx, col)) return;
+
+		this.activeCell = { rowIdx, col };
+		this.cdr.markForCheck();
+
+		setTimeout(() => {
+			const el = document.getElementById(`cell-${col}-${rowIdx}`);
+			if (el) {
+				el.focus();
+				if (el instanceof HTMLInputElement && el.type === 'text') {
+					el.select();
+				}
+			}
+		}, 0);
+	}
+
+	deactivateCell(rowIdx: number, col: CellColumn) {
+		if (this.activeCell?.rowIdx !== rowIdx || this.activeCell?.col !== col) {
+			return;
+		}
+		this.blurTimeout = setTimeout(() => {
+			if (this.activeCell?.rowIdx === rowIdx && this.activeCell?.col === col) {
+				this.activeCell = null;
+				this.ensureEmptyRows();
+				this.recalculateAllSubtotals();
+				this.cdr.markForCheck();
+			}
+		}, 150);
+	}
+
 	removeRow(index: number) {
+		if (this.activeCell) {
+			if (this.activeCell.rowIdx === index) {
+				this.activeCell = null;
+			} else if (this.activeCell.rowIdx > index) {
+				this.activeCell.rowIdx -= 1;
+			}
+		}
+
 		this.itemsFormArray.removeAt(index);
 
 		// Al eliminar, los índices de las filas debajo se desplazan -1.
@@ -299,11 +361,7 @@ export class ProjectBudgetComponent implements OnInit {
 
 		this.recalculateWBS();
 
-		// Foco en el nuevo input creado de manera asíncrona para que se renderice primero
-		setTimeout(() => {
-			const nextInput = document.getElementById(`desc-${index + 1}`);
-			if (nextInput) nextInput.focus();
-		}, 50);
+		this.activateCell(index + 1, 'description');
 	}
 
 	ensureEmptyRows() {
@@ -327,25 +385,90 @@ export class ProjectBudgetComponent implements OnInit {
 		this.recalculateWBS();
 	}
 
-	handleKeydown(event: KeyboardEvent, index: number) {
-		// Tecla TAB: Sangría a la derecha
-		if (event.key === 'Tab' && !event.shiftKey) {
-			event.preventDefault(); // Evita que salte de input
-			this.changeIndent(index, 1);
-		}
-		// Teclas SHIFT + TAB: Quitar Sangría (Izquierda)
-		else if (event.key === 'Tab' && event.shiftKey) {
+	handleCellKeydown(event: KeyboardEvent, rowIdx: number, col: CellColumn) {
+		if (event.key === 'Escape') {
 			event.preventDefault();
-			this.changeIndent(index, -1);
+			if (this.blurTimeout) {
+				clearTimeout(this.blurTimeout);
+				this.blurTimeout = null;
+			}
+			this.activeCell = null;
+			this.ensureEmptyRows();
+			this.recalculateAllSubtotals();
+			this.cdr.markForCheck();
+			return;
 		}
-		// Tecla ENTER: Baja a la siguiente fila
-		else if (event.key === 'Enter') {
+
+		if (
+			(col === 'totalQuantity' || col === 'unitPrice') &&
+			(event.key === '-' || event.key === 'e')
+		) {
 			event.preventDefault();
-			const nextInput = document.getElementById(`desc-${index + 1}`);
-			if (nextInput) {
-				nextInput.focus();
+			return;
+		}
+
+		if (col === 'description') {
+			// Tecla TAB: Sangría a la derecha
+			if (event.key === 'Tab' && !event.shiftKey) {
+				event.preventDefault();
+				this.changeIndent(rowIdx, 1);
+				return;
+			}
+			// Teclas SHIFT + TAB: Quitar Sangría (Izquierda)
+			if (event.key === 'Tab' && event.shiftKey) {
+				event.preventDefault();
+				this.changeIndent(rowIdx, -1);
+				return;
+			}
+			// Tecla ENTER: Baja a la siguiente fila
+			if (event.key === 'Enter') {
+				event.preventDefault();
+				this.activateCell(rowIdx + 1, 'description');
+				return;
+			}
+		} else {
+			// Para otras columnas: TAB navega horizontalmente
+			if (event.key === 'Tab') {
+				event.preventDefault();
+				if (!event.shiftKey) {
+					if (col === 'unit') {
+						this.activateCell(rowIdx, 'totalQuantity');
+					} else if (col === 'totalQuantity') {
+						this.activateCell(rowIdx, 'unitPrice');
+					} else if (col === 'unitPrice') {
+						this.activateCell(rowIdx + 1, 'description');
+					}
+				} else {
+					if (col === 'unitPrice') {
+						this.activateCell(rowIdx, 'totalQuantity');
+					} else if (col === 'totalQuantity') {
+						this.activateCell(rowIdx, 'unit');
+					} else if (col === 'unit') {
+						this.activateCell(rowIdx, 'description');
+					}
+				}
+				return;
+			}
+
+			// Tecla ENTER: Baja a la siguiente fila en la misma columna
+			if (event.key === 'Enter') {
+				event.preventDefault();
+				let nextRow = rowIdx + 1;
+				while (nextRow < this.itemsFormArray.length && this.isParent(nextRow)) {
+					nextRow++;
+				}
+				if (nextRow < this.itemsFormArray.length) {
+					this.activateCell(nextRow, col);
+				} else {
+					this.activateCell(rowIdx + 1, 'description');
+				}
+				return;
 			}
 		}
+	}
+
+	handleKeydown(event: KeyboardEvent, index: number) {
+		this.handleCellKeydown(event, index, 'description');
 	}
 
 	changeIndent(index: number, delta: number) {
@@ -446,8 +569,13 @@ export class ProjectBudgetComponent implements OnInit {
 		return total;
 	}
 
-	// Modificamos el guardado para "limpiar" los datos de los padres antes de enviar
 	saveBudget() {
+		if (this.blurTimeout) {
+			clearTimeout(this.blurTimeout);
+			this.blurTimeout = null;
+		}
+		this.activeCell = null;
+
 		if (this.isLocked) {
 			this.toastService.show(
 				'No se puede modificar el presupuesto de una obra en ejecución.',

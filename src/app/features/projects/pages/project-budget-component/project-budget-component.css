@@ -15,12 +15,85 @@
 .excel-table td { border-bottom: 1px solid #E5E7EB; border-right: 1px solid #E5E7EB; padding: 0; position: relative; }
 .excel-table td.text-center { text-align: center; padding: 10px; }
 
-/* Inputs dentro de las celdas (El efecto Excel) */
+/* Inputs y displays dentro de las celdas (El efecto Excel) */
 .cell-input { width: 100%; height: 100%; border: none; padding: 12px; outline: none; background: transparent; font-family: inherit; font-size: 13px; color: #111827; }
 .cell-input:focus { background-color: #F3F6FF; box-shadow: inset 0 0 0 2px #3B82F6; }
 .text-right { text-align: right; }
 .bg-readonly { background-color: #F3F4F6; color: #6B7280; font-weight: 600; }
 .empty-state { padding: 40px !important; color: #6B7280; }
+
+/* Cell Display & In-Place Cell Editing */
+.cell-display {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 41px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--rt-ink, #111827);
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: text;
+}
+
+.cell-display.text-right {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.cell-display.text-center {
+  justify-content: center;
+  text-align: center;
+}
+
+.cell-editable {
+  cursor: pointer;
+}
+
+.excel-table:not(.table-locked) tbody tr:not(.is-parent-row) td.cell-editable:hover,
+.excel-table:not(.table-locked) tbody tr.is-parent-row td.cell-editable.description-cell:hover {
+  background-color: #F8FAFC;
+}
+
+.cell-disabled {
+  cursor: default !important;
+  background: transparent !important;
+}
+
+.table-locked .cell-editable {
+  cursor: not-allowed;
+}
+
+.active-cell {
+  width: 100%;
+  min-height: 41px;
+  padding: 10px 12px;
+  border: none;
+  outline: none;
+  background-color: #F0FBFB;
+  box-shadow: inset 0 0 0 2px var(--rt-teal-500, #0097A7);
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--rt-ink, #111827);
+  box-sizing: border-box;
+}
+
+select.active-cell {
+  cursor: pointer;
+}
+
+.budget-row {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 44px;
+}
+
+@supports not (content-visibility: auto) {
+  .budget-row {
+    contain: layout style;
+  }
+}
 
 
 /* Estilos para la Magia de la Sangría */

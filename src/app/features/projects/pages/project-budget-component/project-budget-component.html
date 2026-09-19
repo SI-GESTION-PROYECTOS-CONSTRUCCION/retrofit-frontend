@@ -74,51 +74,92 @@
             
             <tr [formGroupName]="idx" [ngClass]="{'is-parent-row': isParent(idx)}" class="budget-row">
               
-              <td style="position: static;">
-                <input type="text" formControlName="code" class="cell-input text-center fw-bold text-muted" readonly>
+              <td class="text-center" style="position: static;">
+                <span class="cell-display text-center fw-bold text-muted">
+                  {{ row.get('code')?.value || '' }}
+                </span>
                 @if (!isLocked) {
-                  <button *appHasPermission="'PROJECT_UPDATE'" class="insert-row-btn" (click)="insertRow(idx)" title="Insertar fila debajo">
+                  <button *appHasPermission="'PROJECT_UPDATE'" class="insert-row-btn" (click)="$event.stopPropagation(); insertRow(idx)" title="Insertar fila debajo">
                     <i class="fa-solid fa-plus"></i>
                   </button>
                 }
               </td>
               
-              <td class="description-cell">
+              <td class="description-cell cell-editable" (click)="activateCell(idx, 'description')">
                 <div class="indent-wrapper" [ngStyle]="{'padding-left': (row.get('level')?.value * 25) + 'px'}">
-                  <input type="text" 
-                         [id]="'desc-' + idx"
-                         formControlName="description" 
-                         class="cell-input" 
-                         placeholder="Escriba aquí..."
-                         [readonly]="isLocked"
-                         (keydown)="handleKeydown($event, idx)"
-                         (blur)="ensureEmptyRows()"
-                         autocomplete="off">
+                  @if (isCellActive(idx, 'description')) {
+                    <input type="text" 
+                           [id]="'cell-description-' + idx"
+                           formControlName="description" 
+                           class="cell-input active-cell" 
+                           placeholder="Escriba aquí..."
+                           (keydown)="handleCellKeydown($event, idx, 'description')"
+                           (blur)="deactivateCell(idx, 'description')"
+                           autocomplete="off">
+                  } @else {
+                    <span class="cell-display" [class.text-muted]="!row.get('description')?.value" [class.fw-bold]="isParent(idx)">
+                      {{ row.get('description')?.value || (isLocked ? '' : 'Escriba aquí...') }}
+                    </span>
+                  }
                 </div>
               </td>
               
-              <td>
+              <td class="cell-editable" [class.cell-disabled]="isParent(idx)" (click)="activateCell(idx, 'unit')">
                 @if (!isParent(idx)) {
-                  <select formControlName="unit" class="cell-input text-center">
-                    <option value="">-</option>
-                    <option value="glb">glb</option>
-                    <option value="m2">m²</option>
-                    <option value="m3">m³</option>
-                    <option value="m">m</option>
-                    <option value="und">und</option>
-                  </select>
+                  @if (isCellActive(idx, 'unit')) {
+                    <select [id]="'cell-unit-' + idx"
+                            formControlName="unit" 
+                            class="cell-input text-center active-cell"
+                            (keydown)="handleCellKeydown($event, idx, 'unit')"
+                            (blur)="deactivateCell(idx, 'unit')">
+                      <option value="">-</option>
+                      <option value="glb">glb</option>
+                      <option value="m2">m²</option>
+                      <option value="m3">m³</option>
+                      <option value="m">m</option>
+                      <option value="und">und</option>
+                    </select>
+                  } @else {
+                    <span class="cell-display text-center" [class.text-muted]="!row.get('unit')?.value">
+                      {{ row.get('unit')?.value || '-' }}
+                    </span>
+                  }
                 }
               </td>
               
-              <td>
+              <td class="cell-editable" [class.cell-disabled]="isParent(idx)" (click)="activateCell(idx, 'totalQuantity')">
                 @if (!isParent(idx)) {
-                  <input type="number" formControlName="totalQuantity" class="cell-input text-right" placeholder="0.00" [readonly]="isLocked">
+                  @if (isCellActive(idx, 'totalQuantity')) {
+                    <input type="number" 
+                           [id]="'cell-totalQuantity-' + idx"
+                           formControlName="totalQuantity" 
+                           class="cell-input text-right active-cell" 
+                           placeholder="0.00"
+                           (keydown)="handleCellKeydown($event, idx, 'totalQuantity')"
+                           (blur)="deactivateCell(idx, 'totalQuantity')">
+                  } @else {
+                    <span class="cell-display text-right" [class.text-muted]="!row.get('totalQuantity')?.value && row.get('totalQuantity')?.value !== 0">
+                      {{ (row.get('totalQuantity')?.value !== null && row.get('totalQuantity')?.value !== undefined && row.get('totalQuantity')?.value !== '') ? (row.get('totalQuantity')?.value | number:'1.2-2') : '-' }}
+                    </span>
+                  }
                 }
               </td>
 
-              <td>
+              <td class="cell-editable" [class.cell-disabled]="isParent(idx)" (click)="activateCell(idx, 'unitPrice')">
                 @if (!isParent(idx)) {
-                  <input type="number" formControlName="unitPrice" class="cell-input text-right" placeholder="0.00" [readonly]="isLocked">
+                  @if (isCellActive(idx, 'unitPrice')) {
+                    <input type="number" 
+                           [id]="'cell-unitPrice-' + idx"
+                           formControlName="unitPrice" 
+                           class="cell-input text-right active-cell" 
+                           placeholder="0.00"
+                           (keydown)="handleCellKeydown($event, idx, 'unitPrice')"
+                           (blur)="deactivateCell(idx, 'unitPrice')">
+                  } @else {
+                    <span class="cell-display text-right" [class.text-muted]="!row.get('unitPrice')?.value && row.get('unitPrice')?.value !== 0">
+                      {{ (row.get('unitPrice')?.value !== null && row.get('unitPrice')?.value !== undefined && row.get('unitPrice')?.value !== '') ? (row.get('unitPrice')?.value | number:'1.2-2') : '-' }}
+                    </span>
+                  }
                 }
               </td>
 
