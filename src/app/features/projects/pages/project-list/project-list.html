@@ -19,7 +19,8 @@
   @if (isModalOpen) {
     <app-project-create-modal-component
       [projectToEdit]="selectedProject"
-      (close)="isModalOpen = false"
+      [projectToDuplicate]="projectToDuplicate"
+      (close)="closeModal()"
       (projectSaved)="onProjectSaved()">
     </app-project-create-modal-component>
   }
@@ -121,6 +122,7 @@
                     @if (activeMenuId === project.id) {
                       <ul class="dropdown-menu" [ngStyle]="{'position': 'fixed', 'top': menuPosition.top, 'left': menuPosition.left, 'right': 'auto', 'margin': '0'}">
                         <li><button *appHasPermission="'PROJECT_UPDATE'" class="dropdown-item" (click)="openEditModal(project)"><i class="fa-solid fa-pen"></i> Editar información</button></li>
+                        <li><button *appHasPermission="'PROJECT_CREATE'" class="dropdown-item" (click)="openDuplicateModal(project)"><i class="fa-solid fa-clone"></i> Duplicar proyecto</button></li>
                         <li><button *appHasPermission="'PROJECT_DELETE'" class="dropdown-item text-danger" (click)="openDeleteModal(project)"><i class="fa-solid fa-trash"></i> Eliminar proyecto</button></li>
                       </ul>
                     }

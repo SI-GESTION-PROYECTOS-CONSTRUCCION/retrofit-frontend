@@ -32,6 +32,7 @@ export class ProjectCreateModalComponent implements OnInit {
 	@Output() close = new EventEmitter<void>();
 	@Output() projectSaved = new EventEmitter<void>();
 	@Input() projectToEdit: ProjectResponseDto | null = null;
+	@Input() projectToDuplicate: ProjectResponseDto | null = null;
 	private fb = inject(FormBuilder);
 	private projectService = inject(ProjectService);
 	private userService = inject(UserService);
@@ -100,7 +101,18 @@ export class ProjectCreateModalComponent implements OnInit {
 				startDate: this.projectToEdit.startDate,
 				status: this.projectToEdit.status,
 				priority: this.projectToEdit.priority,
-				// managerId lo setearemos después de cargar la lista de managers
+			});
+		} else if (this.projectToDuplicate) {
+			const today = new Date().toISOString().split('T')[0];
+			this.projectForm.patchValue({
+				code: '',
+				name: `Copia de ${this.projectToDuplicate.name}`,
+				client: this.projectToDuplicate.client,
+				location: this.projectToDuplicate.location,
+				description: this.projectToDuplicate.description,
+				startDate: today,
+				status: 'PLANNING',
+				priority: this.projectToDuplicate.priority,
 			});
 		}
 	}
@@ -110,9 +122,10 @@ export class ProjectCreateModalComponent implements OnInit {
 			next: (response) => {
 				this.managers = response.content;
 
-				if (this.projectToEdit?.managerId) {
+				const targetManagerId = this.projectToEdit?.managerId || this.projectToDuplicate?.managerId;
+				if (targetManagerId) {
 					this.projectForm.patchValue({
-						managerId: this.projectToEdit.managerId,
+						managerId: targetManagerId,
 					});
 				}
 			},
@@ -146,11 +159,21 @@ export class ProjectCreateModalComponent implements OnInit {
 
 		const request$ = this.projectToEdit
 			? this.projectService.updateProject(this.projectToEdit.id, requestDto)
-			: this.projectService.createProject(requestDto);
+			: this.projectToDuplicate
+				? this.projectService.duplicateProject(this.projectToDuplicate.id, requestDto)
+				: this.projectService.createProject(requestDto);
 
 		request$.subscribe({
 			next: (_res) => {
 				this.isSubmitting = false;
+				this.toastService.show(
+					this.projectToDuplicate
+						? 'Proyecto duplicado con éxito'
+						: this.projectToEdit
+							? 'Proyecto actualizado con éxito'
+							: 'Proyecto creado con éxito',
+					'success',
+				);
 				this.projectSaved.emit();
 				this.closeModal();
 			},

@@ -56,6 +56,7 @@ export class ProjectList implements OnInit {
 	];
 	statusOptions: { label: string; value: string }[] = [{ label: 'Todos los estados', value: '' }];
 	selectedProject: ProjectResponseDto | null = null;
+	projectToDuplicate: ProjectResponseDto | null = null;
 	activeMenuId: number | null = null;
 	menuPosition = { top: '0px', left: '0px' };
 
@@ -147,12 +148,28 @@ export class ProjectList implements OnInit {
 
 	openNewProjectModal() {
 		this.selectedProject = null;
+		this.projectToDuplicate = null;
 		this.isModalOpen = true;
 	}
 
 	openEditModal(project: ProjectResponseDto) {
 		this.selectedProject = project;
+		this.projectToDuplicate = null;
 		this.isModalOpen = true;
+		this.activeMenuId = null;
+	}
+
+	openDuplicateModal(project: ProjectResponseDto) {
+		this.selectedProject = null;
+		this.projectToDuplicate = project;
+		this.isModalOpen = true;
+		this.activeMenuId = null;
+	}
+
+	closeModal() {
+		this.isModalOpen = false;
+		this.selectedProject = null;
+		this.projectToDuplicate = null;
 	}
 
 	openDeleteModal(project: ProjectResponseDto) {

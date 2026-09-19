@@ -43,6 +43,10 @@ export class ProjectService {
 		return this.http.post<ProjectResponseDto>(this.apiUrl, dto);
 	}
 
+	duplicateProject(sourceId: number, dto: ProjectRequestDto): Observable<ProjectResponseDto> {
+		return this.http.post<ProjectResponseDto>(`${this.apiUrl}/${sourceId}/duplicate`, dto);
+	}
+
 	getStatuses(): Observable<string[]> {
 		return this.http.get<string[]>(`${this.apiUrl}/filters/statuses`);
 	}

@@ -8,10 +8,16 @@
       <div class="header-content">
         <div class="header-title">
           <i class="fa-regular fa-folder-open icon-title"></i>
-          <h2 id="project-modal-title">{{ projectToEdit ? 'Editar Proyecto' : 'Registrar Nuevo Proyecto' }}</h2>
+          <h2 id="project-modal-title">
+            {{ projectToEdit ? 'Editar Proyecto' : (projectToDuplicate ? 'Duplicar Proyecto' : 'Registrar Nuevo Proyecto') }}
+          </h2>
         </div>
         <p class="header-subtitle">
-          Complete la información para habilitar el proyecto en el sistema Retrofit Manager.
+          @if (projectToDuplicate) {
+            Se creará un nuevo proyecto clonando el presupuesto y APUs de <strong>{{ projectToDuplicate.code }}</strong> con los precios vigentes de recursos.
+          } @else {
+            Complete la información para habilitar el proyecto en el sistema Retrofit Manager.
+          }
         </p>
       </div>
     </div>
@@ -111,8 +117,7 @@
           @if (isSubmitting) {
             <i class="fa-solid fa-circle-notch fa-spin"></i> Guardando...
           } @else {
-            <!-- Texto Dinámico -->
-            {{ projectToEdit ? 'Actualizar Proyecto' : 'Guardar Proyecto' }}
+            {{ projectToEdit ? 'Actualizar Proyecto' : (projectToDuplicate ? 'Duplicar Proyecto' : 'Guardar Proyecto') }}
           }
         </button>
       </div>
