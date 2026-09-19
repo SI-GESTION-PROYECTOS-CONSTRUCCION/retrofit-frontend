@@ -4,10 +4,12 @@ import {
 	ChangeDetectionStrategy,
 	ChangeDetectorRef,
 	Component,
+	DestroyRef,
 	Input,
 	inject,
 	OnInit,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
 	FormArray,
 	FormBuilder,
@@ -15,7 +17,7 @@ import {
 	FormsModule,
 	ReactiveFormsModule,
 } from '@angular/forms';
-import { debounceTime } from 'rxjs';
+import { debounceTime, finalize } from 'rxjs';
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 import { Resizable } from '../../../../core/directives/resizable';
 import {
@@ -28,6 +30,7 @@ import { ResourceType } from '../../../../core/models/resource.model';
 import { ProjectService } from '../../../../core/services/project.service';
 import { ProjectItemService } from '../../../../core/services/project-item.service';
 import { ToastService } from '../../../../core/services/toast-service';
+import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 import { ApuModalComponent } from '../../modal/apu-modal-component/apu-modal-component';
 
 @Component({
@@ -40,6 +43,7 @@ import { ApuModalComponent } from '../../modal/apu-modal-component/apu-modal-com
 		ApuModalComponent,
 		Resizable,
 		HasPermissionDirective,
+		Skeleton,
 	],
 	templateUrl: './project-budget-component.html',
 	styleUrls: ['./project-budget-component.css'],
@@ -56,6 +60,7 @@ export class ProjectBudgetComponent implements OnInit {
 	private toastService = inject(ToastService);
 	private projectService = inject(ProjectService);
 	private cdr = inject(ChangeDetectorRef);
+	private destroyRef = inject(DestroyRef);
 	project: ProjectResponseDto | null = null;
 	budgetForm!: FormGroup;
 	isLoading = false;
@@ -68,6 +73,13 @@ export class ProjectBudgetComponent implements OnInit {
 
 	generalExpensesPercentage: number = 5.0;
 	utilityPercentage: number = 4.0;
+
+	directCost: number = 0;
+	generalExpenses: number = 0;
+	utility: number = 0;
+	subtotal: number = 0;
+	igv: number = 0;
+	grandTotal: number = 0;
 
 	preventNegative(event: KeyboardEvent) {
 		if (event.key === '-' || event.key === 'e') {
@@ -83,7 +95,7 @@ export class ProjectBudgetComponent implements OnInit {
 
 		this.budgetForm
 			.get('items')
-			?.valueChanges.pipe(debounceTime(300))
+			?.valueChanges.pipe(debounceTime(300), takeUntilDestroyed(this.destroyRef))
 			.subscribe(() => {
 				this.recalculateAllSubtotals();
 			});
@@ -92,26 +104,30 @@ export class ProjectBudgetComponent implements OnInit {
 	}
 
 	loadProjectDetails() {
-		this.projectService.getProjectById(this.projectId).subscribe({
-			next: (data) => {
-				this.project = data;
-				if (
-					data.generalExpensesPercentage !== undefined &&
-					data.generalExpensesPercentage !== null
-				) {
-					this.generalExpensesPercentage = data.generalExpensesPercentage;
-				}
-				if (data.utilityPercentage !== undefined && data.utilityPercentage !== null) {
-					this.utilityPercentage = data.utilityPercentage;
-				}
-				if (this.isLocked) {
-					this.itemsFormArray.controls.forEach((row) => {
-						row.get('unit')?.disable();
-					});
-				}
-				this.cdr.markForCheck();
-			},
-		});
+		this.projectService
+			.getProjectById(this.projectId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (data) => {
+					this.project = data;
+					if (
+						data.generalExpensesPercentage !== undefined &&
+						data.generalExpensesPercentage !== null
+					) {
+						this.generalExpensesPercentage = data.generalExpensesPercentage;
+					}
+					if (data.utilityPercentage !== undefined && data.utilityPercentage !== null) {
+						this.utilityPercentage = data.utilityPercentage;
+					}
+					if (this.isLocked) {
+						this.itemsFormArray.controls.forEach((row) => {
+							row.get('unit')?.disable();
+						});
+					}
+					this.recalculateTotals();
+					this.cdr.markForCheck();
+				},
+			});
 	}
 
 	get isLocked(): boolean {
@@ -124,27 +140,31 @@ export class ProjectBudgetComponent implements OnInit {
 
 	loadExistingItems() {
 		this.isLoading = true;
-		this.itemService.getItems(this.projectId).subscribe({
-			next: (data) => {
-				if (data.length > 0) {
-					const formGroups = data.map((item) => this.crearFila(item));
-					this.budgetForm.setControl('items', this.fb.array(formGroups));
-				} else {
-					this.itemsFormArray.clear();
-				}
+		this.cdr.markForCheck();
+		this.itemService
+			.getItems(this.projectId)
+			.pipe(
+				finalize(() => {
+					this.isLoading = false;
+					this.cdr.markForCheck();
+				}),
+				takeUntilDestroyed(this.destroyRef),
+			)
+			.subscribe({
+				next: (data) => {
+					if (data.length > 0) {
+						const formGroups = data.map((item) => this.crearFila(item));
+						this.budgetForm.setControl('items', this.fb.array(formGroups));
+					} else {
+						this.itemsFormArray.clear();
+					}
 
-				this.recalculateWBS();
-				this.ensureEmptyRows();
-				this.recalculateAllSubtotals();
-
-				this.isLoading = false;
-				this.cdr.markForCheck();
-			},
-			error: () => {
-				this.isLoading = false;
-				this.cdr.markForCheck();
-			},
-		});
+					this.recalculateWBS();
+					this.ensureEmptyRows();
+					this.recalculateAllSubtotals();
+				},
+				error: () => {},
+			});
 	}
 
 	recalculateAllSubtotals() {
@@ -174,7 +194,31 @@ export class ProjectBudgetComponent implements OnInit {
 			}
 		}
 
-		this.cdr.markForCheck(); // Notificar a Angular que hay cambios para la tabla OnPush
+		this.recalculateTotals();
+	}
+
+	recalculateTotals() {
+		const rows = this.itemsFormArray.getRawValue();
+		const validRows = rows.filter(
+			(item: { description?: string; level?: number }) =>
+				item.description?.trim() !== '' || Number(item.level) > 0,
+		);
+
+		let minLevel = 0;
+		if (validRows.length > 0) {
+			minLevel = Math.min(...validRows.map((row: { level?: number }) => Number(row.level) || 0));
+		}
+
+		this.directCost = rows
+			.filter((item: { level?: number; subtotal?: number }) => Number(item.level) === minLevel)
+			.reduce((sum: number, item: { subtotal?: number }) => sum + (Number(item.subtotal) || 0), 0);
+
+		this.generalExpenses = this.directCost * ((this.generalExpensesPercentage || 0) / 100);
+		this.utility = this.directCost * ((this.utilityPercentage || 0) / 100);
+		this.subtotal = this.directCost + this.generalExpenses + this.utility;
+		this.igv = this.subtotal * 0.18;
+		this.grandTotal = this.subtotal + this.igv;
+		this.cdr.markForCheck();
 	}
 
 	private crearFila(item?: Partial<ProjectItemDto>): FormGroup {
@@ -482,6 +526,9 @@ export class ProjectBudgetComponent implements OnInit {
 			return;
 		}
 
+		this.isLoading = true;
+		this.cdr.markForCheck();
+
 		const request: BudgetSaveRequestDto = {
 			generalExpensesPercentage: this.generalExpensesPercentage,
 			utilityPercentage: this.utilityPercentage,
@@ -489,14 +536,23 @@ export class ProjectBudgetComponent implements OnInit {
 		};
 
 		// --- 3. ENVÍO AL BACKEND ---
-		this.itemService.saveBulkItems(this.projectId, request).subscribe({
-			next: () => {
-				this.toastService.show('Presupuesto guardado con éxito.', 'success');
-				this.loadExistingItems();
-			},
-			error: (err: HttpErrorResponse) =>
-				this.toastService.showApiError(err, 'Error de conexión al guardar el presupuesto.'),
-		});
+		this.itemService
+			.saveBulkItems(this.projectId, request)
+			.pipe(
+				finalize(() => {
+					this.isLoading = false;
+					this.cdr.markForCheck();
+				}),
+				takeUntilDestroyed(this.destroyRef),
+			)
+			.subscribe({
+				next: () => {
+					this.toastService.show('Presupuesto guardado con éxito.', 'success');
+					this.loadExistingItems();
+				},
+				error: (err: HttpErrorResponse) =>
+					this.toastService.showApiError(err, 'Error de conexión al guardar el presupuesto.'),
+			});
 	}
 
 	// Al abrir el modal, cargamos los detalles que ya existían
@@ -516,25 +572,34 @@ export class ProjectBudgetComponent implements OnInit {
 	isDownloadingPdf = false;
 
 	exportToPdf() {
-		if (!this.projectId) return;
+		if (!this.projectId || this.isDownloadingPdf) return;
 		this.isDownloadingPdf = true;
-		this.projectService.downloadApuReport(this.projectId).subscribe({
-			next: (blob: Blob) => {
-				const url = window.URL.createObjectURL(blob);
-				const a = document.createElement('a');
-				a.href = url;
-				a.download = `reporte_presupuesto_proyecto_${this.project?.name}.pdf`;
-				document.body.appendChild(a);
-				a.click();
-				document.body.removeChild(a);
-				window.URL.revokeObjectURL(url);
-				this.isDownloadingPdf = false;
-			},
-			error: (_err: HttpErrorResponse) => {
-				this.toastService.show('Error al descargar el PDF', 'error');
-				this.isDownloadingPdf = false;
-			},
-		});
+		this.cdr.markForCheck();
+
+		this.projectService
+			.downloadApuReport(this.projectId)
+			.pipe(
+				finalize(() => {
+					this.isDownloadingPdf = false;
+					this.cdr.markForCheck();
+				}),
+				takeUntilDestroyed(this.destroyRef),
+			)
+			.subscribe({
+				next: (blob: Blob) => {
+					const url = window.URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.href = url;
+					a.download = `reporte_presupuesto_proyecto_${this.project?.name || this.projectId}.pdf`;
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
+					window.URL.revokeObjectURL(url);
+				},
+				error: (_err: HttpErrorResponse) => {
+					this.toastService.show('Error al descargar el PDF', 'error');
+				},
+			});
 	}
 
 	handleApuSaved(_updatedItem: ProjectItemDto) {
@@ -557,42 +622,5 @@ export class ProjectBudgetComponent implements OnInit {
 	getApuGroupTotal(apuDetails: ProjectItemResourceResponseDto[], type: string): number {
 		const group = this.getApuGroup(apuDetails, type);
 		return group.reduce((sum, item) => sum + (item.partialPrice || 0), 0);
-	}
-
-	get directCost(): number {
-		const rows = this.itemsFormArray.getRawValue();
-		const validRows = rows.filter(
-			(item: { description?: string; level?: number }) =>
-				item.description?.trim() !== '' || Number(item.level) > 0,
-		);
-
-		let minLevel = 0;
-		if (validRows.length > 0) {
-			minLevel = Math.min(...validRows.map((row: { level?: number }) => Number(row.level) || 0));
-		}
-
-		return rows
-			.filter((item: { level?: number; subtotal?: number }) => Number(item.level) === minLevel)
-			.reduce((sum: number, item: { subtotal?: number }) => sum + (Number(item.subtotal) || 0), 0);
-	}
-
-	get generalExpenses(): number {
-		return this.directCost * (this.generalExpensesPercentage / 100);
-	}
-
-	get utility(): number {
-		return this.directCost * (this.utilityPercentage / 100);
-	}
-
-	get subtotal(): number {
-		return this.directCost + this.generalExpenses + this.utility;
-	}
-
-	get igv(): number {
-		return this.subtotal * 0.18;
-	}
-
-	get grandTotal(): number {
-		return this.subtotal + this.igv;
 	}
 }

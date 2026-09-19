@@ -43,7 +43,34 @@
             <th width="50px"></th> </tr>
         </thead>
         <tbody formArrayName="items">
-          @for (row of itemsFormArray.controls; track row; let idx = $index) {
+          @if (isLoading) {
+            @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+              <tr class="budget-row">
+                <td style="padding: 10px 12px; text-align: center;">
+                  <app-skeleton width="60px" height="18px" marginBottom="0"></app-skeleton>
+                </td>
+                <td style="padding: 10px 12px;">
+                  <app-skeleton [width]="(i % 2 === 0 ? '75%' : '50%')" height="18px" marginBottom="0"></app-skeleton>
+                </td>
+                <td style="padding: 10px 12px; text-align: center;">
+                  <app-skeleton width="40px" height="18px" marginBottom="0"></app-skeleton>
+                </td>
+                <td style="padding: 10px 12px;">
+                  <app-skeleton width="60px" height="18px" marginBottom="0"></app-skeleton>
+                </td>
+                <td style="padding: 10px 12px;">
+                  <app-skeleton width="60px" height="18px" marginBottom="0"></app-skeleton>
+                </td>
+                <td style="padding: 10px 12px;">
+                  <app-skeleton width="80px" height="18px" marginBottom="0"></app-skeleton>
+                </td>
+                <td style="padding: 10px 12px; text-align: center;">
+                  <app-skeleton width="24px" height="24px" borderRadius="4px" marginBottom="0"></app-skeleton>
+                </td>
+              </tr>
+            }
+          } @else {
+            @for (row of itemsFormArray.controls; track row; let idx = $index) {
             
             <tr [formGroupName]="idx" [ngClass]="{'is-parent-row': isParent(idx)}" class="budget-row">
               
@@ -234,6 +261,7 @@
               </tr>
             }
           }
+        }
         </tbody>
       </table>
     </div>
@@ -247,13 +275,13 @@
           </tr>
           <tr>
             <td class="summary-label text-right text-primario">
-              Gastos Generales (<input type="number" [(ngModel)]="generalExpensesPercentage" (keypress)="preventNegative($event)" [ngModelOptions]="{standalone: true}" [disabled]="isLocked" class="percentage-input" min="0" />%)
+              Gastos Generales (<input type="number" [(ngModel)]="generalExpensesPercentage" (ngModelChange)="recalculateTotals()" (keypress)="preventNegative($event)" [ngModelOptions]="{standalone: true}" [disabled]="isLocked" class="percentage-input" min="0" />%)
             </td>
             <td class="summary-value text-right text-primario">{{ generalExpenses | number:'1.2-2' }}</td>
           </tr>
           <tr class="summary-border-bottom">
             <td class="summary-label text-right text-primario">
-              Utilidad (<input type="number" [(ngModel)]="utilityPercentage" (keypress)="preventNegative($event)" [ngModelOptions]="{standalone: true}" [disabled]="isLocked" class="percentage-input" min="0" />%)
+              Utilidad (<input type="number" [(ngModel)]="utilityPercentage" (ngModelChange)="recalculateTotals()" (keypress)="preventNegative($event)" [ngModelOptions]="{standalone: true}" [disabled]="isLocked" class="percentage-input" min="0" />%)
             </td>
             <td class="summary-value text-right text-primario">{{ utility | number:'1.2-2' }}</td>
           </tr>
