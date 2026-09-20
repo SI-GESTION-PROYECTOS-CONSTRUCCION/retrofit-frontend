@@ -1,20 +1,29 @@
+import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
+	AfterViewChecked,
 	ChangeDetectionStrategy,
 	ChangeDetectorRef,
 	Component,
+	DestroyRef,
 	ElementRef,
-	AfterViewChecked,
 	Input,
+	inject,
 	OnDestroy,
+	OnInit,
 	ViewChild,
 	ViewEncapsulation,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import Gantt, { FrappeGanttOptions, FrappeGanttTask, FrappeGanttViewMode } from 'frappe-gantt';
+import { finalize } from 'rxjs';
+import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
 import { GanttItemResponseDto } from '../../../../core/models/project.model';
-import { ProjectItemService } from '../../../../core/services/project-item.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { ProjectService } from '../../../../core/services/project.service';
+import { ProjectItemService } from '../../../../core/services/project-item.service';
 import { ToastService } from '../../../../core/services/toast-service';
+import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 
 type DateRange = { start: Date; end: Date };
 type RetrofitGanttTask = FrappeGanttTask & {
@@ -25,13 +34,13 @@ type RetrofitGanttTask = FrappeGanttTask & {
 
 @Component({
 	selector: 'app-project-gantt-component',
-	imports: [],
+	imports: [CommonModule, Skeleton, HasPermissionDirective],
 	templateUrl: './project-gantt-component.html',
 	styleUrl: './project-gantt-component.css',
 	encapsulation: ViewEncapsulation.None,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProjectGanttComponent implements AfterViewChecked, OnDestroy {
+export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestroy {
 	@ViewChild('ganttContainer') ganttContainer?: ElementRef<HTMLElement>;
 
 	@Input() projectId!: number;
@@ -43,6 +52,9 @@ export class ProjectGanttComponent implements AfterViewChecked, OnDestroy {
 	activeView: (typeof this.viewModes)[number] = 'Day';
 
 	items: GanttItemResponseDto[] = [];
+	dependencyItems: GanttItemResponseDto[] = [];
+	predecessorCandidates: GanttItemResponseDto[] = [];
+
 	isLoading = true;
 	isDownloadingPdf = false;
 	isDependencyEditorOpen = false;
@@ -50,16 +62,21 @@ export class ProjectGanttComponent implements AfterViewChecked, OnDestroy {
 	selectedDependencyItemId: number | null = null;
 	selectedPredecessorId: number | null = null;
 	errorMessage = '';
+	canEdit = false;
 
 	private gantt: Gantt | null = null;
 	private pendingTasks: RetrofitGanttTask[] | null = null;
 
-	constructor(
-		private projectItemService: ProjectItemService,
-		private projectService: ProjectService,
-		private cdr: ChangeDetectorRef,
-		private toastService: ToastService,
-	) {}
+	private projectItemService = inject(ProjectItemService);
+	private projectService = inject(ProjectService);
+	private cdr = inject(ChangeDetectorRef);
+	private toastService = inject(ToastService);
+	private authService = inject(AuthService);
+	private destroyRef = inject(DestroyRef);
+
+	ngOnInit(): void {
+		this.canEdit = this.authService.hasPermission('PROJECT_UPDATE');
+	}
 
 	ngAfterViewInit(): void {
 		this.loadGanttData();
@@ -90,24 +107,40 @@ export class ProjectGanttComponent implements AfterViewChecked, OnDestroy {
 			this.pendingTasks = null;
 			this.destroyChart();
 		}
-		this.projectItemService.getGanttItems(this.projectId).subscribe({
-			next: (backendItems) => {
-				this.items = backendItems;
-				const tasks = this.buildTasks(backendItems);
-				if (!silent) this.isLoading = false;
-				this.pendingTasks = tasks;
-				this.cdr.markForCheck();
-			},
-			error: (err: HttpErrorResponse) => {
-				if (!silent) {
-					this.pendingTasks = null;
-					this.isLoading = false;
-					this.errorMessage = 'No se pudo cargar el cronograma del proyecto.';
-				}
-				this.toastService.showApiError(err, 'Error cargando el cronograma');
-				this.cdr.markForCheck();
-			},
-		});
+		this.projectItemService
+			.getGanttItems(this.projectId)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: (backendItems) => {
+					this.items = backendItems;
+					this.updateDependencyLists();
+					const tasks = this.buildTasks(backendItems);
+					if (!silent) this.isLoading = false;
+					this.pendingTasks = tasks;
+					this.cdr.markForCheck();
+				},
+				error: (err: HttpErrorResponse) => {
+					if (!silent) {
+						this.pendingTasks = null;
+						this.isLoading = false;
+						this.errorMessage = 'No se pudo cargar el cronograma del proyecto.';
+					}
+					this.toastService.showApiError(err, 'Error cargando el cronograma');
+					this.cdr.markForCheck();
+				},
+			});
+	}
+
+	private updateDependencyLists(): void {
+		const parentIds = new Set(
+			this.items.filter((item) => item.parentId != null).map((item) => item.parentId),
+		);
+		this.dependencyItems = this.items.filter(
+			(item) => item.type !== 'project' && !parentIds.has(item.id),
+		);
+		this.predecessorCandidates = this.dependencyItems.filter(
+			(item) => item.id !== this.selectedDependencyItemId,
+		);
 	}
 
 	private renderChart(tasks: RetrofitGanttTask[]): void {
@@ -129,27 +162,24 @@ export class ProjectGanttComponent implements AfterViewChecked, OnDestroy {
 		this.cdr.markForCheck();
 	}
 
-	get dependencyItems(): GanttItemResponseDto[] {
-		const parentIds = new Set(this.items.filter((item) => item.parentId != null).map((item) => item.parentId));
-		return this.items.filter((item) => item.type !== 'project' && !parentIds.has(item.id));
-	}
-
-	get predecessorCandidates(): GanttItemResponseDto[] {
-		return this.dependencyItems.filter((item) => item.id !== this.selectedDependencyItemId);
-	}
-
 	toggleDependencyEditor(): void {
 		this.isDependencyEditorOpen = !this.isDependencyEditorOpen;
 		if (!this.isDependencyEditorOpen) {
 			this.selectedDependencyItemId = null;
 			this.selectedPredecessorId = null;
+			this.predecessorCandidates = [...this.dependencyItems];
 		}
 	}
 
 	onDependencyItemChange(value: string): void {
 		this.selectedDependencyItemId = value ? Number(value) : null;
-		const item = this.dependencyItems.find((candidate) => candidate.id === this.selectedDependencyItemId);
+		const item = this.dependencyItems.find(
+			(candidate) => candidate.id === this.selectedDependencyItemId,
+		);
 		this.selectedPredecessorId = item?.predecessorId ?? null;
+		this.predecessorCandidates = this.dependencyItems.filter(
+			(candidate) => candidate.id !== this.selectedDependencyItemId,
+		);
 	}
 
 	onPredecessorChange(value: string): void {
@@ -157,52 +187,65 @@ export class ProjectGanttComponent implements AfterViewChecked, OnDestroy {
 	}
 
 	saveDependency(): void {
-		const item = this.dependencyItems.find((candidate) => candidate.id === this.selectedDependencyItemId);
+		const item = this.dependencyItems.find(
+			(candidate) => candidate.id === this.selectedDependencyItemId,
+		);
 		if (!item || this.isSavingDependency) return;
 
 		this.isSavingDependency = true;
-		this.projectItemService.updateGanttDates(this.projectId, item.id, {
-			startDate: item.startDate,
-			endDate: item.endDate,
-			predecessorId: this.selectedPredecessorId,
-		}).subscribe({
-			next: () => {
-				this.isSavingDependency = false;
-				this.toastService.show('Relación de dependencia actualizada.', 'success');
-				this.loadGanttData(true);
-				this.cdr.markForCheck();
-			},
-			error: (err: HttpErrorResponse) => {
-				this.isSavingDependency = false;
-				this.toastService.showApiError(err, 'No se pudo actualizar la relación');
-				this.cdr.markForCheck();
-			},
-		});
+		this.projectItemService
+			.updateGanttDates(this.projectId, item.id, {
+				startDate: item.startDate,
+				endDate: item.endDate,
+				predecessorId: this.selectedPredecessorId,
+			})
+			.pipe(
+				finalize(() => {
+					this.isSavingDependency = false;
+					this.cdr.markForCheck();
+				}),
+				takeUntilDestroyed(this.destroyRef),
+			)
+			.subscribe({
+				next: () => {
+					this.toastService.show('Relación de dependencia actualizada.', 'success');
+					this.loadGanttData(true);
+				},
+				error: (err: HttpErrorResponse) => {
+					this.toastService.showApiError(err, 'No se pudo actualizar la relación');
+				},
+			});
 	}
 
 	exportToPdf(): void {
 		if (!this.projectId || this.isDownloadingPdf) return;
 
 		this.isDownloadingPdf = true;
-		this.projectService.downloadGanttReport(this.projectId).subscribe({
-			next: (blob: Blob) => {
-				const url = window.URL.createObjectURL(blob);
-				const anchor = document.createElement('a');
-				anchor.href = url;
-				anchor.download = `cronograma_proyecto_${this.projectId}.pdf`;
-				document.body.appendChild(anchor);
-				anchor.click();
-				anchor.remove();
-				window.URL.revokeObjectURL(url);
-				this.isDownloadingPdf = false;
-				this.cdr.markForCheck();
-			},
-			error: (err: HttpErrorResponse) => {
-				this.isDownloadingPdf = false;
-				this.toastService.showApiError(err, 'Error al exportar el cronograma');
-				this.cdr.markForCheck();
-			},
-		});
+		this.cdr.markForCheck();
+		this.projectService
+			.downloadGanttReport(this.projectId)
+			.pipe(
+				finalize(() => {
+					this.isDownloadingPdf = false;
+					this.cdr.markForCheck();
+				}),
+				takeUntilDestroyed(this.destroyRef),
+			)
+			.subscribe({
+				next: (blob: Blob) => {
+					const url = window.URL.createObjectURL(blob);
+					const anchor = document.createElement('a');
+					anchor.href = url;
+					anchor.download = `cronograma_proyecto_${this.projectId}.pdf`;
+					document.body.appendChild(anchor);
+					anchor.click();
+					anchor.remove();
+					window.URL.revokeObjectURL(url);
+				},
+				error: (err: HttpErrorResponse) => {
+					this.toastService.showApiError(err, 'Error al exportar el cronograma');
+				},
+			});
 	}
 
 	private createChart(tasks: RetrofitGanttTask[]): void {
@@ -220,7 +263,7 @@ export class ProjectGanttComponent implements AfterViewChecked, OnDestroy {
 			padding: 20,
 			lines: 'vertical',
 			readonly_progress: true,
-			readonly_dates: false,
+			readonly_dates: !this.canEdit,
 			popup_on: 'click',
 			scroll_to: 'start',
 			today_button: false,
@@ -234,19 +277,29 @@ export class ProjectGanttComponent implements AfterViewChecked, OnDestroy {
 					`${this.formatDate(retrofitTask.start)} — ${this.formatDate(retrofitTask.end)}<br/>Avance: ${Math.round(retrofitTask.progress)}%`,
 				);
 			},
-			on_date_change: (task, start, end) => this.handleDateChange(task as RetrofitGanttTask, start, end),
+			on_date_change: (task, start, end) =>
+				this.handleDateChange(task as RetrofitGanttTask, start, end),
 		};
 
 		this.gantt = new Gantt(container, tasks, options);
 	}
 
-	private buildViewModes(tasks: RetrofitGanttTask[], containerWidth: number): FrappeGanttViewMode[] {
+	private buildViewModes(
+		tasks: RetrofitGanttTask[],
+		containerWidth: number,
+	): FrappeGanttViewMode[] {
 		const dates = tasks.flatMap((task) => [this.parseDate(task.start), this.parseDate(task.end)]);
 		const firstDate = new Date(Math.min(...dates.map((date) => date.getTime())));
 		const lastDate = new Date(Math.max(...dates.map((date) => date.getTime())));
-		const projectDays = Math.max(1, Math.ceil((lastDate.getTime() - firstDate.getTime()) / 86_400_000) + 1);
+		const projectDays = Math.max(
+			1,
+			Math.ceil((lastDate.getTime() - firstDate.getTime()) / 86_400_000) + 1,
+		);
 		const projectMonths =
-			(lastDate.getFullYear() - firstDate.getFullYear()) * 12 + lastDate.getMonth() - firstDate.getMonth() + 1;
+			(lastDate.getFullYear() - firstDate.getFullYear()) * 12 +
+			lastDate.getMonth() -
+			firstDate.getMonth() +
+			1;
 		const projectYears = lastDate.getFullYear() - firstDate.getFullYear() + 1;
 		const usableWidth = Math.max(containerWidth, 720);
 		const weekWidth = Math.max(92, Math.ceil(usableWidth / Math.ceil((projectDays + 28) / 7)));
@@ -254,39 +307,67 @@ export class ProjectGanttComponent implements AfterViewChecked, OnDestroy {
 		const yearWidth = Math.max(220, Math.ceil(usableWidth / (projectYears + 2)));
 
 		const monthName = (date: Date, short = false): string => {
-			const value = date.toLocaleDateString('es-PE', { month: short ? 'short' : 'long' }).replace('.', '');
+			const value = date
+				.toLocaleDateString('es-PE', { month: short ? 'short' : 'long' })
+				.replace('.', '');
 			return value.charAt(0).toUpperCase() + value.slice(1);
 		};
 		const isNewMonth = (date: Date, previous: Date | null): boolean =>
-			!previous || date.getMonth() !== previous.getMonth() || date.getFullYear() !== previous.getFullYear();
+			!previous ||
+			date.getMonth() !== previous.getMonth() ||
+			date.getFullYear() !== previous.getFullYear();
 
 		return [
 			{
-				name: 'Day', padding: '7d', step: '1d', date_format: 'YYYY-MM-DD', column_width: 52,
+				name: 'Day',
+				padding: '7d',
+				step: '1d',
+				date_format: 'YYYY-MM-DD',
+				column_width: 52,
 				lower_text: (date) => String(date.getDate()).padStart(2, '0'),
 				upper_text: (date, previous) => (isNewMonth(date, previous) ? monthName(date) : ''),
 				thick_line: (date) => date.getDay() === 1,
 			},
 			{
-				name: 'Week', padding: '14d', step: '7d', date_format: 'YYYY-MM-DD', column_width: weekWidth,
+				name: 'Week',
+				padding: '14d',
+				step: '7d',
+				date_format: 'YYYY-MM-DD',
+				column_width: weekWidth,
 				lower_text: (date, previous) => {
 					const end = this.addDays(date, 6);
-					const startLabel = isNewMonth(date, previous) ? `${date.getDate()} ${monthName(date, true).toLowerCase()}` : String(date.getDate());
-					const endLabel = end.getMonth() !== date.getMonth() ? `${end.getDate()} ${monthName(end, true).toLowerCase()}` : String(end.getDate());
+					const startLabel = isNewMonth(date, previous)
+						? `${date.getDate()} ${monthName(date, true).toLowerCase()}`
+						: String(date.getDate());
+					const endLabel =
+						end.getMonth() !== date.getMonth()
+							? `${end.getDate()} ${monthName(end, true).toLowerCase()}`
+							: String(end.getDate());
 					return `${startLabel} – ${endLabel}`;
 				},
 				upper_text: (date, previous) => (isNewMonth(date, previous) ? monthName(date) : ''),
 				thick_line: (date) => date.getDate() <= 7,
 			},
 			{
-				name: 'Month', padding: '1m', step: '1m', date_format: 'YYYY-MM', column_width: monthWidth,
+				name: 'Month',
+				padding: '1m',
+				step: '1m',
+				date_format: 'YYYY-MM',
+				column_width: monthWidth,
 				lower_text: (date) => monthName(date),
-				upper_text: (date, previous) => (!previous || date.getFullYear() !== previous.getFullYear() ? String(date.getFullYear()) : ''),
+				upper_text: (date, previous) =>
+					!previous || date.getFullYear() !== previous.getFullYear()
+						? String(date.getFullYear())
+						: '',
 				thick_line: (date) => date.getMonth() % 3 === 0,
 				snap_at: '7d',
 			},
 			{
-				name: 'Year', padding: '1y', step: '1y', date_format: 'YYYY', column_width: yearWidth,
+				name: 'Year',
+				padding: '1y',
+				step: '1y',
+				date_format: 'YYYY',
+				column_width: yearWidth,
 				lower_text: (date) => String(date.getFullYear()),
 				upper_text: () => '',
 				snap_at: '30d',
@@ -307,16 +388,19 @@ export class ProjectGanttComponent implements AfterViewChecked, OnDestroy {
 			predecessorId: task.predecessorId,
 		};
 
-		this.projectItemService.updateGanttDates(this.projectId, task.backendItemId, updateDto).subscribe({
-			next: () => {
-				this.toastService.show('Partida actualizada correctamente.', 'success');
-				this.loadGanttData(true);
-			},
-			error: (err: HttpErrorResponse) => {
-				this.toastService.showApiError(err, 'Error al guardar la partida');
-				this.loadGanttData();
-			},
-		});
+		this.projectItemService
+			.updateGanttDates(this.projectId, task.backendItemId, updateDto)
+			.pipe(takeUntilDestroyed(this.destroyRef))
+			.subscribe({
+				next: () => {
+					this.toastService.show('Partida actualizada correctamente.', 'success');
+					this.loadGanttData(true);
+				},
+				error: (err: HttpErrorResponse) => {
+					this.toastService.showApiError(err, 'Error al guardar la partida');
+					this.loadGanttData();
+				},
+			});
 	}
 
 	private buildTasks(items: GanttItemResponseDto[]): RetrofitGanttTask[] {
@@ -333,7 +417,10 @@ export class ProjectGanttComponent implements AfterViewChecked, OnDestroy {
 		const itemById = new Map(items.map((item) => [item.id, item]));
 		const ranges = new Map<number, DateRange>();
 		for (const item of items) {
-			ranges.set(item.id, this.resolveRange(item, itemById, childrenByParent, rangeCache, new Set()));
+			ranges.set(
+				item.id,
+				this.resolveRange(item, itemById, childrenByParent, rangeCache, new Set()),
+			);
 		}
 
 		return items.map((item) => {
@@ -390,7 +477,9 @@ export class ProjectGanttComponent implements AfterViewChecked, OnDestroy {
 	}
 
 	private fallbackRange(item: GanttItemResponseDto): DateRange {
-		const start = item.startDate ? this.parseDate(item.startDate) : this.parseDate(this.projectStartDate);
+		const start = item.startDate
+			? this.parseDate(item.startDate)
+			: this.parseDate(this.projectStartDate);
 		const end = item.endDate
 			? this.addDays(this.parseDate(item.endDate), -1)
 			: this.addDays(start, Math.max(item.baseDurationDays || 1, 1) - 1);

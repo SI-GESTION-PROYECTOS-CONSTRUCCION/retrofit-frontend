@@ -14,9 +14,27 @@
 </section>
 
 @if (isLoading) {
-  <div class="gantt-state-card">
-    <i class="fa-solid fa-spinner fa-spin"></i>
-    <span>Cargando cronograma...</span>
+  <div class="gantt-skeleton-container">
+    <div class="gantt-skeleton-toolbar">
+      <app-skeleton width="200px" height="34px" borderRadius="8px" marginBottom="0"></app-skeleton>
+      <app-skeleton width="180px" height="34px" borderRadius="8px" marginBottom="0"></app-skeleton>
+    </div>
+    <div class="gantt-skeleton-wrapper">
+      @for (i of [1, 2, 3, 4, 5, 6, 7]; track i) {
+        <div class="gantt-skeleton-row">
+          <app-skeleton [width]="i % 2 === 0 ? '220px' : '170px'" height="20px" marginBottom="0"></app-skeleton>
+          <div class="gantt-skeleton-bar-track">
+            <app-skeleton
+              [width]="(i * 12 + 25) + '%'"
+              [style.margin-left]="(i * 8) + '%'"
+              height="24px"
+              borderRadius="4px"
+              marginBottom="0">
+            </app-skeleton>
+          </div>
+        </div>
+      }
+    </div>
   </div>
 } @else if (errorMessage) {
   <div class="gantt-state-card gantt-state-error">
@@ -40,10 +58,12 @@
       }
     </div>
     <div class="gantt-toolbar-actions">
-      <button type="button" class="gantt-dependency-button" [class.active]="isDependencyEditorOpen" (click)="toggleDependencyEditor()">
-        <i class="fa-solid fa-link"></i>
-        Relaciones
-      </button>
+      @if (canEdit) {
+        <button *appHasPermission="'PROJECT_UPDATE'" type="button" class="gantt-dependency-button" [class.active]="isDependencyEditorOpen" (click)="toggleDependencyEditor()">
+          <i class="fa-solid fa-link"></i>
+          Relaciones
+        </button>
+      }
       <div class="gantt-legend" aria-label="Leyenda">
         <span><i class="legend-dot legend-dot-parent"></i>Grupo</span>
         <span><i class="legend-dot legend-dot-task"></i>Partida</span>
@@ -52,8 +72,8 @@
     </div>
   </div>
 
-  @if (isDependencyEditorOpen) {
-    <section class="dependency-editor" aria-label="Editor de relaciones entre actividades">
+  @if (canEdit && isDependencyEditorOpen) {
+    <section *appHasPermission="'PROJECT_UPDATE'" class="dependency-editor" aria-label="Editor de relaciones entre actividades">
       <div class="dependency-editor-heading">
         <i class="fa-solid fa-diagram-project"></i>
         <div>

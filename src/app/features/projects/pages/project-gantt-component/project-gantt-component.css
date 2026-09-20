@@ -301,6 +301,48 @@
 .gantt-container .popup-wrapper .pointer { border-bottom-color: #184a62; }
 .gantt-container .popup { border: 1px solid #dce8e9; border-radius: 10px; box-shadow: 0 10px 30px rgba(24, 74, 98, .16); }
 
+/* Skeleton Loading para Cronograma */
+.gantt-skeleton-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gantt-skeleton-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border: 1px solid var(--rt-line);
+  border-radius: 11px;
+  background: var(--rt-surface);
+}
+
+.gantt-skeleton-wrapper {
+  padding: 18px 20px;
+  border: 1px solid var(--rt-line);
+  border-radius: var(--rt-radius-md);
+  background: var(--rt-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gantt-skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.gantt-skeleton-bar-track {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
 @media (max-width: 720px) {
   .gantt-module-heading,
   .gantt-toolbar { align-items: flex-start; flex-direction: column; }
