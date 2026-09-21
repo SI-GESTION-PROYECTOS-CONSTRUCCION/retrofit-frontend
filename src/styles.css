@@ -743,3 +743,253 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .rt-action-button--edit:hover, .rt-action-button--configure:hover { border-color: #b9d4f3 !important; background: #edf6ff !important; color: var(--rt-brand-700) !important; }
 .rt-action-button--delete:hover { border-color: #f2b9bd !important; background: #fff0f1 !important; color: var(--rt-danger) !important; }
 .rt-action-button--reactivate:hover { border-color: #9bded7 !important; background: #e8f7f6 !important; color: var(--rt-teal-700) !important; }
+
+/* ==========================================================================
+   MÓDULO DE ACCESIBILIDAD WEB (WCAG 2.1 AA) - RETROFIT DESIGN SYSTEM
+   ========================================================================== */
+
+/* 1. Escala de Texto */
+body[data-a11y-text-size="large"] { font-size: 112%; }
+body[data-a11y-text-size="larger"] { font-size: 124%; }
+body[data-a11y-text-size="xlarge"] { font-size: 136%; }
+
+/* 2. Espaciado de Texto y Altura de Línea */
+body[data-a11y-text-spacing="moderate"] :not(.a11y-widget-container *):not(.budget-table-container *):not(.gantt-chart-container *):not(.cdk-virtual-scroll-viewport *) {
+  letter-spacing: 0.08em !important;
+  line-height: 1.8 !important;
+}
+body[data-a11y-text-spacing="heavy"] :not(.a11y-widget-container *):not(.budget-table-container *):not(.gantt-chart-container *):not(.cdk-virtual-scroll-viewport *) {
+  letter-spacing: 0.16em !important;
+  line-height: 2.1 !important;
+}
+
+/* 3. Contraste Medio (Modo Noche / Invertido Suave) */
+body[data-a11y-contrast="medium"] {
+  --rt-canvas: #0f172a !important;
+  --rt-surface: #1e293b !important;
+  --rt-surface-soft: #334155 !important;
+  --rt-ink: #f8fafc !important;
+  --rt-ink-muted: #cbd5e1 !important;
+  --rt-line: #475569 !important;
+  --color-fondo-app: #0f172a !important;
+  --color-fondo-tarjeta: #1e293b !important;
+  --color-fondo: #1e293b !important;
+  --color-texto-principal: #f8fafc !important;
+  --color-texto: #cbd5e1 !important;
+  --color-divisor: #475569 !important;
+
+  /* PrimeNG Aura */
+  --p-content-background: #1e293b !important;
+  --p-content-color: #f8fafc !important;
+  --p-content-border-color: #475569 !important;
+  --p-form-field-background: #0f172a !important;
+  --p-form-field-color: #f8fafc !important;
+  --p-form-field-border-color: #475569 !important;
+  --p-select-background: #1e293b !important;
+  --p-select-color: #f8fafc !important;
+  --p-select-border-color: #475569 !important;
+  --p-select-dropdown-color: #38bdf8 !important;
+  --p-select-overlay-background: #1e293b !important;
+  --p-select-overlay-color: #f8fafc !important;
+  --p-select-overlay-border-color: #475569 !important;
+  --p-select-option-color: #f8fafc !important;
+  --p-select-option-focus-background: #334155 !important;
+  --p-select-option-focus-color: #38bdf8 !important;
+  --p-select-option-selected-background: #0ea5a8 !important;
+  --p-select-option-selected-color: #ffffff !important;
+}
+
+body[data-a11y-contrast="medium"] .header-container {
+  background: #1e293b !important;
+  border-bottom: 1px solid #475569 !important;
+}
+body[data-a11y-contrast="medium"] .sidebar-container {
+  background: #0f172a !important;
+  border-right: 1px solid #475569 !important;
+}
+body[data-a11y-contrast="medium"] .dashboard-hero {
+  background: #1e293b !important;
+  border-color: #475569 !important;
+}
+body[data-a11y-contrast="medium"] .project-selector {
+  background: #0f172a !important;
+  border-color: #475569 !important;
+}
+body[data-a11y-contrast="medium"] .p-select,
+body[data-a11y-contrast="medium"] .dashboard-select,
+body[data-a11y-contrast="medium"] .audit-filter {
+  background: #1e293b !important;
+  border: 1px solid #475569 !important;
+  color: #f8fafc !important;
+}
+body[data-a11y-contrast="medium"] .p-select .p-select-label,
+body[data-a11y-contrast="medium"] .dashboard-select .p-select-label,
+body[data-a11y-contrast="medium"] .audit-filter .p-select-label {
+  color: #f8fafc !important;
+}
+body[data-a11y-contrast="medium"] .p-select .p-select-dropdown,
+body[data-a11y-contrast="medium"] .dashboard-select .p-select-dropdown,
+body[data-a11y-contrast="medium"] .audit-filter .p-select-dropdown {
+  color: #38bdf8 !important;
+}
+
+/* 4. Alto Contraste (WCAG AAA - Negro / Amarillo / Blanco) */
+body[data-a11y-contrast="high"] {
+  --rt-canvas: #000000 !important;
+  --rt-surface: #0a0a0a !important;
+  --rt-surface-soft: #141414 !important;
+  --rt-ink: #ffffff !important;
+  --rt-ink-muted: #f0f0f0 !important;
+  --rt-line: #ffffff !important;
+  --rt-brand-950: #000000 !important;
+  --rt-brand-900: #000000 !important;
+  --rt-brand-800: #050505 !important;
+  --rt-brand-700: #ffff00 !important;
+  --rt-brand-600: #ffff00 !important;
+  --rt-brand-500: #ffff00 !important;
+  --rt-teal-600: #00ffff !important;
+  --rt-teal-500: #00ffff !important;
+  --color-fondo-app: #000000 !important;
+  --color-fondo-tarjeta: #0a0a0a !important;
+  --color-fondo: #0a0a0a !important;
+  --color-texto-principal: #ffffff !important;
+  --color-texto: #f0f0f0 !important;
+  --color-divisor: #ffffff !important;
+  --color-primario: #ffff00 !important;
+
+  /* PrimeNG Aura */
+  --p-primary-color: #ffff00 !important;
+  --p-primary-contrast-color: #000000 !important;
+  --p-focus-ring-color: #ffff00 !important;
+  --p-content-background: #0a0a0a !important;
+  --p-content-color: #ffffff !important;
+  --p-content-border-color: #ffffff !important;
+  --p-form-field-background: #000000 !important;
+  --p-form-field-color: #ffffff !important;
+  --p-form-field-border-color: #ffffff !important;
+  --p-select-background: #000000 !important;
+  --p-select-color: #ffffff !important;
+  --p-select-border-color: #ffffff !important;
+  --p-select-dropdown-color: #ffff00 !important;
+  --p-select-overlay-background: #0a0a0a !important;
+  --p-select-overlay-color: #ffffff !important;
+  --p-select-overlay-border-color: #ffffff !important;
+  --p-select-option-color: #ffffff !important;
+  --p-select-option-focus-background: #1f1f1f !important;
+  --p-select-option-focus-color: #ffff00 !important;
+  --p-select-option-selected-background: #ffff00 !important;
+  --p-select-option-selected-color: #000000 !important;
+}
+
+body[data-a11y-contrast="high"] .header-container {
+  background: #000000 !important;
+  border-bottom: 2px solid #ffffff !important;
+}
+body[data-a11y-contrast="high"] .sidebar-container {
+  background: #000000 !important;
+  border-right: 2px solid #ffffff !important;
+}
+body[data-a11y-contrast="high"] .sidebar-container .nav-menu li a.active,
+body[data-a11y-contrast="high"] .sidebar-container .nav-menu li a:hover {
+  background: #1a1a1a !important;
+  color: #ffff00 !important;
+  border-color: #ffff00 !important;
+}
+body[data-a11y-contrast="high"] .dashboard-hero {
+  background: #000000 !important;
+  border: 2px solid #ffffff !important;
+}
+body[data-a11y-contrast="high"] .project-selector {
+  background: #0a0a0a !important;
+  border: 1px solid #ffffff !important;
+}
+body[data-a11y-contrast="high"] .p-select,
+body[data-a11y-contrast="high"] .dashboard-select,
+body[data-a11y-contrast="high"] .audit-filter {
+  background: #000000 !important;
+  border: 1.5px solid #ffffff !important;
+  color: #ffffff !important;
+}
+body[data-a11y-contrast="high"] .p-select .p-select-label,
+body[data-a11y-contrast="high"] .dashboard-select .p-select-label,
+body[data-a11y-contrast="high"] .audit-filter .p-select-label {
+  color: #ffffff !important;
+}
+body[data-a11y-contrast="high"] .p-select .p-select-dropdown,
+body[data-a11y-contrast="high"] .dashboard-select .p-select-dropdown,
+body[data-a11y-contrast="high"] .audit-filter .p-select-dropdown {
+  color: #ffff00 !important;
+}
+body[data-a11y-contrast="high"] .kpi-card,
+body[data-a11y-contrast="high"] .chart-card,
+body[data-a11y-contrast="high"] .recent-card,
+body[data-a11y-contrast="high"] .alerts-section {
+  background: #0a0a0a !important;
+  border: 1px solid #ffffff !important;
+}
+
+body[data-a11y-contrast="high"] a,
+body[data-a11y-contrast="high"] button:not(.a11y-trigger-btn):not(.a11y-tool-card):not(.a11y-action-btn) {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* 5. Fuente para Dislexia / Alta Legibilidad */
+body[data-a11y-dyslexia="true"],
+body[data-a11y-dyslexia="true"] *:not(.fa-solid):not(.fa-regular):not(.fa-brands) {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', 'Trebuchet MS', Arial, sans-serif !important;
+}
+
+/* 6. Cursor Grande de Alto Contraste */
+body[data-a11y-cursor="true"],
+body[data-a11y-cursor="true"] * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Cpath fill='%23000' stroke='%23fff' stroke-width='2' d='M5 2l22 17-9 2 6 12-4 2-6-12-9 6z'/%3E%3C/svg%3E"), auto !important;
+}
+
+/* 7. Pausar Animaciones (Reducción de Movimiento) */
+body[data-a11y-motion="reduced"] *,
+body[data-a11y-motion="reduced"] *::before,
+body[data-a11y-motion="reduced"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* 8. Ocultar Imágenes (Modo de Enfoque en Texto) */
+body[data-a11y-hide-images="true"] img:not(.a11y-widget-container *),
+body[data-a11y-hide-images="true"] video,
+body[data-a11y-hide-images="true"] [style*="background-image"]:not(.a11y-widget-container *) {
+  opacity: 0.05 !important;
+  filter: grayscale(100%) !important;
+}
+
+/* 9. Filtros de Color / Daltonismo */
+body[data-a11y-filter="grayscale"] {
+  filter: grayscale(100%) !important;
+}
+body[data-a11y-filter="protanopia"] {
+  filter: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"><filter id="f"><feColorMatrix type="matrix" values="0.567, 0.433, 0, 0, 0 0.558, 0.442, 0, 0, 0 0, 0.242, 0.758, 0, 0 0, 0, 0, 1, 0"/></filter></svg>#f') !important;
+}
+body[data-a11y-filter="deuteranopia"] {
+  filter: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"><filter id="f"><feColorMatrix type="matrix" values="0.625, 0.375, 0, 0, 0 0.7, 0.3, 0, 0, 0 0, 0.3, 0.7, 0, 0 0, 0, 0, 1, 0"/></filter></svg>#f') !important;
+}
+body[data-a11y-filter="tritanopia"] {
+  filter: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"><filter id="f"><feColorMatrix type="matrix" values="0.95, 0.05, 0, 0, 0 0, 0.433, 0.567, 0, 0 0, 0.475, 0.525, 0, 0 0, 0, 0, 1, 0"/></filter></svg>#f') !important;
+}
+
+/* 10. PROTECCIÓN DE LAYOUTS DE INGENIERÍA (Gantt y Grilla de Presupuesto) */
+.gantt-chart-container,
+.gantt-container,
+.gantt-task-row,
+.gantt,
+svg.frappe-gantt,
+.budget-table-container,
+.budget-table,
+.budget-row,
+.cdk-virtual-scroll-viewport {
+  font-size: 13px !important;
+  letter-spacing: normal !important;
+  line-height: normal !important;
+}
+

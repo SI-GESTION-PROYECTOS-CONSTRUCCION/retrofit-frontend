@@ -1,0 +1,193 @@
+<div class="a11y-widget-container">
+	<!-- Botón Flotante Tipo UserWay -->
+	<button
+		type="button"
+		class="a11y-trigger-btn"
+		(click)="togglePanel()"
+		[attr.aria-expanded]="isOpen()"
+		aria-haspopup="dialog"
+		aria-label="Abrir panel de herramientas de accesibilidad"
+	>
+		<i class="fa-solid fa-universal-access a11y-trigger-icon"></i>
+		<span class="a11y-trigger-tooltip">Accesibilidad</span>
+	</button>
+
+	<!-- Backdrop semitransparente -->
+	@if (isOpen()) {
+		<div class="a11y-backdrop" (click)="closePanel()" aria-hidden="true"></div>
+
+		<!-- Panel Modal de Herramientas -->
+		<section
+			class="a11y-panel"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="a11y-header-title"
+		>
+			<header class="a11y-header">
+				<div class="a11y-header-titles">
+					<span class="a11y-header-icon"><i class="fa-solid fa-universal-access"></i></span>
+					<div>
+						<h3 id="a11y-header-title">Herramientas de Accesibilidad</h3>
+						<p>Personaliza tu experiencia de navegación e inclusión visual.</p>
+					</div>
+				</div>
+				<div class="a11y-header-actions">
+					<button
+						type="button"
+						class="a11y-action-btn a11y-btn-reset"
+						(click)="a11y.resetAll()"
+						title="Restablecer todas las configuraciones"
+					>
+						<i class="fa-solid fa-rotate-left"></i>
+						<span>Restablecer</span>
+					</button>
+					<button
+						type="button"
+						class="a11y-action-btn a11y-btn-close"
+						(click)="closePanel()"
+						aria-label="Cerrar menú de accesibilidad"
+					>
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+			</header>
+
+			<div class="a11y-body">
+				<div class="a11y-grid">
+					<!-- 1. Contraste -->
+					<button
+						type="button"
+						class="a11y-tool-card"
+						[class.active]="a11y.settings().contrast !== 'off'"
+						(click)="a11y.cycleContrast()"
+					>
+						<div class="a11y-tool-icon">
+							<i class="fa-solid fa-circle-half-stroke"></i>
+						</div>
+						<span class="a11y-tool-title">Contraste</span>
+						<span class="a11y-tool-badge">{{ contrastBadge }}</span>
+					</button>
+
+					<!-- 2. Tamaño de Texto -->
+					<button
+						type="button"
+						class="a11y-tool-card"
+						[class.active]="a11y.settings().textSize !== 'normal'"
+						(click)="a11y.cycleTextSize()"
+					>
+						<div class="a11y-tool-icon">
+							<i class="fa-solid fa-font"></i>
+						</div>
+						<span class="a11y-tool-title">Tamaño Texto</span>
+						<span class="a11y-tool-badge">{{ textSizeBadge }}</span>
+					</button>
+
+					<!-- 3. Espaciado -->
+					<button
+						type="button"
+						class="a11y-tool-card"
+						[class.active]="a11y.settings().textSpacing !== 'normal'"
+						(click)="a11y.cycleTextSpacing()"
+					>
+						<div class="a11y-tool-icon">
+							<i class="fa-solid fa-arrows-left-right-to-line"></i>
+						</div>
+						<span class="a11y-tool-title">Espaciado</span>
+						<span class="a11y-tool-badge">{{ textSpacingBadge }}</span>
+					</button>
+
+					<!-- 4. Dislexia -->
+					<button
+						type="button"
+						class="a11y-tool-card"
+						[class.active]="a11y.settings().dyslexiaFont"
+						(click)="a11y.toggleDyslexiaFont()"
+					>
+						<div class="a11y-tool-icon">
+							<i class="fa-solid fa-book-open-reader"></i>
+						</div>
+						<span class="a11y-tool-title">Fuente Dislexia</span>
+						<span class="a11y-tool-badge">{{ a11y.settings().dyslexiaFont ? 'Activo' : 'Normal' }}</span>
+					</button>
+
+					<!-- 5. Cursor Grande -->
+					<button
+						type="button"
+						class="a11y-tool-card"
+						[class.active]="a11y.settings().largeCursor"
+						(click)="a11y.toggleLargeCursor()"
+					>
+						<div class="a11y-tool-icon">
+							<i class="fa-solid fa-arrow-pointer"></i>
+						</div>
+						<span class="a11y-tool-title">Cursor Grande</span>
+						<span class="a11y-tool-badge">{{ a11y.settings().largeCursor ? 'Grande' : 'Normal' }}</span>
+					</button>
+
+					<!-- 6. Pausar Animaciones -->
+					<button
+						type="button"
+						class="a11y-tool-card"
+						[class.active]="a11y.settings().pauseAnimations"
+						(click)="a11y.togglePauseAnimations()"
+					>
+						<div class="a11y-tool-icon">
+							<i class="fa-solid fa-pause"></i>
+						</div>
+						<span class="a11y-tool-title">Pausar Anim.</span>
+						<span class="a11y-tool-badge">{{ a11y.settings().pauseAnimations ? 'Pausado' : 'Normal' }}</span>
+					</button>
+
+					<!-- 7. Filtro Daltonismo -->
+					<button
+						type="button"
+						class="a11y-tool-card"
+						[class.active]="a11y.settings().colorFilter !== 'none'"
+						(click)="a11y.cycleColorFilter()"
+					>
+						<div class="a11y-tool-icon">
+							<i class="fa-solid fa-palette"></i>
+						</div>
+						<span class="a11y-tool-title">Filtro Color</span>
+						<span class="a11y-tool-badge">{{ colorFilterBadge }}</span>
+					</button>
+
+					<!-- 8. Ocultar Imágenes -->
+					<button
+						type="button"
+						class="a11y-tool-card"
+						[class.active]="a11y.settings().hideImages"
+						(click)="a11y.toggleHideImages()"
+					>
+						<div class="a11y-tool-icon">
+							<i class="fa-solid fa-eye-slash"></i>
+						</div>
+						<span class="a11y-tool-title">Ocultar Fotos</span>
+						<span class="a11y-tool-badge">{{ a11y.settings().hideImages ? 'Ocultas' : 'Normal' }}</span>
+					</button>
+
+					<!-- 9. Lector de Pantalla -->
+					<button
+						type="button"
+						class="a11y-tool-card"
+						[class.active]="a11y.settings().screenReader"
+						(click)="a11y.toggleScreenReader()"
+					>
+						<div class="a11y-tool-icon">
+							<i class="fa-solid fa-volume-high"></i>
+						</div>
+						<span class="a11y-tool-title">Lector de Voz</span>
+						<span class="a11y-tool-badge">{{ a11y.settings().screenReader ? 'Activo' : 'Inactivo' }}</span>
+					</button>
+				</div>
+			</div>
+
+			<!--<footer class="a11y-footer">
+				<span class="a11y-compliance-pill">
+					<i class="fa-solid fa-certificate"></i>
+					Conforme con criterios WCAG 2.1 AA & Sección 508
+				</span>
+			</footer>-->
+		</section>
+	}
+</div>

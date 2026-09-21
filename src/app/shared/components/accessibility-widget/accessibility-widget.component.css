@@ -1,0 +1,347 @@
+.a11y-widget-container {
+	position: relative;
+	font-family: var(--rt-font-sans);
+}
+
+/* FAB Flotante */
+.a11y-trigger-btn {
+	position: fixed;
+	bottom: 24px;
+	right: 24px;
+	width: 52px;
+	height: 52px;
+	border-radius: 50%;
+	background: var(--rt-brand-700);
+	color: #ffffff;
+	border: 2px solid rgba(255, 255, 255, 0.25);
+	box-shadow: 0 10px 24px rgba(11, 31, 58, 0.35);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.4rem;
+	z-index: 9999;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.a11y-trigger-btn:hover {
+	background: var(--rt-brand-600);
+	transform: scale(1.1);
+	box-shadow: 0 14px 28px rgba(11, 31, 58, 0.45);
+}
+
+.a11y-trigger-btn:focus-visible {
+	outline: 3px solid var(--rt-teal-500);
+	outline-offset: 3px;
+}
+
+/* Tooltip al pasar el cursor por el FAB */
+.a11y-trigger-tooltip {
+	position: absolute;
+	right: 64px;
+	background: var(--rt-brand-950);
+	color: #ffffff;
+	padding: 6px 12px;
+	border-radius: 8px;
+	font-size: 0.78rem;
+	font-weight: 600;
+	white-space: nowrap;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateX(6px);
+	transition: all 0.2s ease;
+	box-shadow: var(--rt-shadow-sm);
+}
+
+.a11y-trigger-btn:hover .a11y-trigger-tooltip {
+	opacity: 1;
+	transform: translateX(0);
+}
+
+/* Backdrop transparente (permite ver cambios en vivo y cerrar al hacer clic afuera) */
+.a11y-backdrop {
+	position: fixed;
+	inset: 0;
+	background: transparent;
+	z-index: 10000;
+}
+
+/* Modal / Drawer */
+.a11y-panel {
+	position: fixed;
+	bottom: 86px;
+	right: 24px;
+	width: 400px;
+	max-width: calc(100vw - 36px);
+	max-height: calc(100vh - 110px);
+	background: var(--rt-surface);
+	border: 1px solid var(--rt-line);
+	border-radius: 20px;
+	box-shadow: 0 20px 50px rgba(11, 31, 58, 0.3);
+	z-index: 10001;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	animation: a11ySlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Header */
+.a11y-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1.1rem 1.25rem;
+	background: var(--rt-brand-950);
+	color: #ffffff;
+}
+
+.a11y-header-titles {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.a11y-header-icon {
+	width: 36px;
+	height: 36px;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.12);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.15rem;
+	color: #ffffff;
+}
+
+.a11y-header h3 {
+	font-size: 0.95rem;
+	font-weight: 700;
+	margin: 0;
+	color: #ffffff;
+}
+
+.a11y-header p {
+	font-size: 0.72rem;
+	color: rgba(255, 255, 255, 0.7);
+	margin: 2px 0 0 0;
+}
+
+.a11y-header-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.a11y-action-btn {
+	background: transparent;
+	border: none;
+	color: rgba(255, 255, 255, 0.85);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 10px;
+	border-radius: 8px;
+	font-size: 0.78rem;
+	font-weight: 600;
+	transition: all 0.2s ease;
+}
+
+.a11y-btn-reset {
+	border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.a11y-btn-reset:hover {
+	background: rgba(255, 255, 255, 0.15);
+	color: #ffffff;
+}
+
+.a11y-btn-close {
+	width: 32px;
+	height: 32px;
+	justify-content: center;
+	font-size: 1.1rem;
+}
+
+.a11y-btn-close:hover {
+	background: rgba(217, 83, 89, 0.25);
+	color: #ff8e94;
+}
+
+/* Body / Tools Grid */
+.a11y-body {
+	padding: 1.1rem;
+	overflow-y: auto;
+	max-height: 480px;
+}
+
+.a11y-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 10px;
+}
+
+/* Cards de Herramientas */
+.a11y-tool-card {
+	background: var(--rt-surface-soft);
+	border: 1.5px solid var(--rt-line);
+	border-radius: 14px;
+	padding: 14px 8px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	text-align: center;
+	cursor: pointer;
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	position: relative;
+}
+
+.a11y-tool-card:hover {
+	border-color: var(--rt-brand-500);
+	background: var(--rt-surface);
+	transform: translateY(-2px);
+	box-shadow: var(--rt-shadow-sm);
+}
+
+.a11y-tool-card:focus-visible {
+	outline: 2px solid var(--rt-teal-500);
+	outline-offset: 2px;
+}
+
+.a11y-tool-card.active {
+	background: #eaf4ff;
+	border-color: var(--rt-brand-600);
+	box-shadow: 0 4px 12px rgba(17, 88, 165, 0.15);
+}
+
+.a11y-tool-icon {
+	font-size: 1.35rem;
+	color: var(--rt-brand-700);
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform 0.2s ease;
+}
+
+.a11y-tool-card:hover .a11y-tool-icon {
+	transform: scale(1.12);
+}
+
+.a11y-tool-title {
+	font-size: 0.74rem;
+	font-weight: 700;
+	color: var(--rt-ink);
+	line-height: 1.2;
+}
+
+.a11y-tool-badge {
+	font-size: 0.66rem;
+	font-weight: 700;
+	padding: 2px 7px;
+	border-radius: 6px;
+	background: var(--rt-line);
+	color: #1e293b;
+	letter-spacing: 0.02em;
+	transition: all 0.2s ease;
+}
+
+.a11y-tool-card.active .a11y-tool-badge {
+	background: var(--rt-brand-700);
+	color: #ffffff;
+}
+
+/* Soporte de alto contraste dentro del propio panel */
+:host-context(body[data-a11y-contrast="high"]) .a11y-panel {
+	background: #000000 !important;
+	border: 2px solid #ffffff !important;
+}
+
+:host-context(body[data-a11y-contrast="high"]) .a11y-tool-card {
+	background: #0a0a0a !important;
+	border-color: #ffffff !important;
+}
+
+:host-context(body[data-a11y-contrast="high"]) .a11y-tool-card:not(.active) .a11y-tool-title {
+	color: #ffffff !important;
+}
+
+:host-context(body[data-a11y-contrast="high"]) .a11y-tool-card:not(.active) .a11y-tool-icon {
+	color: #ffffff !important;
+}
+
+:host-context(body[data-a11y-contrast="high"]) .a11y-tool-card:not(.active) .a11y-tool-badge {
+	background: #ffffff !important;
+	color: #000000 !important;
+}
+
+:host-context(body[data-a11y-contrast="high"]) .a11y-tool-card.active {
+	background: #ffff00 !important;
+	border-color: #ffffff !important;
+}
+
+:host-context(body[data-a11y-contrast="high"]) .a11y-tool-card.active .a11y-tool-title,
+:host-context(body[data-a11y-contrast="high"]) .a11y-tool-card.active .a11y-tool-icon {
+	color: #000000 !important;
+}
+
+:host-context(body[data-a11y-contrast="high"]) .a11y-tool-card.active .a11y-tool-badge {
+	background: #000000 !important;
+	color: #ffff00 !important;
+}
+
+/* Footer de Cumplimiento */
+.a11y-footer {
+	padding: 0.8rem 1rem;
+	border-top: 1px solid var(--rt-line);
+	background: var(--rt-surface-soft);
+	text-align: center;
+}
+
+.a11y-compliance-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.72rem;
+	font-weight: 600;
+	color: var(--rt-ink-muted);
+}
+
+.a11y-compliance-pill i {
+	color: var(--rt-teal-600);
+}
+
+/* Animaciones */
+@keyframes a11yFadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes a11ySlideUp {
+	from {
+		opacity: 0;
+		transform: translateY(16px) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@media (max-width: 480px) {
+	.a11y-panel {
+		left: 12px;
+		right: 12px;
+		width: auto;
+		bottom: 80px;
+	}
+	.a11y-grid {
+		grid-template-columns: repeat(3, 1fr);
+		gap: 6px;
+	}
+	.a11y-tool-card {
+		padding: 10px 4px;
+	}
+}
