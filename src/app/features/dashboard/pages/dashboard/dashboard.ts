@@ -95,6 +95,10 @@ export class DashboardComponent implements OnInit {
 		}
 	}
 
+	isParentItem(item: ProjectItemDto): boolean {
+		return !!item.code && this.items.some((candidate) => candidate.code?.startsWith(`${item.code}.`));
+	}
+
 	loadDashboard(projectId: number, itemId?: number | null) {
 		this.isLoading = true;
 		this.dashboardService.getProjectDashboard(projectId, itemId).subscribe({
@@ -136,26 +140,38 @@ export class DashboardComponent implements OnInit {
 						label: 'Planeado (PV)',
 						data: pvData,
 						borderColor: '#3b82f6',
-						backgroundColor: '#3b82f6',
+						backgroundColor: 'rgba(59, 130, 246, .10)',
+						borderWidth: 3,
+						pointRadius: 0,
+						pointHoverRadius: 5,
+						fill: true,
 						tension: 0.4,
 					},
 					{
 						label: 'Ganado (EV)',
 						data: evData,
 						borderColor: '#10b981',
-						backgroundColor: '#10b981',
+						backgroundColor: 'rgba(16, 185, 129, .10)',
+						borderWidth: 3,
+						pointRadius: 0,
+						pointHoverRadius: 5,
+						fill: true,
 						tension: 0.4,
 					},
 					{
 						label: 'Costo Real (AC)',
 						data: acData,
 						borderColor: '#ef4444',
-						backgroundColor: '#ef4444',
+						backgroundColor: 'rgba(239, 68, 68, .08)',
+						borderWidth: 3,
+						pointRadius: 0,
+						pointHoverRadius: 5,
+						fill: true,
 						tension: 0.4,
 					},
 				],
 			},
-			options: { responsive: true, maintainAspectRatio: false },
+			options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { labels: { usePointStyle: true, padding: 18 } }, tooltip: { callbacks: { label: (context) => ` ${context.dataset.label}: S/ ${Number(context.raw).toLocaleString('es-PE', { minimumFractionDigits: 2 })}` } } }, scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(148, 163, 184, .18)' }, ticks: { callback: (value) => `S/ ${Number(value).toLocaleString('es-PE', { notation: 'compact' })}` } } } },
 		});
 	}
 
@@ -164,22 +180,43 @@ export class DashboardComponent implements OnInit {
 
 		if (!this.data || !this.donutChartRef) return;
 
+		const resources = [
+			{ label: 'Mano de Obra', value: this.data.totalLaborCost, color: '#f59e0b' },
+			{ label: 'Equipos', value: this.data.totalEquipmentCost, color: '#8b5cf6' },
+			{ label: 'Materiales', value: this.data.totalMaterialCost, color: '#0ea5e9' },
+		].filter((resource) => resource.value > 0);
+		const totalCost = resources.reduce((total, resource) => total + resource.value, 0);
+		const currency = new Intl.NumberFormat('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+		const labels = resources.map((resource) => {
+			const percentage = totalCost ? (resource.value / totalCost) * 100 : 0;
+			return `${resource.label} — S/ ${currency.format(resource.value)} (${percentage.toFixed(2)}%)`;
+		});
+
 		this.donutChart = new Chart(this.donutChartRef.nativeElement, {
 			type: 'doughnut',
 			data: {
-				labels: ['Mano de Obra', 'Equipos', 'Materiales'],
+				labels,
 				datasets: [
 					{
-						data: [
-							this.data.totalLaborCost,
-							this.data.totalEquipmentCost,
-							this.data.totalMaterialCost,
-						],
-						backgroundColor: ['#f59e0b', '#8b5cf6', '#0ea5e9'],
+						data: resources.map((resource) => resource.value),
+						backgroundColor: resources.map((resource) => resource.color),
+						borderColor: '#ffffff',
+						borderWidth: 4,
 					},
 				],
 			},
-			options: { responsive: true, maintainAspectRatio: false },
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				cutout: '68%',
+				plugins: {
+					tooltip: {
+						callbacks: {
+							label: (context) => ` ${labels[context.dataIndex]}`,
+						},
+					},
+				},
+			},
 		});
 	}
 }

@@ -165,37 +165,43 @@
       </div>
 
       <div class="details-body">
-        <h4>INFORMACIÓN DE SISTEMA</h4>
+        <h4>INFORMACIÓN DE ACTIVIDAD</h4>
         <div class="info-grid">
           <div class="info-item">
-            <label>Dirección IP</label>
-            <div class="info-box">{{ selectedLog.ipAddress }}</div>
+            <label>Origen de la conexión</label>
+            <div class="info-box">{{ getConnectionOrigin(selectedLog.ipAddress) }}</div>
           </div>
           <div class="info-item">
-            <label>Timestamp</label>
-            <div class="info-box">{{ selectedLog.timestamp | date:'HH:mm:ss' }}</div>
+            <label>Fecha y hora del evento</label>
+            <div class="info-box">{{ selectedLog.timestamp | date:'dd/MM/yyyy, HH:mm' }}</div>
           </div>
         </div>
         <div class="info-item mt-3">
-          <label>Agente de Usuario</label>
-          <div class="info-box">{{ selectedLog.userAgent }}</div>
+          <label>Navegador y dispositivo</label>
+          <div class="info-box">{{ getDeviceDescription(selectedLog.userAgent) }}</div>
         </div>
 
-        <h4 class="mt-4">CAMBIOS EN EL PAYLOAD</h4>
+        <h4 class="mt-4">RESUMEN DEL EVENTO</h4>
+        <div class="event-summary"><span>{{ eventSummary }}</span></div>
 
-        <ng-container *ngIf="selectedLog.oldData && selectedLog.oldData !== 'null'">
-          <div class="payload-section old-data">
-            <span class="payload-title"><i class="fa-solid fa-circle text-danger"></i> ESTADO ANTERIOR</span>
-            <pre>{{ selectedLog.oldData | json }}</pre>
+        @if (eventDetails.length > 0) {
+        <div class="event-details">
+          @for (detail of eventDetails; track detail.field) {
+          <div class="event-detail">
+            <span class="event-field">{{ detail.field }}</span>
+            @if (detail.previous !== undefined && detail.current !== undefined) {
+            <span class="event-value">De “{{ detail.previous }}” a “{{ detail.current }}”</span>
+            } @else if (detail.current !== undefined) {
+            <span class="event-value">{{ detail.current }}</span>
+            } @else {
+            <span class="event-value">{{ detail.previous }}</span>
+            }
           </div>
-
-          <div class="payload-divider"><i class="fa-solid fa-arrow-right-arrow-left fa-rotate-90"></i></div>
-        </ng-container>
-
-        <div class="payload-section new-data">
-          <span class="payload-title"><i class="fa-solid fa-circle text-success"></i> NUEVO ESTADO</span>
-          <pre>{{ selectedLog.newData | json }}</pre>
+          }
         </div>
+        } @else {
+        <p class="event-empty">No se registraron campos adicionales para este evento.</p>
+        }
       </div>
     </aside>
     }

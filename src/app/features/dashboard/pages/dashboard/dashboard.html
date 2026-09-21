@@ -19,7 +19,15 @@
         <label for="itemSelect"><i class="fa-solid fa-list-check"></i> Nivel de análisis</label>
         <p-select inputId="itemSelect" [options]="items" optionLabel="description" optionValue="id"
           [(ngModel)]="selectedItemId" (onChange)="onItemChange()" placeholder="Todas las partidas"
-          [showClear]="true" appendTo="body" styleClass="dashboard-select"></p-select>
+          [showClear]="true" appendTo="body" styleClass="dashboard-select">
+          <ng-template #item let-item>
+            <div [style.display]="'flex'" [style.align-items]="'center'" [style.gap.px]="8" [style.padding-left.px]="(item.level || 0) * 16" [style.padding-top.px]="7" [style.padding-bottom.px]="7" [style.font-weight]="isParentItem(item) ? 800 : 400">
+              <span style="min-width: 38px; color: #0f7f85; font-family: monospace; font-size: 10px; font-weight: 800;">{{ item.code }}</span>
+              <span>{{ item.description }}</span>
+              @if (isParentItem(item)) { <small style="margin-left: auto; padding: 2px 5px; border-radius: 5px; background: #d8eef4; color: #0f7f85; font-size: 8px; font-weight: 800; text-transform: uppercase;">Grupo</small> }
+            </div>
+          </ng-template>
+        </p-select>
       </div>
     </div>
   </div>
@@ -129,7 +137,7 @@
     <div class="kpi-card">
       <div class="kpi-header">
         <span class="kpi-title">Índice Desempeño (CPI)</span>
-        <i class="fa-solid fa-circle-info text-gray" pTooltip="Cost Performance Index (CPI = EV / AC): mide la eficiencia financiera. Un valor menor a 1 indica ineficiencia."
+        <i class="fa-solid fa-circle-info text-gray" pTooltip="Mide la eficiencia del costo: compara el valor del trabajo ejecutado con lo gastado. Mayor a 1 es favorable; menor a 1 indica sobrecosto."
           tooltipPosition="top" appendTo="body" tooltipStyleClass="dashboard-kpi-tooltip" aria-label="Información sobre el índice de desempeño"></i>
       </div>
       <span class="kpi-value" [class.text-red]="data.cpi < 1" [class.text-green]="data.cpi >= 1">
@@ -193,7 +201,9 @@
 
   <div class="charts-grid">
     <div class="chart-card s-curve-card">
-      <h3>Evolución de Costos (Curva S)</h3>
+      <h3>Evolución de Costos (Curva S)
+        <i class="fa-solid fa-circle-info text-gray" pTooltip="Azul (PV): gasto planificado acumulado según el cronograma. Verde (EV): valor del trabajo ejecutado. Rojo (AC): costo real acumulado. Si EV está por encima de AC, se ejecuta más valor del que cuesta; si AC supera EV, hay sobrecosto." tooltipPosition="top" appendTo="body" tooltipStyleClass="dashboard-kpi-tooltip" aria-label="Cómo interpretar la Curva S"></i>
+      </h3>
       <div class="canvas-container">
         <canvas #sCurveChart></canvas>
       </div>

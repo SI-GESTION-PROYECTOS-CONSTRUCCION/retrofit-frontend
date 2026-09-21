@@ -10,16 +10,29 @@
   </div>
 
   <div class="user-actions">
-    <span class="header-date"><i class="fa-regular fa-calendar"></i> Agosto 2026</span>
-    <button pButton type="button" class="header-icon-button" [text]="true" [rounded]="true" aria-label="Notificaciones">
+    <span class="header-date"><i class="fa-regular fa-calendar"></i> {{ limaDate }}</span>
+    <button pButton type="button" class="header-icon-button notification-button" [text]="true" [rounded]="true" aria-label="Notificaciones" (click)="toggleNotifications()">
       <i class="fa-regular fa-bell"></i>
+      @if (unreadCount > 0) { <span class="notification-count">{{ unreadCount > 9 ? '9+' : unreadCount }}</span> }
     </button>
+    @if (isNotificationsOpen) {
+    <section class="notification-panel" aria-label="Notificaciones recientes">
+      <header class="notification-header"><strong>Notificaciones</strong><button type="button" (click)="markAllAsRead()">Marcar leídas</button></header>
+      @if (notifications.length > 0) {
+        @for (notification of notifications; track notification.id) {
+        <article class="notification-item" [class.unread]="!notification.read">
+          <strong>{{ notification.title }}</strong><span>{{ notification.message }}</span><time>{{ notification.timestamp | date:'dd/MM, HH:mm' }}</time>
+        </article>
+        }
+      } @else { <p class="notification-empty">No hay notificaciones nuevas.</p> }
+    </section>
+    }
     <div class="profile-summary">
       <div class="profile-copy">
-        <span class="profile-name">Sesión activa</span>
-        <span class="profile-role">Retrofit</span>
+        <span class="profile-name">{{ userName }}</span>
+        <span class="profile-role">{{ userRole }}</span>
       </div>
-      <p-avatar label="RI" shape="circle" styleClass="header-avatar"></p-avatar>
+      <p-avatar [label]="userInitials" shape="circle" styleClass="header-avatar"></p-avatar>
     </div>
   </div>
 </header>

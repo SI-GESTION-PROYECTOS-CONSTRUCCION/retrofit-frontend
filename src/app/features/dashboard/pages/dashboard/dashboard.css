@@ -28,6 +28,10 @@
 :host ::ng-deep .dashboard-select { width: 100%; border: 1px solid var(--rt-line) !important; border-radius: 10px; background: var(--rt-surface) !important; font-size: 12px; }
 :host ::ng-deep .dashboard-select .p-select-label { padding: 10px 12px; color: var(--rt-ink) !important; font-weight: 700; }
 :host ::ng-deep .dashboard-select .p-select-dropdown { width: 35px; color: var(--rt-brand-700) !important; }
+:host ::ng-deep .dashboard-item-option { display: flex; align-items: center; gap: 7px; min-width: 0; padding-top: 7px; padding-bottom: 7px; color: var(--rt-ink); font-size: 12px; }
+:host ::ng-deep .dashboard-item-option.parent-item { background: #f0f8fb; color: var(--rt-brand-800); font-weight: 800; }
+:host ::ng-deep .dashboard-item-option .item-code { flex: 0 0 auto; color: var(--rt-teal-700); font: 800 10px var(--rt-font-mono); }
+:host ::ng-deep .dashboard-item-option small { margin-left: auto; padding: 2px 5px; border-radius: 5px; background: #d8eef4; color: var(--rt-teal-700); font: 800 8px var(--rt-font-mono); text-transform: uppercase; }
 
 .kpi-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; margin-bottom: 20px; }
 .kpi-card { position: relative; min-height: 128px; overflow: hidden; padding: 18px; border: 1px solid var(--rt-line); border-radius: var(--rt-radius-md); background: var(--rt-surface); box-shadow: var(--rt-shadow-sm); transition: transform .2s ease, box-shadow .2s ease; }

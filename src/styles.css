@@ -68,21 +68,29 @@ body > .p-datepicker-panel {
   z-index: 1301 !important;
 }
 
-body > .dashboard-kpi-tooltip {
+body > .dashboard-kpi-tooltip,
+.dashboard-kpi-tooltip {
   z-index: 1301 !important;
-  max-width: 260px;
+  width: min(280px, calc(100vw - 32px)) !important;
+  max-width: calc(100vw - 32px) !important;
   background: transparent !important;
 }
 
-body > .dashboard-kpi-tooltip .p-tooltip-text {
+body > .dashboard-kpi-tooltip .p-tooltip-text,
+.dashboard-kpi-tooltip .p-tooltip-text {
   background: var(--rt-brand-950) !important;
   color: #fff !important;
+  box-sizing: border-box;
+  width: 100%;
   padding: 11px 14px;
   border-radius: 10px;
   box-shadow: var(--rt-shadow-md);
   font-size: 11px;
   font-weight: 600;
   line-height: 1.5;
+  white-space: normal !important;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
 
 body > .dashboard-kpi-tooltip.p-tooltip-top .p-tooltip-arrow {
@@ -749,9 +757,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
    ========================================================================== */
 
 /* 1. Escala de Texto */
-body[data-a11y-text-size="large"] { font-size: 112%; }
-body[data-a11y-text-size="larger"] { font-size: 124%; }
-body[data-a11y-text-size="xlarge"] { font-size: 136%; }
+/* La interfaz usa mayormente px; zoom escala también esos textos y controles. */
+body[data-a11y-text-size="large"] { zoom: 1.15; }
+body[data-a11y-text-size="larger"] { zoom: 1.30; }
+body[data-a11y-text-size="xlarge"] { zoom: 1.45; }
 
 /* 2. Espaciado de Texto y Altura de Línea */
 body[data-a11y-text-spacing="moderate"] :not(.a11y-widget-container *):not(.budget-table-container *):not(.gantt-chart-container *):not(.cdk-virtual-scroll-viewport *) {
