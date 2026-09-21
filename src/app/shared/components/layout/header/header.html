@@ -13,7 +13,7 @@
     <span class="header-date"><i class="fa-regular fa-calendar"></i> {{ limaDate }}</span>
     <button pButton type="button" class="header-icon-button notification-button" [text]="true" [rounded]="true" aria-label="Notificaciones" (click)="toggleNotifications()">
       <i class="fa-regular fa-bell"></i>
-      @if (unreadCount > 0) { <span class="notification-count">{{ unreadCount > 9 ? '9+' : unreadCount }}</span> }
+      @if (unreadCount > 0) { <span class="notification-count">{{ unreadCount }}</span> }
     </button>
     @if (isNotificationsOpen) {
     <section class="notification-panel" aria-label="Notificaciones recientes">

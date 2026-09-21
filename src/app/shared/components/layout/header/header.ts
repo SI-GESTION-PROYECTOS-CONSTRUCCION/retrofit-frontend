@@ -26,6 +26,7 @@ export class Header implements OnInit, OnDestroy {
 	private authService = inject(AuthService);
 	private zone = inject(NgZone);
 	private streamAbort?: AbortController;
+	private notificationsLoadId = 0;
 	@Output() toggleMenu = new EventEmitter<void>();
 	readonly limaDate = this.getLimaDate();
 	notifications: HeaderNotification[] = [];
@@ -63,13 +64,26 @@ export class Header implements OnInit, OnDestroy {
 	}
 
 	private loadNotifications(): void {
-		this.auditService.getLogs(0, 8, '', 'Todos', 'Todas', '').subscribe({
-			next: (page) => {
-				const readIds = new Set<string>(JSON.parse(localStorage.getItem('retrofit_read_notifications') ?? '[]'));
-				this.notifications = page.content.map((log) => this.toNotification(log, readIds));
-			},
-			error: () => { this.notifications = []; },
-		});
+		const loadId = ++this.notificationsLoadId;
+		const readIds = new Set<string>(JSON.parse(localStorage.getItem('retrofit_read_notifications') ?? '[]'));
+		const loaded: HeaderNotification[] = [];
+		const loadPage = (pageNumber: number): void => {
+			this.auditService.getLogs(pageNumber, 100, '', 'Todos', 'Todas', '').subscribe({
+				next: (page) => {
+					loaded.push(...page.content.map((log) => this.toNotification(log, readIds)));
+					if (page.number + 1 < page.totalPages) {
+						loadPage(page.number + 1);
+					} else if (loadId === this.notificationsLoadId) {
+						this.notifications = loaded;
+					}
+				},
+				error: () => {
+					if (loadId === this.notificationsLoadId) this.notifications = [];
+				},
+			});
+		};
+
+		loadPage(0);
 	}
 
 	private loadUserProfile(): void {
@@ -127,7 +141,7 @@ export class Header implements OnInit, OnDestroy {
 			const notification = JSON.parse(data) as Omit<HeaderNotification, 'read'>;
 			this.zone.run(() => {
 				if (this.notifications.some((item) => item.id === notification.id)) return;
-				this.notifications = [{ ...notification, read: false }, ...this.notifications].slice(0, 8);
+				this.notifications = [{ ...notification, read: false }, ...this.notifications];
 			});
 		} catch { /* Ignore malformed SSE messages. */ }
 	}
