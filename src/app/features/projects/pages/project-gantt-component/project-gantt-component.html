@@ -78,7 +78,7 @@
         <i class="fa-solid fa-diagram-project"></i>
         <div>
           <strong>Relaciones entre actividades</strong>
-          <span>Define qué partida debe finalizar antes de iniciar otra.</span>
+          <span>Agrega una o varias predecesoras y el tipo de vínculo entre actividades.</span>
         </div>
       </div>
       <label>
@@ -99,6 +99,26 @@
           }
         </select>
       </label>
+      <label>
+        Tipo de relación
+        <select [value]="selectedDependencyType" (change)="selectedDependencyType = $any($event.target).value">
+          @for (type of dependencyTypes; track type.value) {
+            <option [value]="type.value">{{ type.label }}</option>
+          }
+        </select>
+      </label>
+      <button type="button" class="gantt-dependency-button" [disabled]="!selectedDependencyItemId || !selectedPredecessorId" (click)="addDependency()">
+        <i class="fa-solid fa-plus"></i> Agregar
+      </button>
+      @if (editableDependencies.length) {
+        <div class="dependency-list">
+          @for (dependency of editableDependencies; track dependency.predecessorId) {
+            <span>{{ predecessorLabel(dependency.predecessorId) }} · {{ dependencyLabel(dependency.type) }}
+              <button type="button" aria-label="Quitar relación" (click)="removeDependency(dependency.predecessorId)">&times;</button>
+            </span>
+          }
+        </div>
+      }
       <button type="button" class="gantt-save-dependency-button" [disabled]="!selectedDependencyItemId || isSavingDependency" (click)="saveDependency()">
         <i class="fa-solid" [class.fa-floppy-disk]="!isSavingDependency" [class.fa-spinner]="isSavingDependency" [class.fa-spin]="isSavingDependency"></i>
         {{ isSavingDependency ? 'Guardando...' : 'Guardar relación' }}
@@ -107,6 +127,9 @@
   }
 
   <div class="gantt-wrapper">
+    @if (canEdit) {
+      <p class="custom-gantt-help">Arrastra una barra para moverla o sus extremos para cambiar la duración. Las líneas FS, SS, FF y SF muestran las relaciones guardadas.</p>
+    }
     <div #ganttContainer class="gantt-chart"></div>
   </div>
 }

@@ -763,11 +763,11 @@ body[data-a11y-text-size="larger"] { zoom: 1.30; }
 body[data-a11y-text-size="xlarge"] { zoom: 1.45; }
 
 /* 2. Espaciado de Texto y Altura de Línea */
-body[data-a11y-text-spacing="moderate"] :not(.a11y-widget-container *):not(.budget-table-container *):not(.gantt-chart-container *):not(.cdk-virtual-scroll-viewport *) {
+body[data-a11y-text-spacing="moderate"] :not(.a11y-widget-container *):not(.budget-table-container *):not(.cdk-virtual-scroll-viewport *) {
   letter-spacing: 0.08em !important;
   line-height: 1.8 !important;
 }
-body[data-a11y-text-spacing="heavy"] :not(.a11y-widget-container *):not(.budget-table-container *):not(.gantt-chart-container *):not(.cdk-virtual-scroll-viewport *) {
+body[data-a11y-text-spacing="heavy"] :not(.a11y-widget-container *):not(.budget-table-container *):not(.cdk-virtual-scroll-viewport *) {
   letter-spacing: 0.16em !important;
   line-height: 2.1 !important;
 }
@@ -988,11 +988,6 @@ body[data-a11y-filter="tritanopia"] {
 }
 
 /* 10. PROTECCIÓN DE LAYOUTS DE INGENIERÍA (Gantt y Grilla de Presupuesto) */
-.gantt-chart-container,
-.gantt-container,
-.gantt-task-row,
-.gantt,
-svg.frappe-gantt,
 .budget-table-container,
 .budget-table,
 .budget-row,

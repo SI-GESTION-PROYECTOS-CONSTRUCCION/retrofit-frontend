@@ -111,6 +111,7 @@ export interface GanttItemResponseDto {
 	startDate: string;
 	endDate: string;
 	predecessorId: number | null;
+	dependencies: GanttDependencyDto[];
 	baseDurationDays: number;
 	currentProgressPercentage: number;
 	parentId: number | null;
@@ -118,10 +119,18 @@ export interface GanttItemResponseDto {
 	type: string;
 }
 
+export type GanttDependencyType = 'FINISH_TO_START' | 'START_TO_START' | 'FINISH_TO_FINISH' | 'START_TO_FINISH';
+
+export interface GanttDependencyDto {
+	predecessorId: number;
+	type: GanttDependencyType;
+}
+
 export interface GanttUpdateDto {
 	startDate: string;
 	endDate: string;
 	predecessorId: number | null;
+	dependencies?: GanttDependencyDto[];
 }
 
 export interface ProgressReportFilters {

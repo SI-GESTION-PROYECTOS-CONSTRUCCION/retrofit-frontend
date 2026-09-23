@@ -8,7 +8,7 @@ Este es el proyecto frontend del sistema **Retrofit**, la interfaz principal par
 - **TypeScript**: Lenguaje base para un tipado fuerte y mayor seguridad.
 - **RxJS**: Programación reactiva para el manejo de flujos de datos asíncronos y HTTP.
 - **Chart.js**: Biblioteca utilizada para la generación de gráficos y estadísticas en tiempo real en los Dashboards.
-- **DHTMLX Gantt**: Integración avanzada para la visualización y planificación de cronogramas y tareas de proyectos (Diagramas de Gantt).
+- **Cronograma Gantt propio**: Planificación de actividades, dependencias y exportación a PDF.
 - **Ng-Select**: Selectores y autocompletados modernos para formularios interactivos.
 
 ---

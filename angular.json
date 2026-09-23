@@ -25,8 +25,7 @@
               }
             ],
             "styles": [
-              "src/styles.css",
-              "node_modules/frappe-gantt/dist/frappe-gantt.css"
+              "src/styles.css"
             ]
           },
           "configurations": {

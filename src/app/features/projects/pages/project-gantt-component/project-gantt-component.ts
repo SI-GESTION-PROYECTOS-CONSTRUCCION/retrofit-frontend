@@ -15,10 +15,9 @@ import {
 	ViewEncapsulation,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import Gantt, { FrappeGanttOptions, FrappeGanttTask, FrappeGanttViewMode } from 'frappe-gantt';
 import { finalize } from 'rxjs';
 import { HasPermissionDirective } from '../../../../core/directives/has-permission.directive';
-import { GanttItemResponseDto } from '../../../../core/models/project.model';
+import { GanttDependencyDto, GanttDependencyType, GanttItemResponseDto } from '../../../../core/models/project.model';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ProjectService } from '../../../../core/services/project.service';
 import { ProjectItemService } from '../../../../core/services/project-item.service';
@@ -26,10 +25,14 @@ import { ToastService } from '../../../../core/services/toast-service';
 import { Skeleton } from '../../../../shared/components/skeleton/skeleton';
 
 type DateRange = { start: Date; end: Date };
-type RetrofitGanttTask = FrappeGanttTask & {
+type RetrofitGanttTask = {
+	id: string;
+	name: string;
+	start: string;
+	end: string;
+	progress: number;
 	backendItemId: number;
 	isParent: boolean;
-	predecessorId: number | null;
 };
 
 @Component({
@@ -47,8 +50,6 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 	@Input() projectStartDate!: string;
 
 	readonly viewModes = ['Day', 'Week', 'Month', 'Year'] as const;
-	// Frappe inicia con el primer modo configurado (Day), por lo que el selector
-	// debe comenzar en el mismo modo para no mostrar una escala distinta a la activa.
 	activeView: (typeof this.viewModes)[number] = 'Day';
 
 	items: GanttItemResponseDto[] = [];
@@ -61,10 +62,20 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 	isSavingDependency = false;
 	selectedDependencyItemId: number | null = null;
 	selectedPredecessorId: number | null = null;
+	selectedDependencyType: GanttDependencyType = 'FINISH_TO_START';
+	editableDependencies: GanttDependencyDto[] = [];
+	readonly dependencyTypes: Array<{ value: GanttDependencyType; label: string }> = [
+		{ value: 'FINISH_TO_START', label: 'Fin a inicio (FS)' },
+		{ value: 'START_TO_START', label: 'Inicio a inicio (SS)' },
+		{ value: 'FINISH_TO_FINISH', label: 'Fin a fin (FF)' },
+		{ value: 'START_TO_FINISH', label: 'Inicio a fin (SF)' },
+	];
 	errorMessage = '';
 	canEdit = false;
 
-	private gantt: Gantt | null = null;
+	private chartTasks: RetrofitGanttTask[] = [];
+	private initialScaleChosen = false;
+	private dragState: { id: number; mode: 'move' | 'start' | 'end'; initialX: number; start: Date; end: Date; daysPerPixel: number } | null = null;
 	private pendingTasks: RetrofitGanttTask[] | null = null;
 
 	private projectItemService = inject(ProjectItemService);
@@ -92,7 +103,7 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 
 	ngOnDestroy(): void {
 		this.pendingTasks = null;
-		this.gantt = null;
+		this.chartTasks = [];
 		if (this.ganttContainer?.nativeElement) {
 			this.ganttContainer.nativeElement.innerHTML = '';
 		}
@@ -115,6 +126,13 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 					this.items = backendItems;
 					this.updateDependencyLists();
 					const tasks = this.buildTasks(backendItems);
+					if (!this.initialScaleChosen && tasks.length) {
+						const starts = tasks.map(task => this.parseDate(task.start).getTime());
+						const ends = tasks.map(task => this.parseDate(task.end).getTime());
+						const span = (Math.max(...ends) - Math.min(...starts)) / 86_400_000;
+						this.activeView = span > 730 ? 'Year' : span > 150 ? 'Month' : span > 45 ? 'Week' : 'Day';
+						this.initialScaleChosen = true;
+					}
 					if (!silent) this.isLoading = false;
 					this.pendingTasks = tasks;
 					this.cdr.markForCheck();
@@ -146,8 +164,6 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 	private renderChart(tasks: RetrofitGanttTask[]): void {
 		if (tasks.length === 0) {
 			this.destroyChart();
-		} else if (this.gantt) {
-			this.gantt.refresh(tasks);
 		} else {
 			this.createChart(tasks);
 		}
@@ -155,10 +171,7 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 
 	changeViewMode(mode: (typeof this.viewModes)[number]): void {
 		this.activeView = mode;
-		// Frappe only recalculates the date range when the mode is changed without
-		// preserving the previous horizontal position. Preserving it leaves the old
-		// grid dimensions in place and offsets bars in Week, Month and Year views.
-		this.gantt?.change_view_mode(mode);
+		this.createChart(this.chartTasks);
 		this.cdr.markForCheck();
 	}
 
@@ -167,6 +180,7 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 		if (!this.isDependencyEditorOpen) {
 			this.selectedDependencyItemId = null;
 			this.selectedPredecessorId = null;
+			this.editableDependencies = [];
 			this.predecessorCandidates = [...this.dependencyItems];
 		}
 	}
@@ -177,6 +191,7 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 			(candidate) => candidate.id === this.selectedDependencyItemId,
 		);
 		this.selectedPredecessorId = item?.predecessorId ?? null;
+		this.editableDependencies = [...(item?.dependencies ?? [])];
 		this.predecessorCandidates = this.dependencyItems.filter(
 			(candidate) => candidate.id !== this.selectedDependencyItemId,
 		);
@@ -184,6 +199,27 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 
 	onPredecessorChange(value: string): void {
 		this.selectedPredecessorId = value ? Number(value) : null;
+	}
+
+	addDependency(): void {
+		if (this.selectedPredecessorId == null) return;
+		const existing = this.editableDependencies.find((dependency) => dependency.predecessorId === this.selectedPredecessorId);
+		if (existing) existing.type = this.selectedDependencyType;
+		else this.editableDependencies = [...this.editableDependencies, { predecessorId: this.selectedPredecessorId, type: this.selectedDependencyType }];
+		this.selectedPredecessorId = null;
+	}
+
+	removeDependency(predecessorId: number): void {
+		this.editableDependencies = this.editableDependencies.filter((dependency) => dependency.predecessorId !== predecessorId);
+	}
+
+	dependencyLabel(type: GanttDependencyType): string {
+		return this.dependencyTypes.find((option) => option.value === type)?.label ?? type;
+	}
+
+	predecessorLabel(predecessorId: number): string {
+		const item = this.predecessorCandidates.find((candidate) => candidate.id === predecessorId);
+		return item ? `${item.code} · ${item.name}` : 'Actividad no disponible';
 	}
 
 	saveDependency(): void {
@@ -197,7 +233,8 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 			.updateGanttDates(this.projectId, item.id, {
 				startDate: item.startDate,
 				endDate: item.endDate,
-				predecessorId: this.selectedPredecessorId,
+				predecessorId: this.editableDependencies[0]?.predecessorId ?? null,
+				dependencies: this.editableDependencies,
 			})
 			.pipe(
 				finalize(() => {
@@ -249,131 +286,155 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 	}
 
 	private createChart(tasks: RetrofitGanttTask[]): void {
-		const container = this.ganttContainer?.nativeElement;
-		if (!container) {
-			this.pendingTasks = tasks;
-			return;
+		const host = this.ganttContainer?.nativeElement;
+		if (!host) { this.pendingTasks = tasks; return; }
+		this.chartTasks = tasks;
+		host.replaceChildren();
+		if (!tasks.length) return;
+		const ns = 'http://www.w3.org/2000/svg';
+		const left = 300, top = 56, row = 42;
+		const px = { Day: 36, Week: 12, Month: 4, Year: 1.4 }[this.activeView];
+		const allDates = tasks.flatMap(t => [this.parseDate(t.start), this.parseDate(t.end)]);
+		const origin = this.addDays(new Date(Math.min(...allDates.map(d => d.getTime()))), -7);
+		const final = this.addDays(new Date(Math.max(...allDates.map(d => d.getTime()))), 14);
+		const days = this.daysBetween(origin, final);
+		const width = left + Math.max(800, days * px), height = top + tasks.length * row;
+		const pinned = document.createElement('div');
+		pinned.className = 'gantt-pinned-labels';
+		pinned.style.width = `${left}px`;
+		pinned.style.height = `${height}px`;
+		pinned.style.marginBottom = `-${height}px`;
+		const pinnedHeading = document.createElement('div');
+		pinnedHeading.className = 'gantt-pinned-heading';
+		pinnedHeading.textContent = 'PARTIDAS Y ACTIVIDADES';
+		pinned.appendChild(pinnedHeading);
+		tasks.forEach((task, index) => {
+			const name = document.createElement('div');
+			name.className = `gantt-pinned-row${task.isParent ? ' parent' : ''}`;
+			name.style.top = `${top + index * row}px`;
+			name.textContent = task.name;
+			name.title = task.name;
+			pinned.appendChild(name);
+		});
+		host.appendChild(pinned);
+		const svg = document.createElementNS(ns, 'svg');
+		svg.setAttribute('width', String(width)); svg.setAttribute('height', String(height));
+		svg.setAttribute('class', 'retrofit-custom-gantt');
+		svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'Cronograma con actividades y relaciones');
+		host.appendChild(svg);
+		const add = (tag: string, attrs: Record<string, string>, parent: Element = svg) => {
+			const node = document.createElementNS(ns, tag);
+			Object.entries(attrs).forEach(([k, v]) => node.setAttribute(k, v));
+			parent.appendChild(node); return node;
+		};
+		const x = (date: Date) => left + this.daysBetween(origin, date) * px;
+		add('rect', { x:'0', y:'0', width:String(width), height:String(height), fill:'#fff' });
+		add('rect', { x:'0', y:'0', width:String(width), height:String(top), fill:'#eaf6f4' });
+		add('rect', { x:'0', y:'0', width:String(left), height:String(height), fill:'#f8fbfb' });
+		for (let index = 1; index < tasks.length; index += 2) {
+			add('rect', { x:'0', y:String(top + index * row), width:String(width), height:String(row), fill:'#f7fafb' });
 		}
-
-		const options: FrappeGanttOptions = {
-			view_mode: this.activeView,
-			view_modes: this.buildViewModes(tasks, container.clientWidth),
-			language: 'es',
-			bar_height: 32,
-			padding: 20,
-			lines: 'vertical',
-			readonly_progress: true,
-			readonly_dates: !this.canEdit,
-			popup_on: 'click',
-			scroll_to: 'start',
-			today_button: false,
-			infinite_padding: false,
-			holidays: { 'var(--g-weekend-highlight-color)': 'weekend' },
-			popup: ({ task, set_title, set_subtitle, set_details }) => {
-				const retrofitTask = task as RetrofitGanttTask;
-				set_title(`${retrofitTask.name}`);
-				set_subtitle(retrofitTask.isParent ? 'Grupo de partidas' : 'Partida ejecutable');
-				set_details(
-					`${this.formatDate(retrofitTask.start)} — ${this.formatDate(retrofitTask.end)}<br/>Avance: ${Math.round(retrofitTask.progress)}%`,
-				);
-			},
-			on_date_change: (task, start, end) =>
-				this.handleDateChange(task as RetrofitGanttTask, start, end),
-		};
-
-		this.gantt = new Gantt(container, tasks, options);
+		const heading = add('text', { x:'16', y:'35', class:'custom-gantt-heading' }); heading.textContent = 'PARTIDAS Y ACTIVIDADES';
+		for (let d = 0; d <= days; d++) {
+			const date = this.addDays(origin, d);
+			const show = this.activeView === 'Day' || (this.activeView === 'Week' && date.getDay() === 1)
+				|| (this.activeView === 'Month' && date.getDate() === 1)
+				|| (this.activeView === 'Year' && date.getDate() === 1 && date.getMonth() === 0);
+			if (!show) continue;
+			const xx = x(date);
+			add('line', { x1:String(xx), x2:String(xx), y1:'0', y2:String(height), class:'custom-gantt-grid' });
+			const label = add('text', { x:String(xx + 5), y:'36', class:'custom-gantt-tick' });
+			label.textContent = this.activeView === 'Day' ? String(date.getDate()) : this.activeView === 'Year' ? String(date.getFullYear())
+				: this.activeView === 'Month' ? date.toLocaleDateString('es-PE', {month:'short',year:'2-digit'}) : `${date.getDate()}/${date.getMonth()+1}`;
+			if (this.activeView === 'Day' && date.getDate() === 1) {
+				const month = add('text', { x:String(xx+5), y:'15', class:'custom-gantt-month' });
+				month.textContent = date.toLocaleDateString('es-PE', {month:'long',year:'numeric'});
+			}
+		}
+		const bars = new Map<number, {a:number;b:number;y:number}>();
+		tasks.forEach((task, i) => {
+			const y = top + i*row + row/2;
+			add('line', {x1:'0',x2:String(width),y1:String(top+(i+1)*row),y2:String(top+(i+1)*row),class:'custom-gantt-row-line'});
+			const name = add('text', {x:task.isParent?'16':'30',y:String(y+4),class:task.isParent?'custom-gantt-parent-label':'custom-gantt-label'});
+			name.textContent = task.name.length > 39 ? task.name.slice(0,36)+'…' : task.name;
+			add('title', {}, name).textContent = task.name;
+			const a = x(this.parseDate(task.start)), b = x(this.addDays(this.parseDate(task.end),1));
+			bars.set(task.backendItemId,{a,b,y});
+			const bar = add('rect',{x:String(a),y:String(y-12),width:String(Math.max(b-a,4)),height:'24',rx:'5',class:task.isParent?'custom-gantt-parent-bar':'custom-gantt-bar','data-id':String(task.backendItemId),'data-mode':'move'});
+			add('title',{},bar).textContent = `${task.name}: ${task.start} — ${task.end}`;
+			if (!task.isParent) {
+				add('rect',{x:String(a),y:String(y-12),width:String(Math.max(0,(b-a)*task.progress/100)),height:'24',class:'custom-gantt-progress','pointer-events':'none'});
+				if (this.canEdit) for (const [mode,xx] of [['start',a],['end',b]] as const)
+					add('rect',{x:String(xx-5),y:String(y-14),width:'10',height:'28',rx:'3',class:'custom-gantt-handle','data-id':String(task.backendItemId),'data-mode':mode});
+			}
+		});
+		const links = add('g', {class:'custom-gantt-links','pointer-events':'none'});
+		for (const item of this.items) for (const dep of this.itemDependencies(item)) {
+			const source = bars.get(dep.predecessorId), target = bars.get(item.id);
+			if (!source || !target) continue;
+			const type = dep.type ?? 'FINISH_TO_START';
+			const sx = type.startsWith('START') ? source.a : source.b;
+			const tx = type.endsWith('START') ? target.a : target.b;
+			const elbow = tx > sx+30 ? (sx+tx)/2 : sx-22;
+			add('path',{d:`M ${sx} ${source.y} H ${elbow} V ${target.y} H ${tx}`,class:`custom-gantt-link ${type.toLowerCase()}`},links);
+			add('circle',{cx:String(tx),cy:String(target.y),r:'3',class:'custom-gantt-link-end'},links);
+			const code = add('text',{x:String(elbow+4),y:String((source.y+target.y)/2-4),class:'custom-gantt-link-label'},links);
+			code.textContent = {FINISH_TO_START:'FS',START_TO_START:'SS',FINISH_TO_FINISH:'FF',START_TO_FINISH:'SF'}[type];
+		}
+		if (this.canEdit) {
+			svg.addEventListener('pointerdown', event => {
+				const target = event.target as SVGElement, id = Number(target.getAttribute('data-id'));
+				const mode = target.getAttribute('data-mode') as 'move'|'start'|'end'|null;
+				const task = tasks.find(t => t.backendItemId === id);
+				if (!task || task.isParent || !mode) return;
+				this.dragState = {id,mode,initialX:event.clientX,start:this.parseDate(task.start),end:this.parseDate(task.end),daysPerPixel:1/px};
+				svg.setPointerCapture(event.pointerId);
+			});
+			svg.addEventListener('pointermove', event => {
+				const drag = this.dragState;
+				if (!drag) return;
+				const delta = Math.round((event.clientX - drag.initialX) * drag.daysPerPixel) * px;
+				const bar = Array.from(svg.querySelectorAll<SVGRectElement>('.custom-gantt-bar'))
+					.find(node => node.getAttribute('data-id') === String(drag.id));
+				if (!bar) return;
+				const original = bars.get(drag.id);
+				if (!original) return;
+				if (drag.mode === 'move') {
+					bar.setAttribute('x', String(original.a + delta));
+				} else if (drag.mode === 'start' && original.b - original.a - delta >= px) {
+					bar.setAttribute('x', String(original.a + delta));
+					bar.setAttribute('width', String(original.b - original.a - delta));
+				} else if (drag.mode === 'end' && original.b - original.a + delta >= px) {
+					bar.setAttribute('width', String(original.b - original.a + delta));
+				}
+			});
+			svg.addEventListener('pointerup', event => {
+				const drag = this.dragState; this.dragState = null;
+				if (!drag) return;
+				const shift = Math.round((event.clientX-drag.initialX)*drag.daysPerPixel);
+				if (!shift) return;
+				const start = this.addDays(drag.start, drag.mode === 'end' ? 0 : shift);
+				const end = this.addDays(drag.end, drag.mode === 'start' ? 0 : shift);
+				if (end < start) { this.toastService.show('La duración debe ser de al menos un día.','error'); this.createChart(tasks); return; }
+				const task = tasks.find(t => t.backendItemId === drag.id);
+				if (task) this.handleDateChange(task,start,end);
+			});
+			svg.addEventListener('pointercancel',()=>{this.dragState=null;});
+		}
 	}
 
-	private buildViewModes(
-		tasks: RetrofitGanttTask[],
-		containerWidth: number,
-	): FrappeGanttViewMode[] {
-		const dates = tasks.flatMap((task) => [this.parseDate(task.start), this.parseDate(task.end)]);
-		const firstDate = new Date(Math.min(...dates.map((date) => date.getTime())));
-		const lastDate = new Date(Math.max(...dates.map((date) => date.getTime())));
-		const projectDays = Math.max(
-			1,
-			Math.ceil((lastDate.getTime() - firstDate.getTime()) / 86_400_000) + 1,
-		);
-		const projectMonths =
-			(lastDate.getFullYear() - firstDate.getFullYear()) * 12 +
-			lastDate.getMonth() -
-			firstDate.getMonth() +
-			1;
-		const projectYears = lastDate.getFullYear() - firstDate.getFullYear() + 1;
-		const usableWidth = Math.max(containerWidth, 720);
-		const weekWidth = Math.max(92, Math.ceil(usableWidth / Math.ceil((projectDays + 28) / 7)));
-		const monthWidth = Math.max(160, Math.ceil(usableWidth / (projectMonths + 2)));
-		const yearWidth = Math.max(220, Math.ceil(usableWidth / (projectYears + 2)));
-
-		const monthName = (date: Date, short = false): string => {
-			const value = date
-				.toLocaleDateString('es-PE', { month: short ? 'short' : 'long' })
-				.replace('.', '');
-			return value.charAt(0).toUpperCase() + value.slice(1);
-		};
-		const isNewMonth = (date: Date, previous: Date | null): boolean =>
-			!previous ||
-			date.getMonth() !== previous.getMonth() ||
-			date.getFullYear() !== previous.getFullYear();
-
-		return [
-			{
-				name: 'Day',
-				padding: '7d',
-				step: '1d',
-				date_format: 'YYYY-MM-DD',
-				column_width: 52,
-				lower_text: (date) => String(date.getDate()).padStart(2, '0'),
-				upper_text: (date, previous) => (isNewMonth(date, previous) ? monthName(date) : ''),
-				thick_line: (date) => date.getDay() === 1,
-			},
-			{
-				name: 'Week',
-				padding: '14d',
-				step: '7d',
-				date_format: 'YYYY-MM-DD',
-				column_width: weekWidth,
-				lower_text: (date, previous) => {
-					const end = this.addDays(date, 6);
-					const startLabel = isNewMonth(date, previous)
-						? `${date.getDate()} ${monthName(date, true).toLowerCase()}`
-						: String(date.getDate());
-					const endLabel =
-						end.getMonth() !== date.getMonth()
-							? `${end.getDate()} ${monthName(end, true).toLowerCase()}`
-							: String(end.getDate());
-					return `${startLabel} – ${endLabel}`;
-				},
-				upper_text: (date, previous) => (isNewMonth(date, previous) ? monthName(date) : ''),
-				thick_line: (date) => date.getDate() <= 7,
-			},
-			{
-				name: 'Month',
-				padding: '1m',
-				step: '1m',
-				date_format: 'YYYY-MM',
-				column_width: monthWidth,
-				lower_text: (date) => monthName(date),
-				upper_text: (date, previous) =>
-					!previous || date.getFullYear() !== previous.getFullYear()
-						? String(date.getFullYear())
-						: '',
-				thick_line: (date) => date.getMonth() % 3 === 0,
-				snap_at: '7d',
-			},
-			{
-				name: 'Year',
-				padding: '1y',
-				step: '1y',
-				date_format: 'YYYY',
-				column_width: yearWidth,
-				lower_text: (date) => String(date.getFullYear()),
-				upper_text: () => '',
-				snap_at: '30d',
-			},
-		];
+	private daysBetween(from: Date, to: Date): number {
+		return Math.round((Date.UTC(to.getFullYear(),to.getMonth(),to.getDate())-Date.UTC(from.getFullYear(),from.getMonth(),from.getDate()))/86_400_000);
 	}
+
+	private itemDependencies(item: GanttItemResponseDto): GanttDependencyDto[] {
+		return item.dependencies?.length
+			? item.dependencies
+			: item.predecessorId != null
+				? [{ predecessorId: item.predecessorId, type: 'FINISH_TO_START' }]
+				: [];
+	}
+
 
 	private handleDateChange(task: RetrofitGanttTask, start: Date, end: Date): void {
 		if (task.isParent) {
@@ -383,9 +444,10 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 
 		const updateDto = {
 			startDate: this.toIsoDate(start),
-			// El backend guarda endDate como límite exclusivo; Frappe trabaja con fecha final inclusiva.
+			// El backend guarda endDate como límite exclusivo; la barra usa fecha final inclusiva.
 			endDate: this.toIsoDate(this.addDays(end, 1)),
-			predecessorId: task.predecessorId,
+			predecessorId: this.itemDependencies(this.items.find(item => item.id === task.backendItemId)!)[0]?.predecessorId ?? null,
+			dependencies: this.itemDependencies(this.items.find(item => item.id === task.backendItemId)!),
 		};
 
 		this.projectItemService
@@ -434,12 +496,8 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 				start: this.toIsoDate(range.start),
 				end: this.toIsoDate(range.end),
 				progress: this.clampProgress(item.currentProgressPercentage),
-				dependencies: item.predecessorId != null ? String(item.predecessorId) : undefined,
-				custom_class: isParent ? 'retrofit-parent-task' : 'retrofit-task',
-				description: item.name,
 				backendItemId: item.id,
 				isParent,
-				predecessorId: item.predecessorId,
 			};
 		});
 	}
@@ -487,7 +545,7 @@ export class ProjectGanttComponent implements OnInit, AfterViewChecked, OnDestro
 	}
 
 	private destroyChart(): void {
-		this.gantt = null;
+		this.chartTasks = [];
 		if (this.ganttContainer?.nativeElement) {
 			this.ganttContainer.nativeElement.innerHTML = '';
 		}
