@@ -21,111 +21,222 @@
   <section class="login-access-panel">
     <div class="login-card">
       <div class="login-header">
-        <span class="access-eyebrow">ACCESO SEGURO</span>
-        <h2>Bienvenido de vuelta</h2>
-        <p>Ingresa tus credenciales para continuar.</p>
+        <span class="access-eyebrow" *ngIf="viewMode === 'LOGIN'">ACCESO SEGURO</span>
+        <span class="access-eyebrow" *ngIf="viewMode === 'FORGOT_PASSWORD'">RECUPERACIÓN</span>
+        <span class="access-eyebrow" *ngIf="viewMode === 'RESET_PASSWORD'">SEGURIDAD</span>
+        <span class="access-eyebrow" *ngIf="viewMode === 'REQUIRE_CHANGE'">ACTUALIZACIÓN REQUERIDA</span>
+
+        <h2 *ngIf="viewMode === 'LOGIN'">Bienvenido de vuelta</h2>
+        <h2 *ngIf="viewMode === 'FORGOT_PASSWORD'">Recuperar contraseña</h2>
+        <h2 *ngIf="viewMode === 'RESET_PASSWORD'">Restablecer contraseña</h2>
+        <h2 *ngIf="viewMode === 'REQUIRE_CHANGE'">Actualizar contraseña</h2>
+
+        <p *ngIf="viewMode === 'LOGIN'">Ingresa tus credenciales para continuar.</p>
+        <p *ngIf="viewMode === 'FORGOT_PASSWORD'">Ingresa tu correo para recibir las instrucciones de recuperación.</p>
+        <p *ngIf="viewMode === 'RESET_PASSWORD'">Crea una nueva contraseña segura para tu cuenta.</p>
+        <p *ngIf="viewMode === 'REQUIRE_CHANGE'">Por seguridad, debes definir una nueva clave personal.</p>
       </div>
 
-    <form *ngIf="!requirePasswordChange" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- MODO 1: INICIO DE SESIÓN -->
+      <form *ngIf="viewMode === 'LOGIN'" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="success-box" *ngIf="successMessage">
+          <span><i class="fa-solid fa-circle-check"></i></span>
+          <p>{{ successMessage }}</p>
+        </div>
 
         <div class="form-group login-field">
           <label for="username">Nombre de usuario</label>
           <div class="input-wrapper">
-          <span class="icon"><i class="fa-solid fa-user"></i></span>
-          <input
-            type="text"
-            id="username"
-            formControlName="username"
-            placeholder="Username"
-            [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+            <span class="icon"><i class="fa-solid fa-user"></i></span>
+            <input
+              type="text"
+              id="username"
+              formControlName="username"
+              placeholder="Username"
+              [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+          </div>
         </div>
-      </div>
 
         <div class="form-group login-field">
-        <div class="label-row">
-          <label for="password">Contraseña</label>
+          <div class="label-row">
+            <label for="password">Contraseña</label>
+            <a type="button" class="forgot-link" (click)="setViewMode('FORGOT_PASSWORD')">¿Olvidaste tu contraseña?</a>
+          </div>
+          <div class="input-wrapper" style="position: relative;">
+            <span class="icon"><i class="fa-solid fa-lock"></i></span>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              formControlName="password"
+              placeholder="••••••••"
+              [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            <span class="toggle-password" (click)="togglePasswordVisibility('password')" style="position: absolute; right: 15px; cursor: pointer; color: #888;">
+              <i class="fa-regular" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </span>
+          </div>
         </div>
-        <div class="input-wrapper" style="position: relative;">
-          <span class="icon"><i class="fa-solid fa-lock"></i></span>
-          <input
-            [type]="showPassword ? 'text' : 'password'"
-            id="password"
-            formControlName="password"
-            placeholder="••••••••"
-            [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-          <span class="toggle-password" (click)="togglePasswordVisibility('password')" style="position: absolute; right: 15px; cursor: pointer; color: #888;">
-            <i class="fa-regular" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-          </span>
-        </div>
-      </div>
 
-      <div class="error-message" *ngIf="errorMessage">
-        {{ errorMessage }}
-      </div>
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
 
         <button type="submit" class="login-submit" [disabled]="isLoading">
-        {{ isLoading ? 'Cargando...' : 'Iniciar Sesión' }}
-        <span *ngIf="!isLoading" class="arrow-icon"><i class="fa-solid fa-chevron-right"></i></span>
-      </button>
+          {{ isLoading ? 'Cargando...' : 'Iniciar Sesión' }}
+          <span *ngIf="!isLoading" class="arrow-icon"><i class="fa-solid fa-chevron-right"></i></span>
+        </button>
+      </form>
 
-    </form>
-
-    <form *ngIf="requirePasswordChange" [formGroup]="changePasswordForm" (ngSubmit)="onChangePasswordSubmit()">
-      
-      <div class="info-box">
-        <span><i class="fa-solid fa-circle-info"></i></span>
-        <p>Por seguridad, debes cambiar tu contraseña en tu primer inicio de sesión o si un administrador la restableció.</p>
-      </div>
-
-      <div class="form-group login-field">
-        <label for="newPassword">Nueva contraseña</label>
-        <div class="input-wrapper" style="position: relative;">
-          <span class="icon"><i class="fa-solid fa-lock"></i></span>
-          <input
-            [type]="showNewPassword ? 'text' : 'password'"
-            id="newPassword"
-            formControlName="newPassword"
-            placeholder="Mín. 8 chars, 1 mayúscula, 1 número, 1 especial"
-            [class.is-invalid]="changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched">
-          <span class="toggle-password" (click)="togglePasswordVisibility('newPassword')" style="position: absolute; right: 15px; cursor: pointer; color: #888;">
-            <i class="fa-regular" [ngClass]="showNewPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-          </span>
+      <!-- MODO 2: OLVIDÉ MI CONTRASEÑA -->
+      <form *ngIf="viewMode === 'FORGOT_PASSWORD'" [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPasswordSubmit()">
+        <div class="form-group login-field">
+          <label for="forgotEmail">Correo electrónico registrado</label>
+          <div class="input-wrapper">
+            <span class="icon"><i class="fa-solid fa-envelope"></i></span>
+            <input
+              type="email"
+              id="forgotEmail"
+              formControlName="email"
+              placeholder="ejemplo@retrofit.com"
+              [class.is-invalid]="forgotPasswordForm.get('email')?.invalid && forgotPasswordForm.get('email')?.touched">
+          </div>
+          <div class="error-text" *ngIf="forgotPasswordForm.get('email')?.invalid && forgotPasswordForm.get('email')?.touched">
+            Ingresa un correo electrónico válido.
+          </div>
         </div>
-        <div class="error-text" *ngIf="changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched" style="color: #f44336; font-size: 0.85rem; margin-top: 5px;">
-          Debe tener al menos 8 caracteres, 1 mayúscula, 1 número y 1 carácter especial.
+
+        <div class="success-box" *ngIf="successMessage">
+          <span><i class="fa-solid fa-circle-check"></i></span>
+          <p>{{ successMessage }}</p>
         </div>
-      </div>
 
-      <div class="form-group login-field">
-        <label for="confirmPassword">Confirmar contraseña</label>
-        <div class="input-wrapper" style="position: relative;">
-          <span class="icon"><i class="fa-solid fa-lock"></i></span>
-          <input
-            [type]="showConfirmPassword ? 'text' : 'password'"
-            id="confirmPassword"
-            formControlName="confirmPassword"
-            placeholder="Confirmar contraseña"
-            [class.is-invalid]="changePasswordForm.get('confirmPassword')?.invalid && changePasswordForm.get('confirmPassword')?.touched">
-          <span class="toggle-password" (click)="togglePasswordVisibility('confirmPassword')" style="position: absolute; right: 15px; cursor: pointer; color: #888;">
-            <i class="fa-regular" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-          </span>
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
         </div>
-      </div>
 
-      <div class="error-message" *ngIf="changePasswordForm.hasError('passwordMismatch') && changePasswordForm.get('confirmPassword')?.touched">
-        Las contraseñas no coinciden.
-      </div>
+        <button type="submit" class="login-submit" [disabled]="isLoading">
+          {{ isLoading ? 'Enviando...' : 'Enviar enlace de recuperación' }}
+          <span *ngIf="!isLoading" class="arrow-icon"><i class="fa-solid fa-paper-plane"></i></span>
+        </button>
 
-      <div class="error-message" *ngIf="errorMessage">
-        {{ errorMessage }}
-      </div>
+        <div class="back-link-wrapper">
+          <button type="button" class="back-link" (click)="setViewMode('LOGIN')">
+            <i class="fa-solid fa-arrow-left"></i> Volver a Iniciar Sesión
+          </button>
+        </div>
+      </form>
 
-      <button type="submit" class="login-submit" [disabled]="isLoading">
-        {{ isLoading ? 'Guardando...' : 'Cambiar Contraseña' }}
-        <span *ngIf="!isLoading" class="arrow-icon"><i class="fa-solid fa-chevron-right"></i></span>
-      </button>
+      <!-- MODO 3: RESTABLECER CONTRASEÑA (CON TOKEN) -->
+      <form *ngIf="viewMode === 'RESET_PASSWORD'" [formGroup]="resetPasswordForm" (ngSubmit)="onResetPasswordSubmit()">
+        <div class="form-group login-field">
+          <label for="resetNewPassword">Nueva contraseña</label>
+          <div class="input-wrapper" style="position: relative;">
+            <span class="icon"><i class="fa-solid fa-lock"></i></span>
+            <input
+              [type]="showResetNewPassword ? 'text' : 'password'"
+              id="resetNewPassword"
+              formControlName="newPassword"
+              placeholder="Mín. 8 chars, 1 mayúscula, 1 número, 1 especial"
+              [class.is-invalid]="resetPasswordForm.get('newPassword')?.invalid && resetPasswordForm.get('newPassword')?.touched">
+            <span class="toggle-password" (click)="togglePasswordVisibility('resetNewPassword')" style="position: absolute; right: 15px; cursor: pointer; color: #888;">
+              <i class="fa-regular" [ngClass]="showResetNewPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </span>
+          </div>
+          <div class="error-text" *ngIf="resetPasswordForm.get('newPassword')?.invalid && resetPasswordForm.get('newPassword')?.touched">
+            Debe tener al menos 8 caracteres, 1 mayúscula, 1 número y 1 carácter especial.
+          </div>
+        </div>
 
-    </form>
+        <div class="form-group login-field">
+          <label for="resetConfirmPassword">Confirmar nueva contraseña</label>
+          <div class="input-wrapper" style="position: relative;">
+            <span class="icon"><i class="fa-solid fa-lock"></i></span>
+            <input
+              [type]="showResetConfirmPassword ? 'text' : 'password'"
+              id="resetConfirmPassword"
+              formControlName="confirmPassword"
+              placeholder="Confirmar nueva contraseña"
+              [class.is-invalid]="resetPasswordForm.get('confirmPassword')?.invalid && resetPasswordForm.get('confirmPassword')?.touched">
+            <span class="toggle-password" (click)="togglePasswordVisibility('resetConfirmPassword')" style="position: absolute; right: 15px; cursor: pointer; color: #888;">
+              <i class="fa-regular" [ngClass]="showResetConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </span>
+          </div>
+        </div>
+
+        <div class="error-message" *ngIf="resetPasswordForm.hasError('passwordMismatch') && resetPasswordForm.get('confirmPassword')?.touched">
+          Las contraseñas no coinciden.
+        </div>
+
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <button type="submit" class="login-submit" [disabled]="isLoading">
+          {{ isLoading ? 'Restableciendo...' : 'Restablecer Contraseña' }}
+          <span *ngIf="!isLoading" class="arrow-icon"><i class="fa-solid fa-check"></i></span>
+        </button>
+
+        <div class="back-link-wrapper">
+          <button type="button" class="back-link" (click)="setViewMode('LOGIN')">
+            <i class="fa-solid fa-arrow-left"></i> Volver a Iniciar Sesión
+          </button>
+        </div>
+      </form>
+
+      <!-- MODO 4: CAMBIO OBLIGATORIO DE CONTRASEÑA EN PRIMER INICIO -->
+      <form *ngIf="viewMode === 'REQUIRE_CHANGE'" [formGroup]="changePasswordForm" (ngSubmit)="onChangePasswordSubmit()">
+        <div class="info-box">
+          <span><i class="fa-solid fa-circle-info"></i></span>
+          <p>Por seguridad, debes cambiar tu contraseña en tu primer inicio de sesión o si un administrador la restableció.</p>
+        </div>
+
+        <div class="form-group login-field">
+          <label for="newPassword">Nueva contraseña</label>
+          <div class="input-wrapper" style="position: relative;">
+            <span class="icon"><i class="fa-solid fa-lock"></i></span>
+            <input
+              [type]="showNewPassword ? 'text' : 'password'"
+              id="newPassword"
+              formControlName="newPassword"
+              placeholder="Mín. 8 chars, 1 mayúscula, 1 número, 1 especial"
+              [class.is-invalid]="changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched">
+            <span class="toggle-password" (click)="togglePasswordVisibility('newPassword')" style="position: absolute; right: 15px; cursor: pointer; color: #888;">
+              <i class="fa-regular" [ngClass]="showNewPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </span>
+          </div>
+          <div class="error-text" *ngIf="changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched">
+            Debe tener al menos 8 caracteres, 1 mayúscula, 1 número y 1 carácter especial.
+          </div>
+        </div>
+
+        <div class="form-group login-field">
+          <label for="confirmPassword">Confirmar contraseña</label>
+          <div class="input-wrapper" style="position: relative;">
+            <span class="icon"><i class="fa-solid fa-lock"></i></span>
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              id="confirmPassword"
+              formControlName="confirmPassword"
+              placeholder="Confirmar contraseña"
+              [class.is-invalid]="changePasswordForm.get('confirmPassword')?.invalid && changePasswordForm.get('confirmPassword')?.touched">
+            <span class="toggle-password" (click)="togglePasswordVisibility('confirmPassword')" style="position: absolute; right: 15px; cursor: pointer; color: #888;">
+              <i class="fa-regular" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </span>
+          </div>
+        </div>
+
+        <div class="error-message" *ngIf="changePasswordForm.hasError('passwordMismatch') && changePasswordForm.get('confirmPassword')?.touched">
+          Las contraseñas no coinciden.
+        </div>
+
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <button type="submit" class="login-submit" [disabled]="isLoading">
+          {{ isLoading ? 'Guardando...' : 'Cambiar Contraseña' }}
+          <span *ngIf="!isLoading" class="arrow-icon"><i class="fa-solid fa-chevron-right"></i></span>
+        </button>
+      </form>
 
       <div class="login-footer">
         <div class="security-badge">

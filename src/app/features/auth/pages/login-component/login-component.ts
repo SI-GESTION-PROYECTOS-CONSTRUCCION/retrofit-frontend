@@ -9,8 +9,10 @@ import {
 	ValidatorFn,
 	Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+
+export type AuthViewMode = 'LOGIN' | 'FORGOT_PASSWORD' | 'RESET_PASSWORD' | 'REQUIRE_CHANGE';
 
 @Component({
 	selector: 'app-login-component',
@@ -19,26 +21,36 @@ import { AuthService } from '../../../../core/services/auth.service';
 	styleUrl: './login-component.css',
 })
 export class LoginComponent implements OnInit {
+	viewMode: AuthViewMode = 'LOGIN';
 	loginForm!: FormGroup;
 	changePasswordForm!: FormGroup;
+	forgotPasswordForm!: FormGroup;
+	resetPasswordForm!: FormGroup;
+	
 	isLoading = false;
 	errorMessage = '';
-	requirePasswordChange = false;
+	successMessage = '';
+	resetToken: string | null = null;
 
 	showPassword = false;
 	showNewPassword = false;
 	showConfirmPassword = false;
+	showResetNewPassword = false;
+	showResetConfirmPassword = false;
 
-	togglePasswordVisibility(field: 'password' | 'newPassword' | 'confirmPassword') {
+	togglePasswordVisibility(field: 'password' | 'newPassword' | 'confirmPassword' | 'resetNewPassword' | 'resetConfirmPassword') {
 		if (field === 'password') this.showPassword = !this.showPassword;
 		else if (field === 'newPassword') this.showNewPassword = !this.showNewPassword;
 		else if (field === 'confirmPassword') this.showConfirmPassword = !this.showConfirmPassword;
+		else if (field === 'resetNewPassword') this.showResetNewPassword = !this.showResetNewPassword;
+		else if (field === 'resetConfirmPassword') this.showResetConfirmPassword = !this.showResetConfirmPassword;
 	}
 
 	constructor(
 		private fb: FormBuilder,
 		private authService: AuthService,
 		private router: Router,
+		private route: ActivatedRoute,
 	) {}
 
 	ngOnInit(): void {
@@ -63,13 +75,46 @@ export class LoginComponent implements OnInit {
 			{ validators: this.passwordMatchValidator },
 		);
 
+		this.forgotPasswordForm = this.fb.group({
+			email: ['', [Validators.required, Validators.email]],
+		});
+
+		this.resetPasswordForm = this.fb.group(
+			{
+				newPassword: [
+					'',
+					[
+						Validators.required,
+						Validators.minLength(8),
+						Validators.pattern('^(?=.*[0-9])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$'),
+					],
+				],
+				confirmPassword: ['', [Validators.required]],
+			},
+			{ validators: this.passwordMatchValidator },
+		);
+
+		// Detección automática del token para modo RESET_PASSWORD
+		this.route.queryParams.subscribe((params) => {
+			if (params['token']) {
+				this.resetToken = params['token'];
+				this.setViewMode('RESET_PASSWORD');
+			}
+		});
+
 		if (this.authService.isAutenticated()) {
 			this.authService.loadUserProfile().subscribe((profile) => {
 				if (profile.requirePasswordChange) {
-					this.requirePasswordChange = true;
+					this.setViewMode('REQUIRE_CHANGE');
 				}
 			});
 		}
+	}
+
+	setViewMode(mode: AuthViewMode): void {
+		this.errorMessage = '';
+		this.successMessage = '';
+		this.viewMode = mode;
 	}
 
 	private passwordMatchValidator: ValidatorFn = (
@@ -87,6 +132,7 @@ export class LoginComponent implements OnInit {
 		if (this.loginForm.valid) {
 			this.isLoading = true;
 			this.errorMessage = '';
+			this.successMessage = '';
 
 			const credenciales = {
 				username: this.loginForm.value.username,
@@ -103,12 +149,10 @@ export class LoginComponent implements OnInit {
 						}
 
 						this.router.navigate(['/dashboard']).then((_success) => {
-							// Si el guard bloquea la navegación (redirecciona a /login),
-							// debemos cargar el perfil localmente para mostrar el form
 							if (this.router.url === '/login') {
 								this.authService.loadUserProfile().subscribe((profile) => {
 									if (profile.requirePasswordChange) {
-										this.requirePasswordChange = true;
+										this.setViewMode('REQUIRE_CHANGE');
 									}
 								});
 							}
@@ -128,6 +172,55 @@ export class LoginComponent implements OnInit {
 			});
 		} else {
 			this.loginForm.markAllAsTouched();
+		}
+	}
+
+	onForgotPasswordSubmit(): void {
+		if (this.forgotPasswordForm.valid) {
+			this.isLoading = true;
+			this.errorMessage = '';
+			this.successMessage = '';
+			const email = this.forgotPasswordForm.value.email;
+
+			this.authService.forgotPassword(email).subscribe({
+				next: (res) => {
+					this.isLoading = false;
+					this.successMessage = res.message || 'Si el correo está registrado, recibirás un enlace de recuperación.';
+					this.forgotPasswordForm.reset();
+				},
+				error: (err) => {
+					this.isLoading = false;
+					this.errorMessage = err.error?.message || err.error?.general || 'Error al procesar la solicitud.';
+				},
+			});
+		} else {
+			this.forgotPasswordForm.markAllAsTouched();
+		}
+	}
+
+	onResetPasswordSubmit(): void {
+		if (this.resetPasswordForm.valid && this.resetToken) {
+			this.isLoading = true;
+			this.errorMessage = '';
+			this.successMessage = '';
+			const newPassword = this.resetPasswordForm.value.newPassword;
+
+			this.authService.resetPassword(this.resetToken, newPassword).subscribe({
+				next: (res) => {
+					this.isLoading = false;
+					this.successMessage = res.message || 'Contraseña restablecida exitosamente. Ya puedes iniciar sesión.';
+					this.resetPasswordForm.reset();
+					this.resetToken = null;
+					this.router.navigate([], { queryParams: {} });
+					this.setViewMode('LOGIN');
+				},
+				error: (err) => {
+					this.isLoading = false;
+					this.errorMessage = err.error?.message || err.error?.general || 'El enlace de recuperación es inválido o ha expirado.';
+				},
+			});
+		} else {
+			this.resetPasswordForm.markAllAsTouched();
 		}
 	}
 
