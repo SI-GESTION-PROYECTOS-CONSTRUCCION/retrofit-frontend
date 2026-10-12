@@ -42,4 +42,31 @@ export class AuditService {
 
 		return this.http.get<Page<AuditLog>>(this.apiUrl, { params });
 	}
+
+	exportAuditReportPdf(
+		search?: string,
+		module?: string,
+		action?: string,
+		date?: string,
+	): Observable<Blob> {
+		let params = new HttpParams();
+
+		if (search && search.trim() !== '') {
+			params = params.set('search', search.trim());
+		}
+		if (module && module !== 'Todos') {
+			params = params.set('module', module);
+		}
+		if (action && action !== 'Todas') {
+			params = params.set('action', action);
+		}
+		if (date) {
+			params = params.set('date', date);
+		}
+
+		return this.http.get(`${this.apiUrl}/export/pdf`, {
+			params,
+			responseType: 'blob',
+		});
+	}
 }

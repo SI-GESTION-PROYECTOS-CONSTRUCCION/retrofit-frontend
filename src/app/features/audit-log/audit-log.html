@@ -5,7 +5,13 @@
     <div class="header-titles">
       <span class="audit-eyebrow"><i class="fa-solid fa-fingerprint"></i> Control y trazabilidad</span>
       <h2>Registro de Auditoría</h2>
-      <p>Trazabilidad inmutable de todas las acciones ejecutadas en el sistema.</p>
+      <p>Trazabilidad inmutable de todas las acciones ejecutadas en el sistema (Norma ISO/IEC 27001).</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-export-pdf" (click)="exportReportPdf()" [disabled]="isExporting">
+        <i class="fa-solid" [ngClass]="isExporting ? 'fa-spinner fa-spin' : 'fa-file-pdf'"></i>
+        <span>{{ isExporting ? 'GENERANDO...' : 'EXPORTAR REPORTE (PDF)' }}</span>
+      </button>
     </div>
   </header>
 

@@ -7,6 +7,7 @@ export interface UserProfile {
 	role: string;
 	permissions: string[];
 	requirePasswordChange: boolean;
+	privacyPolicyAccepted?: boolean;
 }
 
 export interface AuthResponse {

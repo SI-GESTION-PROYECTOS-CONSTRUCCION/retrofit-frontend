@@ -228,22 +228,44 @@
           Las contraseñas no coinciden.
         </div>
 
+        <div class="form-group terms-group">
+          <label class="terms-label">
+            <input
+              type="checkbox"
+              formControlName="acceptPrivacyPolicy"
+              class="terms-checkbox"
+              id="acceptPrivacyPolicy">
+            <span class="terms-text">
+              He leído y acepto la
+              <a [routerLink]="['/' + APP_ROUTES.PRIVACY_POLICY]" target="_blank" rel="noopener noreferrer" class="terms-link">
+                Política de Privacidad y Tratamiento de Datos Personales
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>
+            </span>
+          </label>
+          <div class="error-text" *ngIf="changePasswordForm.get('acceptPrivacyPolicy')?.invalid && changePasswordForm.get('acceptPrivacyPolicy')?.touched">
+            Debes aceptar la política de privacidad para continuar.
+          </div>
+        </div>
+
         <div class="error-message" *ngIf="errorMessage">
           {{ errorMessage }}
         </div>
 
         <button type="submit" class="login-submit" [disabled]="isLoading">
-          {{ isLoading ? 'Guardando...' : 'Cambiar Contraseña' }}
+          {{ isLoading ? 'Guardando...' : 'Aceptar y Cambiar Contraseña' }}
           <span *ngIf="!isLoading" class="arrow-icon"><i class="fa-solid fa-chevron-right"></i></span>
         </button>
       </form>
 
       <div class="login-footer">
         <div class="security-badge">
-          <span><i class="fa-solid fa-shield-halved"></i></span> Conexión segura cifrada SSL
+          <span><i class="fa-solid fa-shield-halved"></i></span> Conexión segura cifrada SSL &bull; ISO 27001
         </div>
         <div class="footer-links">
-          <span class="lang-selector"><i class="fa-solid fa-globe"></i> ESPAÑOL</span>
+          <a [routerLink]="['/' + APP_ROUTES.PRIVACY_POLICY]" target="_blank" rel="noopener noreferrer" class="privacy-link">
+            <i class="fa-solid fa-shield-check"></i> Políticas de Privacidad
+          </a>
           <span class="divider">|</span>
           <span class="version">v1.0.0</span>
         </div>

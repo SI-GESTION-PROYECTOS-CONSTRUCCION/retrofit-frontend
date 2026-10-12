@@ -9,18 +9,20 @@ import {
 	ValidatorFn,
 	Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { APP_ROUTES } from '../../../../core/constants/routes.constants';
 
 export type AuthViewMode = 'LOGIN' | 'FORGOT_PASSWORD' | 'RESET_PASSWORD' | 'REQUIRE_CHANGE';
 
 @Component({
 	selector: 'app-login-component',
-	imports: [CommonModule, ReactiveFormsModule],
+	imports: [CommonModule, ReactiveFormsModule, RouterLink],
 	templateUrl: './login-component.html',
 	styleUrl: './login-component.css',
 })
 export class LoginComponent implements OnInit {
+	protected readonly APP_ROUTES = APP_ROUTES;
 	viewMode: AuthViewMode = 'LOGIN';
 	loginForm!: FormGroup;
 	changePasswordForm!: FormGroup;
@@ -71,6 +73,7 @@ export class LoginComponent implements OnInit {
 					],
 				],
 				confirmPassword: ['', [Validators.required]],
+				acceptPrivacyPolicy: [false, [Validators.requiredTrue]],
 			},
 			{ validators: this.passwordMatchValidator },
 		);
@@ -229,8 +232,9 @@ export class LoginComponent implements OnInit {
 			this.isLoading = true;
 			this.errorMessage = '';
 			const newPassword = this.changePasswordForm.value.newPassword;
+			const acceptPolicy = this.changePasswordForm.value.acceptPrivacyPolicy === true;
 
-			this.authService.changePassword(newPassword).subscribe({
+			this.authService.changePassword(newPassword, acceptPolicy).subscribe({
 				next: () => {
 					this.isLoading = false;
 					this.router.navigate(['/dashboard']);

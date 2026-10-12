@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { APP_ROUTES } from '../constants/routes.constants';
 import { AuthService } from '../services/auth.service';
 
 export const guestGuard: CanActivateFn = (): Observable<boolean | UrlTree> | boolean | UrlTree => {
@@ -17,7 +18,7 @@ export const guestGuard: CanActivateFn = (): Observable<boolean | UrlTree> | boo
 			if (profile.requirePasswordChange) {
 				return true;
 			}
-			return router.createUrlTree(['/dashboard']);
+			return router.createUrlTree(['/', APP_ROUTES.DASHBOARD]);
 		}),
 		catchError(() => {
 			return of(true);

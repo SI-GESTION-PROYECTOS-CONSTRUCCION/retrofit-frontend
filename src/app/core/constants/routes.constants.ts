@@ -16,4 +16,5 @@ export const APP_ROUTES = {
 		ROLES: 'roles',
 	},
 	PROJECT_ASSIGNMENT: 'asignacionProyectos',
+	PRIVACY_POLICY: 'politica-privacidad',
 };

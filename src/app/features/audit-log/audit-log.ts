@@ -33,12 +33,21 @@ export class AuditLogComponent implements OnInit {
 	totalPages = 0;
 	totalElements = 0;
 
+	isExporting = false;
 	searchTerm: string = '';
 	selectedModule: string = 'Todos';
 	selectedAction: string = 'Todas';
 	selectedDate: Date | null = null;
-	readonly moduleOptions = ['Todos','Trabajadores','Usuarios','Proyectos','Recursos','Roles','Asignaciones','Presupuestos','Gantt','Avances de Obra','Inventario'].map(label => ({ label, value: label }));
-	readonly actionOptions = [{label:'Todas las acciones',value:'Todas'},{label:'Crear',value:'CREATE'},{label:'Actualizar',value:'UPDATE'},{label:'Eliminar',value:'DELETE'}];
+	readonly moduleOptions = ['Todos','Trabajadores','Usuarios','Proyectos','Recursos','Roles','Asignaciones','Presupuestos','Gantt','Avances de Obra','Inventario','Autenticación'].map(label => ({ label, value: label }));
+	readonly actionOptions = [
+		{ label: 'Todas las acciones', value: 'Todas' },
+		{ label: 'Crear', value: 'CREATE' },
+		{ label: 'Actualizar', value: 'UPDATE' },
+		{ label: 'Eliminar', value: 'DELETE' },
+		{ label: 'Inicio de Sesión', value: 'LOGIN' },
+		{ label: 'Fallo de Auth', value: 'LOGIN_FAILED' },
+		{ label: 'Exportación', value: 'EXPORT' },
+	];
 	private searchDebounce?: ReturnType<typeof setTimeout>;
 
 	stats = {
@@ -126,6 +135,10 @@ export class AuditLogComponent implements OnInit {
 				return 'badge-delete';
 			case 'LOGIN':
 				return 'badge-login';
+			case 'LOGIN_FAILED':
+				return 'badge-delete';
+			case 'EXPORT':
+				return 'badge-export';
 			default:
 				return 'badge-login';
 		}
@@ -231,7 +244,39 @@ export class AuditLogComponent implements OnInit {
 	isAlert(log: AuditLog): boolean {
 		const isDelete = log.action?.toUpperCase() === 'DELETE';
 		const isRoleModule = log.module === 'Roles';
-		// Si tienes EXPORT o LOGIN_FAILED en el futuro, los sumas aquí
-		return isDelete || isRoleModule;
+		const isLoginFailed = log.action?.toUpperCase() === 'LOGIN_FAILED';
+		return isDelete || isRoleModule || isLoginFailed;
+	}
+
+	exportReportPdf(): void {
+		if (this.isExporting) return;
+		this.isExporting = true;
+
+		this.auditService
+			.exportAuditReportPdf(
+				this.searchTerm,
+				this.selectedModule,
+				this.selectedAction,
+				this.formatSelectedDate(),
+			)
+			.subscribe({
+				next: (blob) => {
+					this.isExporting = false;
+					const url = window.URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.href = url;
+					const today = new Date().toISOString().slice(0, 10);
+					a.download = `reporte_auditoria_retrofit_${today}.pdf`;
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
+					window.URL.revokeObjectURL(url);
+				},
+				error: (err) => {
+					this.isExporting = false;
+					console.error('Error exportando reporte de auditoría:', err);
+					alert('No se pudo generar el reporte de auditoría. Verifique su conexión y permisos.');
+				},
+			});
 	}
 }

@@ -77,7 +77,18 @@ form { display: flex; flex-direction: column; gap: 20px; }
 .security-badge { display: flex; align-items: center; gap: 6px; }
 .security-badge span { color: var(--rt-success); }
 .footer-links { display: flex; gap: 8px; align-items: center; }
+.privacy-link { color: var(--rt-brand-600); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-weight: 700; transition: color .2s; }
+.privacy-link:hover { color: var(--rt-brand-800); text-decoration: underline; }
 .access-legal { margin: 42px 0 0; color: var(--rt-ink-muted); font-size: 10px; line-height: 1.6; text-align: center; }
+
+/* Terms & Privacy checkbox styling */
+.terms-group { margin: 16px 0 6px; }
+.terms-label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; user-select: none; }
+.terms-checkbox { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--rt-brand-600); cursor: pointer; flex-shrink: 0; }
+.terms-text { font-size: 12.5px; color: var(--rt-ink-base); line-height: 1.5; font-weight: 500; }
+.terms-link { color: var(--rt-brand-600); font-weight: 700; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px; }
+.terms-link:hover { color: var(--rt-brand-800); }
+.terms-link i { font-size: 10px; }
 
 @media (max-width: 900px) {
   .login-container { grid-template-columns: 1fr; }

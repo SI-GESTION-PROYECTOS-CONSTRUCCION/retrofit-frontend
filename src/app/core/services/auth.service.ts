@@ -42,14 +42,15 @@ export class AuthService {
 		return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credenciales);
 	}
 
-	changePassword(newPassword: string): Observable<{ message: string }> {
+	changePassword(newPassword: string, acceptPrivacyPolicy: boolean = true): Observable<{ message: string }> {
 		return this.http
-			.post<{ message: string }>(`${this.apiUrl}/change-password`, { newPassword })
+			.post<{ message: string }>(`${this.apiUrl}/change-password`, { newPassword, acceptPrivacyPolicy })
 			.pipe(
 				tap(() => {
 					this.requirePasswordChange = false;
 					if (this.cachedProfile) {
 						this.cachedProfile.requirePasswordChange = false;
+						this.cachedProfile.privacyPolicyAccepted = true;
 					}
 				}),
 			);
